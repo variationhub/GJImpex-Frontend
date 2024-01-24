@@ -23,7 +23,7 @@ export default function LoginScreen({navigation}) {
                 placeholder='Password'
                 >
             </TextInput>
-        <Pressable style={styles.loginButton} onPress={() => navigation.navigate('lr')}>
+        <Pressable style={styles.loginButton} onPress={() => navigation.navigate('landingPage')}>
             <Text style={styles.loginText}> Login </Text>
         </Pressable> 
         </View>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     image: {
         width: "90%",
         height: 100,
-        marginTop:"10%",
+        marginTop:"20%",
         // marginBottom:"auto"
     },
     inputFields:{
