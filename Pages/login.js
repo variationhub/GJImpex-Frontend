@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator();
 export default function LoginScreen({navigation}) {
   return (
     <View style={styles.container}>
-        <Image style={styles.image} source={require('../assets/gjimpexlogin.jpg')}>
+        <Image style={styles.image} source={require('../assets/gjimpexlogin.png')}>
 
         </Image>
         <View style={styles.inputFields}>
