@@ -2,12 +2,10 @@ import { StyleSheet } from 'react-native';
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import LoginScreen from './Pages/login';
-import LandingScreen from './Pages/landingPage';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import LoginScreen from './pages/login';
+import LandingScreen from './pages/home';
 
 const Stack = createNativeStackNavigator();
-const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
@@ -19,9 +17,9 @@ export default function App() {
         options={{headerShown: false}}
       />
     <Stack.Screen 
-        name="landingPage" 
+        name="Home" 
         component={LandingScreen} 
-        options={{headerShown: false}}
+        // options={{headerShown: false}}
     />
     </Stack.Navigator>
   </NavigationContainer>

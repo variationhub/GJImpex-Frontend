@@ -23,7 +23,7 @@ export default function LoginScreen({navigation}) {
                 placeholder='Password'
                 >
             </TextInput>
-        <Pressable style={styles.loginButton} onPress={() => navigation.navigate('landingPage')}>
+        <Pressable style={styles.loginButton} onPress={() => navigation.navigate('Home')}>
             <Text style={styles.loginText}> Login </Text>
         </Pressable> 
         </View>
