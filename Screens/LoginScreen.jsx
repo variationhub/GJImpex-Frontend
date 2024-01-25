@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({navigation, setUser}) {
   return (
     <View style={styles.container}>
         <Image style={styles.image} source={require('../assets/gjimpexlogin.png')}>
@@ -23,7 +23,10 @@ export default function LoginScreen({navigation}) {
                 placeholder='Password'
                 >
             </TextInput>
-        <Pressable style={styles.loginButton} onPress={() => navigation.navigate('HomeScreen')}>
+        <Pressable style={styles.loginButton} onPress={() => {
+            setUser(true);
+            // navigation.navigate('HomeScreen');
+        }}>
             <Text style={styles.loginText}> Login </Text>
         </Pressable> 
         </View>
