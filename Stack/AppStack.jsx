@@ -7,7 +7,7 @@ import LoginScreen from "../Screens/LoginScreen";
 import CustomDrawer from "../Components/CustomDrawer";
 import UserScreen from "../Screens/UserScreen";
 import ProductScreen from "../Screens/ProductScreen";
-import OrderScreen from "../Screens/OrderScreen";
+import TaskScreen from "../Screens/TaskScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -18,9 +18,9 @@ const option = {
     headerTintColor: 'white'
 };
 
+
 const AppStack = () => {
     const [user, setUser] = useState(false);
-
     if (user) {
         // User is authenticated, show the drawer navigator
         return (
@@ -38,7 +38,7 @@ const AppStack = () => {
                 />
                 <Drawer.Screen
                         name="Task"
-                        component={OrderScreen}
+                        component={TaskScreen}
                         options={option}
                 />
                 <Drawer.Screen
