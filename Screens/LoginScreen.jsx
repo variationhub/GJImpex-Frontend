@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
         width : '90%',
         borderColor : 'rgba(0, 0, 0, 0.2)',
         borderRadius : 5,
-        margin : "0 auto"
+        marginLeft : 'auto',
+        marginRight : "auto"
     },
     loginButton :{
         width : '90%',
