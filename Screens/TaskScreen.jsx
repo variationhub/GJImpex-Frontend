@@ -1,15 +1,15 @@
 import { StyleSheet, View, Text } from "react-native";
 import React from "react";
 
-const OrderScreen = () => {
+const TaskScreen = () => {
     return (
         <View style={styles.container}>
-            <Text>Order Page</Text>
+            <Text>Task Page</Text>
         </View>
     );
 };
 
-export default OrderScreen;
+export default TaskScreen;
 
 const styles = StyleSheet.create({
     container: {
