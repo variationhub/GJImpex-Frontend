@@ -1,13 +1,30 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Modal, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Alert, ImageBackground, TextInput } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Alert, ImageBackground } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import DetailsModal from "../Modals/DetailsModal";
+import PartyModal from "../Modals/PartyModal";
 
 const HomeScreen = () => {
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalDelete, setModalDelete] = useState(false);
+    const [modalAddParty, setModalAddParty] = useState(false);
     const [rowData, setRowData] = useState(null);
-    const [partyName, setPartyName] = useState("");
-    const [quantity, setQuantity] = useState("");
-    const [value, setValue] = useState("");
+    const [partyData, setPartyData] = useState({
+        name:"",
+        products:{
+            "123":{
+                id:"123",
+                name:"",
+                quantity:0,
+                price:0
+            },
+            "456":{
+                id:"456",
+                name:"",
+                quantity:0,
+                price:0
+            }
+        }
+    })
     const [data, setData] = useState([
         // Assuming you have some data for each row
         { id: 1, title: "Jignesh bhai Surat", description: "Information for Row 1" },
@@ -33,148 +50,68 @@ const HomeScreen = () => {
 
     const handleRowClick = (data) => {
         setRowData(data);
-        setModalVisible(true);
-    };
-
-    const closeModal = () => {
-        setModalVisible(false);
+        setModalDelete(true);
     };
 
     const openForm = () => {
-        setModalVisible(true);
+        setModalAddParty(true);
     };
 
-    const closeForm = () => {
-        setModalVisible(false);
-    };
+    const deleteHandler = (e) => {
+        e.stopPropagation()
+        Alert.alert('Delete ', 'Are You Sure ?', [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            { text: 'Delete', onPress: () => console.log('OK Pressed') },
 
-    const saveForm = () => {
-        // Your logic to save form data goes here
-        // For example, you can log the data to the console
-        console.log("Party Name:", partyName);
-        console.log("Quantity:", quantity);
-        console.log("Value:", value);
-        const value = { id: new Date(), title: partyName, description: "Information for Row 1" }
-        setData([...data,value])
+        ], {
+            alertContainerStyle: styles.alertContainer,
+            titleStyle: styles.alertTitle,
+            messageStyle: styles.alertMessage,
+        })
+    }
 
-        // Close the form modal
-        closeForm();
-    };
-
-
-    
-
-
-const deleteHandler = (e) =>{
-    e.stopPropagation()
-    Alert.alert('Delete ', 'Are You Sure ?', [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'Delete', onPress: () => console.log('OK Pressed')},
-        
-      ], {
-        alertContainerStyle: styles.alertContainer,
-        titleStyle: styles.alertTitle,
-        messageStyle: styles.alertMessage,
-      })
-}
-
-const image = require('../assets/logo.png');
+    const image = require('../assets/logo.png');
 
     return (
 
         <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.25}>
-        <ScrollView style={styles.scrollView}>
-            {/* <View style={styles.image}>
-                <Image source={require('../assets/logo.png')} />
-            </View> */}
-            {data.map((row) => (
-                <TouchableOpacity
-                    key={row.id}
-                    style={styles.row}
-                    onPress={() => handleRowClick(row)}>
-                    <Text ellipsizeMode="tail" style={styles.title}>{row.title}</Text>
-                    <View style={styles.bottomLine}>
-                        <Text style={styles.status}>- LR Pending</Text>
-                        <View style={styles.icons}>
-                            <TouchableOpacity style={styles.icon} onPress={(e) => e.stopPropagation()}>
-                                <Ionicons name="marker" size={24} color={'#5F4521'} />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.icon} onPress={(e) => e.stopPropagation()}>
-                                <Ionicons name="book-check" size={24} color={'#5F4521'} />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.icon} onPress={deleteHandler}>
-                                <Ionicons name="delete" size={24} color={'#5F4521'} />
-                            </TouchableOpacity>
+            <ScrollView style={styles.scrollView}>
+                {data.map((row) => (
+                    <TouchableOpacity
+                        key={row.id}
+                        style={styles.row}
+                        onPress={() => handleRowClick(row)}>
+                        <Text ellipsizeMode="tail" style={styles.title}>{row.title}</Text>
+                        <View style={styles.bottomLine}>
+                            <Text style={styles.status}>- LR Pending</Text>
+                            <View style={styles.icons}>
+                                <TouchableOpacity style={styles.icon} onPress={(e) => e.stopPropagation()}>
+                                    <Ionicons name="marker" size={24} color={'#5F4521'} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.icon} onPress={(e) => e.stopPropagation()}>
+                                    <Ionicons name="book-check" size={24} color={'#5F4521'} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.icon} onPress={deleteHandler}>
+                                    <Ionicons name="delete" size={24} color={'#5F4521'} />
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                </TouchableOpacity>
-            ))}
-            {rowData && (
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={closeModal}>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <Text  >{rowData.title}</Text>
-                            <Text>{rowData.description}</Text>
-                            <TouchableOpacity onPress={closeModal} style={styles.closeModal}>
-                                <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-            )}
-        </ScrollView>
-        <TouchableOpacity style={styles.fab} onPress={openForm}>
+                    </TouchableOpacity>
+                ))}
+                {rowData && (
+                    <DetailsModal deleteModalData={{ modalDelete ,rowData}} deleteModalFn={{ setModalDelete,setRowData }} />
+                )}
+            </ScrollView>
+            <TouchableOpacity style={styles.fab} onPress={openForm}>
                 <Ionicons name="plus" size={30} color={'white'} />
             </TouchableOpacity>
-
-            {/* Form Modal */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={closeForm}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.formTitle}>Add Party</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Party Name"
-                            value={partyName}
-                            onChangeText={(text) => setPartyName(text)}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Quantity"
-                            value={quantity}
-                            onChangeText={(text) => setQuantity(text)}
-                            keyboardType="numeric"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Value"
-                            value={value}
-                            onChangeText={(text) => setValue(text)}
-                            keyboardType="numeric"
-                        />
-                        <TouchableOpacity style={styles.saveButton} onPress={saveForm}>
-                            <Text style={styles.saveButtonText}>Save</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
-                            <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
-
+            {modalAddParty &&
+                <PartyModal partyModalData={{modalAddParty,partyData, data}} partyModalFn={{setModalAddParty,setPartyData}}/>
+            }
 
         </ImageBackground>
     );
@@ -190,8 +127,8 @@ const styles = StyleSheet.create({
     backgroundImage: {
     },
     image: {
-        position : 'absolute',
-        top : '50%',
+        position: 'absolute',
+        top: '50%',
     },
     title: {
         fontWeight: 'bold',
@@ -213,7 +150,7 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     modalContent: {
-        position : 'relative',
+        position: 'relative',
         backgroundColor: "white",
         padding: 20,
         width: '100%',
@@ -239,9 +176,9 @@ const styles = StyleSheet.create({
         color: '#5f4521',
         marginBottom: -5
     },
-    icon:{
-        padding : 15,
-        paddingBottom : 2
+    icon: {
+        padding: 15,
+        paddingBottom: 2
     },
     alertContainer: {
         backgroundColor: "lightgrey",
@@ -255,11 +192,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "black",
     },
-    closeModal : {
-        display : 'flex',
-        position : 'absolute',
-        top : '3%',
-        right : '3%',
+    closeModal: {
+        display: 'flex',
+        position: 'absolute',
+        top: '3%',
+        right: '3%',
     },
     fab: {
         position: 'absolute',
