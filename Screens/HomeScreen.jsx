@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     container: {
     },
     backgroundImage: {
+        height:'100%',
     },
     image: {
         position: 'absolute',
