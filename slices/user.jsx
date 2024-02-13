@@ -22,7 +22,20 @@ export const fetchUserData = () => async(dispatch) => {
 
 export const createUserData = (data) => async(dispatch) => {
   const response = await axiosInstance.post('/users',data);
-  // dispatch(userSlice.actions.updateUser(response.data.data));
+  if(response.data.status){
+    dispatch(fetchUserData());
+  }
+}
+
+export const deleteUserData = (id) => async(dispatch) => {
+  const response = await axiosInstance.delete(`/users/${id}`);
+  if(response.data.status){
+    dispatch(fetchUserData());
+  }
+}
+
+export const updateUserData = (id, data) => async(dispatch) => {
+  const response = await axiosInstance.put(`/users/${id}`, data);
   if(response.data.status){
     dispatch(fetchUserData());
   }

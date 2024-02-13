@@ -3,7 +3,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.5:8000/api',
+  baseURL: 'https://tense-jade-sawfish.cyclic.app/api',
   timeout: 5000, // Timeout after 5 seconds
 });
 

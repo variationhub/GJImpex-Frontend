@@ -19,6 +19,9 @@ const UserScreen = () => {
     const { data } = useSelector((state) => state.user)
 
     const [modalAddUser, setModalAddUser] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
+    const [id, setId] = useState('');
+
 
     const openForm = () => {
         setModalAddUser(true);
@@ -28,19 +31,34 @@ const UserScreen = () => {
     }, [])
     const image = require('../assets/logo.png');
 
+    const editUser = (id) => {
+        const value = data.find(value => value._id === id)
+        setUserData({
+            name: value.name,
+            role: value.role,
+            phone: value.phone,
+            email: value.email,
+            password: "password",
+            address: value.address
+        })
+        setIsEdit(true)
+        setId(id)
+        setModalAddUser(true)
+    }
+
     return (
         <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.25}>
             <ScrollView>
 
                 <View style={styles.container}>
-                    {data.map(item => <UserData data={item} />)}
+                    {data.map(item => <UserData data={item} editUser={editUser}/>)}
                 </View>
                 </ScrollView>
                 <TouchableOpacity style={styles.fab} onPress={openForm}>
                     <Ionicons name="plus" size={30} color={'white'} />
                 </TouchableOpacity>
                 {modalAddUser &&
-                    <UserModal userModalData={{ modalAddUser, userData }} userModalFn={{ setModalAddUser, setUserData }} />
+                    <UserModal userModalData={{ modalAddUser, userData, isEdit, id}} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
                 }
 
         </ImageBackground>

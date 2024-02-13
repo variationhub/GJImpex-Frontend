@@ -1,45 +1,38 @@
 import React, { useState } from 'react'
-
 import { StyleSheet, View, Text, Modal, TouchableOpacity, TextInput, Picker } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-import { createUserData, updateUserData } from '../slices/user';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { createOrderData, updateOrderData } from '../slices/order';
 import { Dropdown } from 'react-native-element-dropdown';
 
+const OrderModal = (props) => {
 
-const data = [
-    { label: 'Admin', value: 'Admin' },
-    { label: 'Sales', value: 'Sales' },
-    { label: 'Accountant', value: 'Accountant' }
-];
-
-const UserModal = (props) => {
-
-    const { modalAddUser, userData, isEdit, id } = props.userModalData;
-    const { setModalAddUser, setUserData, setIsEdit, setId } = props.userModalFn;
+    const { modalAddOrder, orderData, isEdit, id } = props.orderModalData;
+    const { setModalAddOrder, setOrderData, setIsEdit, setId } = props.orderModalFn;
 
     const dispatch = useDispatch()
+    const { products } = useSelector((state) => state.product)
     const closeForm = () => {
-        setUserData({
+        setOrderData({
             name: "",
-            role: "",
-            phone: "",
-            email: "",
-            password: "",
-            address: ""
+            product:"",
+            quantity: "",
+            value:"",
+            transport: "",
+            gstPrice:"",
         })
-        setModalAddUser(false);
+        setModalAddOrder(false);
     }
 
     const saveForm = (isEdit) => {
-        console.log(userData);
+        console.log(orderData);
         if(isEdit){
-            dispatch(updateUserData(id, userData))
+            dispatch(updateOrderData(id, orderData))
             setIsEdit(false)
             setId('')
         }
         else{
-            dispatch(createUserData(userData))
+            dispatch(createOrderData(orderData))
         }
         closeForm();
     };
@@ -51,70 +44,70 @@ const UserModal = (props) => {
         <Modal
             animationType="slide"
             transparent={true}
-            visible={modalAddUser}
+            visible={modalAddOrder}
             onRequestClose={closeForm}
         >
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                    <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} User</Text>
+                    <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} Order</Text>
                     <TextInput
                         name="name"
                         style={styles.input}
                         placeholder="Enter full name"
-                        value={userData.name}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, name: e }))}
+                        value={orderData.name}
+                        onChangeText={(e) => setOrderData(prev => ({ ...prev, name: e }))}
                     />
                     <TextInput
-                        name="phone"
-                        keyboardType="numeric"
+                        name="product"
                         style={styles.input}
-                        placeholder="Enter phone number"
-                        value={userData.phone}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, phone: e }))}
+                        placeholder="Enter Product"
+                        value={orderData.product}
+                        onChangeText={(e) => setOrderData(prev => ({ ...prev, product: e }))}
                     />
                     <Dropdown
                         style={[styles.dropdown, isFocus && { borderColor: 'gray' }]}
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
                         inputSearchStyle={styles.inputSearchStyle}
-                        iconStyle={styles.iconStyle}
-                        data={data}
+                        data={products}
                         maxHeight={300}
-                        labelField="label"
-                        valueField="value"
+                        labelField="name"
+                        valueField="name"
                         placeholder={!isFocus ? 'Select item' : '...'}
-                        value={userData.role}
+                        value={products}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
-                        onChange={(e) => setUserData(prev => ({ ...prev, role: e.value }))}
+                        onChange={(e) => setOrderData(prev => ({ ...prev, product: e.value }))}
                     />
                     <TextInput
-                        name="email"
+                        name="quantity"
                         style={styles.input}
-                        placeholder="Enter email"
-                        value={userData.email}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, email: e }))}
-
+                        keyboardType="numeric"
+                        placeholder="Enter quantity"
+                        value={orderData.quantity}
+                        onChangeText={(e) => setOrderData(prev => ({ ...prev, quantity: e }))}
                     />
                     <TextInput
-                        name="password"
-                        secureTextEntry={isEdit? true:false}
+                        name="price"
                         style={styles.input}
-                        editable={isEdit ? false : true}
-                        placeholder="Enter password"
-                        value={userData.password}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, password: e }))}
-
+                        placeholder="Enter price"
+                        value={orderData.price}
+                        onChangeText={(e) => setOrderData(prev => ({ ...prev, price: e }))}
                     />
                     <TextInput
-                        name="address"
+                        name="transport"
                         style={styles.input}
-                        placeholder="Enter address"
-                        value={userData.address}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, address: e }))}
-
+                        placeholder="Enter transport name"
+                        value={orderData.transport}
+                        onChangeText={(e) => setOrderData(prev => ({ ...prev, transport: e }))}
                     />
-
+                    <TextInput
+                        name="gst"
+                        style={styles.input}
+                        placeholder="Enter gst in percentage"
+                        value={orderData.gst}
+                        onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: e }))}
+                    />
                     <TouchableOpacity style={styles.saveButton} onPress={() => saveForm(isEdit)}>
                         <Text style={styles.saveButtonText}>{isEdit ? "Update" :"Create"}</Text>
                     </TouchableOpacity>
@@ -127,13 +120,12 @@ const UserModal = (props) => {
     )
 }
 
-export default UserModal
+export default OrderModal
 
 const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         width: '100%',
-
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",

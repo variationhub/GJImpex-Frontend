@@ -33,7 +33,7 @@ const AppStack = ({token}) => {
     if (user) {
         // User is authenticated, show the drawer navigator
         return (
-            <Drawer.Navigator initialRouteName="Users" drawerContent={(props) => <CustomDrawer {...props}/>} 
+            <Drawer.Navigator initialRouteName="Orders" drawerContent={(props) => <CustomDrawer {...props}/>} 
             screenOptions={{
                 
                 drawerActiveTintColor: '#fff',
