@@ -1,17 +1,13 @@
-import {
-    View,
-    Text,
-    TouchableOpacity,
-} from "react-native";
-import {
-    DrawerContentScrollView,
-    DrawerItemList,
-} from "@react-navigation/drawer";
-
+import { View, Text, TouchableOpacity } from "react-native";
+import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Image } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { loginSlice } from "../slices/login";
 
 const CustomDrawer = (props) => {
+    const dispatch = useDispatch();
     return (
         <View style={{ flex: 1 }}>
             <View style={{ marginTop: 20, padding: 20, display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: "#ccc"}}>
@@ -39,8 +35,8 @@ const CustomDrawer = (props) => {
             </DrawerContentScrollView>
             <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: "#ccc" }}>
                 <TouchableOpacity style={{ paddingVertical: 15 }} onPress={() => {
-                    props.setUser(false);
-                    // props.navigation.navigate('LoginScreen')
+                    AsyncStorage.removeItem('token');
+                    dispatch(loginSlice.actions.updateUser(false));
                 }}>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Ionicons name="exit-outline" size={22} />

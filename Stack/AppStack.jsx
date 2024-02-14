@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,6 +8,8 @@ import CustomDrawer from "../Components/CustomDrawer";
 import UserScreen from "../Screens/UserScreen";
 import ProductScreen from "../Screens/ProductScreen";
 import TaskScreen from "../Screens/TaskScreen";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSlice } from "../slices/login";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -18,13 +20,20 @@ const option = {
     headerTintColor: 'white'
 };
 
+const AppStack = ({token}) => {
+    const { user } = useSelector((state)=> state.login);
+    const dispatch = useDispatch();
 
-const AppStack = () => {
-    const [user, setUser] = useState(false);
+    useEffect(()=>{
+        if(token){
+        dispatch(loginSlice.actions.updateUser(true))
+        }
+    },[]);
+
     if (user) {
         // User is authenticated, show the drawer navigator
         return (
-            <Drawer.Navigator initialRouteName="Orders" drawerContent={(props) => <CustomDrawer {...props} setUser={setUser} />} 
+            <Drawer.Navigator initialRouteName="Orders" drawerContent={(props) => <CustomDrawer {...props}/>} 
             screenOptions={{
                 
                 drawerActiveTintColor: '#fff',
@@ -59,7 +68,7 @@ const AppStack = () => {
             <Stack.Navigator>
                 <Stack.Screen
                     name="Login"
-                    component={() => <LoginScreen setUser={setUser} />}
+                    component={LoginScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
