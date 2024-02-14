@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData } from "../slices/user";
@@ -47,7 +47,7 @@ const UserScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.25}>
+        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
             <ScrollView>
 
                 <View style={styles.container}>

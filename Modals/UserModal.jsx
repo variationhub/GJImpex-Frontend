@@ -34,7 +34,13 @@ const UserModal = (props) => {
     const saveForm = (isEdit) => {
         console.log(userData);
         if(isEdit){
-            dispatch(updateUserData(id, userData))
+            dispatch(updateUserData(id, {
+                name:userData.name,
+                role:userData.role,
+                phone:userData.phone,
+                email:userData.email,
+                address:userData.address
+            }))
             setIsEdit(false)
             setId('')
         }

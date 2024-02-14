@@ -5,16 +5,19 @@ import { fetchOrderData } from "../slices/order";
 import OrderData from "../Components/OrderData";
 import OrderModal from "../Modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { fetchProductData } from "../slices/product";
 
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
-        name:"",
-        description:"",
-        stock:"",
+        name: "",
+        transport: "",
+        gst: "",
+        gstPrice: 0,
+        total: 0
     })
     const dispatch = useDispatch();
     const { data } = useSelector((state) => state.order)
-
+    console.log(data);
     const [modalAddOrder, setModalAddOrder] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
@@ -26,6 +29,7 @@ const OrderScreen = () => {
     useEffect(() => {
         dispatch(fetchOrderData())
     }, [])
+
     const image = require('../assets/logo.png');
 
     const editOrder = (id) => {
@@ -41,18 +45,18 @@ const OrderScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.25}>
+        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
             <ScrollView>
                 <View style={styles.container}>
-                    {data.map(item => <OrderData data={item} editOrder={editOrder}/>)}
+                    {data.map(item => <OrderData data={item} editOrder={editOrder} />)}
                 </View>
-                </ScrollView>
-                <TouchableOpacity style={styles.fab} onPress={openForm}>
-                    <Ionicons name="plus" size={30} color={'white'} />
-                </TouchableOpacity>
-                {modalAddOrder &&
-                    <OrderModal orderModalData={{ modalAddOrder, orderData, isEdit, id}} orderModalFn={{ setModalAddOrder, setOrderData, setIsEdit, setId }} />
-                }
+            </ScrollView>
+            <TouchableOpacity style={styles.fab} onPress={openForm}>
+                <Ionicons name="plus" size={30} color={'white'} />
+            </TouchableOpacity>
+            {modalAddOrder &&
+                <OrderModal orderModalData={{ modalAddOrder, orderData, isEdit, id }} orderModalFn={{ setModalAddOrder, setOrderData, setIsEdit, setId }} />
+            }
         </ImageBackground>
     );
 };
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
         paddingTop: 10
     },
     backgroundImage: {
-        height:'100%',
+        height: '100%',
     },
     DrawerButton: {
         backgroundColor: "#000",

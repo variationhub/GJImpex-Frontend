@@ -7,7 +7,7 @@ import { deleteOrderData } from "../slices/order";
 const OrderData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
 
-    const { name, product, quantity, price, value, transport, gst, _id } = props.data;
+    const { partyName, status, price, LR, transport, gst, updatedDate, orderChanged, _id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -28,9 +28,9 @@ const OrderData = (props) => {
 
     return (
         <View style={styles.container}>
-            <ScrollView horizontal={true}><Text style={styles.name}>{name}</Text></ScrollView>
-            <Text style={styles.product}>{product}</Text>
-            <Text style={styles.quantity}>{quantity}</Text>
+            <ScrollView horizontal={true}><Text style={styles.name}>{partyName}</Text></ScrollView>
+            <Text style={styles.product}>{status}</Text>
+            <Text style={styles.quantity}>{LR}</Text>
             <View style={styles.icons}>
             <TouchableOpacity style={styles.icon} onPress={()=>props.editOrder(_id)}>
                 <Ionicons name="marker" size={24} color={'#5F4521'} />

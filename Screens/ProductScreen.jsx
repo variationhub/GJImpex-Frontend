@@ -41,7 +41,7 @@ const ProductScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.25}>
+        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
             <ScrollView>
 
                 <View style={styles.container}>
