@@ -6,6 +6,8 @@ import { ActivityIndicator, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import store from "./store";
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
 
 export default App = () => {
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,9 @@ export default App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <AppStack token={userToken}/>
+        <ApplicationProvider {...eva} theme={eva.light}>
+          <AppStack token={userToken}/>
+        </ApplicationProvider>
       </NavigationContainer>
     </Provider>
   );
