@@ -2,22 +2,36 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert, Pressable, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
-import { deleteOrderData } from "../slices/order";
+import { deleteOrderData, updateStatus } from "../slices/order";
 import { CheckBox } from "@ui-kitten/components";
 import { Modal } from "react-native";
 
 const RenderCheckboxModal = (props) => {
-    const { showModalCheckboxes, setShowModalCheckboxes, handleBookCheck } = props
-    const [isBilledChecked, setIsBilledChecked] = useState(false);
-    const [isDispatchChecked, setIsDispatchChecked] = useState(false);
-    const [isLrSentChecked, setIsLrSentChecked] = useState(false);
+    const { showModalCheckboxes, setShowModalCheckboxes, handleBookCheck, id, setId, dispatched, billed, LR } = props
+    const [isBilledChecked, setIsBilledChecked] = useState(billed);
+    const [isDispatchChecked, setIsDispatchChecked] = useState(dispatched);
+    const [isLrSentChecked, setIsLrSentChecked] = useState(LR);
+
+    const dispatch = useDispatch()
+    const [value, setValue] = useState("");
     const closeForm = () => {
-       
+        setShowModalCheckboxes(false)
     }
 
     const saveForm = () => {
-        console.log();
-    
+        let data = false
+        if (value == 'billed' && isBilledChecked) {
+            data = true
+        }
+        if (value == 'dispatched' && isDispatchChecked) {
+            data = true
+        }
+        if (value == 'LR' && isLrSentChecked) {
+            data = true
+        }
+        dispatch(updateStatus(id, value, data))
+
+        console.log(value);
         closeForm();
     };
     return (
@@ -32,24 +46,33 @@ const RenderCheckboxModal = (props) => {
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isBilledChecked}
-                            onChange={(newValue) => setIsBilledChecked(newValue)}
+                            onChange={(newValue) => {
+                                setIsBilledChecked(newValue)
+                                setValue('billed')
+                            }}
                         >Billed</CheckBox>
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isDispatchChecked}
-                            onChange={(newValue) => setIsDispatchChecked(newValue)}
+                            onChange={(newValue) => {
+                                setIsDispatchChecked(newValue)
+                                setValue('dispatched')
+                            }}
                         >Dispatch</CheckBox>
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isLrSentChecked}
-                            onChange={(newValue) => setIsLrSentChecked(newValue)}
+                            onChange={(newValue) => {
+                                setIsLrSentChecked(newValue)
+                                setValue('LR')
+                            }}
                         >LR Sent</CheckBox>
-                    <TouchableOpacity style={styles.saveButton} onPress={() => saveForm()}>
-                        <Text style={styles.saveButtonText}>SAVE</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
-                        <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.saveButton} onPress={() => saveForm()}>
+                            <Text style={styles.saveButtonText}>SAVE</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
+                            <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -58,10 +81,9 @@ const RenderCheckboxModal = (props) => {
 };
 
 const OrderData = (props) => {
-    const [modalDelete, setModalDelete] = useState(false);
+    const [id, setId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false); // State for checkbox modal visibility
-
-    const { partyName, status, price, LR, transport, gst, updatedDate, orderChanged, _id } = props.data;
+    const { partyName, status, price, dispatched, billed, LR, transport, gst, updatedDate, orderChanged, _id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -72,14 +94,15 @@ const OrderData = (props) => {
                 style: 'cancel',
             },
             { text: 'Delete', onPress: () => dispatch(deleteOrderData(_id)) },
-
         ], {
             alertContainerStyle: styles.alertContainer,
             titleStyle: styles.alertTitle,
             messageStyle: styles.alertMessage,
         })
     }
-    const handleBookCheck = () => {
+
+    const handleBookCheck = (_id) => {
+        setId(_id);
         setShowModalCheckboxes(!showModalCheckboxes);
     };
 
@@ -87,70 +110,76 @@ const OrderData = (props) => {
         <>
             <View style={styles.container}>
                 <ScrollView horizontal={true}><Text style={styles.name}>{partyName}</Text></ScrollView>
-                <Text style={styles.product}>{status}</Text>
-                <Text style={styles.quantity}>{LR}</Text>
-                <View style={styles.icons}>
-                    <TouchableOpacity style={styles.icon} onPress={() => props.editOrder(_id)}>
-                        <Ionicons name="marker" size={24} color={'#5F4521'} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.icon} onPress={handleBookCheck}>
-                        <Ionicons name="book-check" size={24} color={'#5F4521'} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.icon} onPress={deleteHandler}>
-                        <Ionicons name="delete" size={24} color={'#5F4521'} />
-                    </TouchableOpacity>
+                <Text style={styles.transport}>{transport}</Text>
+                <View style={styles.inline}>
+                    <Text style={styles.status}>{status}</Text>
+                    <View style={styles.icons}>
+                        <TouchableOpacity style={styles.icon} onPress={() => props.editOrder(_id)}>
+                            <Ionicons name="marker" size={24} color={'#5F4521'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.icon} onPress={() => handleBookCheck(_id)}>
+                            <Ionicons name="book-check" size={24} color={'#5F4521'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.icon} onPress={deleteHandler}>
+                            <Ionicons name="delete" size={24} color={'#5F4521'} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
-            {showModalCheckboxes && <RenderCheckboxModal handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} />}
+            {showModalCheckboxes && <RenderCheckboxModal dispatched={dispatched} billed={billed} LR={LR} id={id} setId={setId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} />}
         </>
     );
 };
 
 export default OrderData;
 
-
 const styles = StyleSheet.create({
     container: {
         width: '95%',
-        height: 80,
+        height: 85,
         backgroundColor: "#f0f0f0",
         padding: 10,
+        paddingBottom:5,
         marginBottom: 10,
         borderRadius: 4,
         borderWidth: 1,
         borderColor: "#ccc",
         position: 'relative',
+        fontWeight: 'bold'
+
     },
     name: {
-        fontSize: 15,
+        fontSize: 17,
         fontWeight: "bold",
         marginBottom: 5,
-        width: '70%',
-        // overflow: 'scroll',
     },
-    stock: {
+    transport: {
         fontSize: 15,
-        padding: 4,
-        backgroundColor: 'rgba(251, 97, 26, 0.3)',
-        width: 80,
         textAlign: 'center',
         color: "#5f4521",
         marginBottom: 3,
         position: 'absolute',
-        borderRadius: 10,
-        fontWeight: 'bold',
         right: 10,
         top: 5,
     },
-    description: {
+    inline: {
+        display:'flex',
+        flexDirection:'row',
+        justifyContent: 'space-between',
+        alignItems:'center',
+    },
+    status: {
         fontSize: 13,
         color: "#666",
-
+        backgroundColor: 'rgba(251, 97, 26, 0.3)',
+        // width: 'auto',
+        padding: 5,
+        paddingHorizontal:10,
+        borderRadius: 10,
+        fontWeight: 'bold',
+        textTransform: 'uppercase'
     },
     icons: {
-        position: 'absolute',
-        right: 0,
-        bottom: 6,
         flexDirection: 'row',
         gap: 0,
         color: '#5f4521',
@@ -169,7 +198,7 @@ const styles = StyleSheet.create({
         marginTop: 22,
     },
     modalView: {
-        width:'90%',
+        width: '90%',
         margin: 20,
         backgroundColor: 'white',
         borderRadius: 10,
@@ -183,8 +212,8 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
     },
-    modal:{
-        position:'absolute'
+    modal: {
+        position: 'absolute'
     },
     modalTitle: {
         fontSize: 20,
@@ -193,7 +222,7 @@ const styles = StyleSheet.create({
     },
     modalCheckbox: {
         marginBottom: 10,
-        height:30
+        height: 30
     },
     modalButton: {
         marginTop: 20,
