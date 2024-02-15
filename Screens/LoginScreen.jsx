@@ -1,29 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Image, ActivityIndicator } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthService from '../Services/AuthService';
 import { loginSlice } from '../slices/login';
 
-const Stack = createNativeStackNavigator();
-
 export default function LoginScreen() {
   const [contactNo, setContactNo] = useState('9328677043');
   const [password, setPassword] = useState('GJ@2024');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
     setLoading(true);
     try {
       const userData = await AuthService.login(contactNo, password);
-      await AsyncStorage.setItem('token', userData.token);
-      dispatch(loginSlice.actions.updateUser(true));
-      // navigation.navigate('HomeScreen');
+      if (userData) {
+        await AsyncStorage.setItem('token', userData.token);
+        dispatch(loginSlice.actions.updateUser(true));
+      } else {
+        setError(true);
+        setTimeout(()=>{
+          setError(false)
+        },3000)
+      }
     } catch (error) {
       console.error('Login failed:', error);
-      // Handle login error, e.g., show error message to the user
     } finally {
       setLoading(false);
     }
@@ -34,6 +38,7 @@ export default function LoginScreen() {
       <Image style={styles.logo} source={require('../assets/gjimpexlogin.png')} />
       <View style={styles.formContainer}>
         <Text style={styles.signInText}>Sign In</Text>
+        {error && <Text style={styles.signInError}>Invalid phone number or password</Text>}
         <TextInput
           value={contactNo}
           onChangeText={setContactNo}
@@ -78,7 +83,7 @@ const styles = StyleSheet.create({
   signInText: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
     textAlign: 'center',
   },
   input: {
@@ -103,4 +108,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase'
   },
+  signInError:{
+    color:"maroon",
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 10
+  }
 });

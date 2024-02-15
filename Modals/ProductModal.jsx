@@ -17,24 +17,22 @@ const ProductModal = (props) => {
             stock: ""
         })
         setModalAddProduct(false);
+        setId("")
     }
 
     const saveForm = (isEdit) => {
-        console.log(productData);
-        if(isEdit){
+        if (isEdit) {
             dispatch(updateProductData(id, productData))
             setIsEdit(false)
-            setId('')
         }
-        else{
+        else {
             dispatch(createProductData(productData))
         }
+        setId('')
         closeForm();
     };
 
-    const [value, setValue] = useState(null);
-    const [isFocus, setIsFocus] = useState(false);
-
+    console.log(productData)
     return (
         <Modal
             animationType="slide"
@@ -69,7 +67,7 @@ const ProductModal = (props) => {
 
                     />
                     <TouchableOpacity style={styles.saveButton} onPress={() => saveForm(isEdit)}>
-                        <Text style={styles.saveButtonText}>{isEdit ? "Update" :"Create"}</Text>
+                        <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
