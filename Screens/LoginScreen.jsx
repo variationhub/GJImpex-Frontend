@@ -44,7 +44,7 @@ export default function LoginScreen() {
           onChangeText={setContactNo}
           style={styles.input}
           placeholder="Contact No."
-          keyboardType="numeric"
+          inputMode="numeric"
         />
         <TextInput
           value={password}

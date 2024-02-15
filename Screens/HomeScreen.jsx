@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderData } from "../slices/order";
@@ -51,9 +51,9 @@ const OrderScreen = () => {
                     {data.map(item => <OrderData data={item} editOrder={editOrder} />)}
                 </View>
             </ScrollView>
-            <TouchableOpacity style={styles.fab} onPress={openForm}>
+            <Pressable style={styles.fab} onPress={openForm}>
                 <Ionicons name="plus" size={30} color={'white'} />
-            </TouchableOpacity>
+            </Pressable>
             {modalAddOrder &&
                 <OrderModal orderModalData={{ modalAddOrder, orderData, isEdit, id }} orderModalFn={{ setModalAddOrder, setOrderData, setIsEdit, setId }} />
             }

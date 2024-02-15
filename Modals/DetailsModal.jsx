@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, Text, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const DetailsModal = (props) => {
@@ -23,9 +23,9 @@ const DetailsModal = (props) => {
                 <View style={styles.modalContent}>
                     <Text  >{rowData.title}</Text>
                     <Text>{rowData.description}</Text>
-                    <TouchableOpacity onPress={closeModal} style={styles.closeModal}>
+                    <Pressable onPress={closeModal} style={styles.closeModal}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
             </View>
         </Modal>

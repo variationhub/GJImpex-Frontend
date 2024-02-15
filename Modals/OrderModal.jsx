@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Modal, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrderData, updateOrderData } from '../slices/order';
@@ -99,9 +99,9 @@ const OrderModal = (props) => {
                     />
                     <View style={styles.addProduct}>
                         <Text style={styles.productTitle}>{isEdit ? "Edit" : "Add"} Product </Text>
-                        <TouchableOpacity style={styles.plus} onPress={openForm}>
+                        <Pressable style={styles.plus} onPress={openForm}>
                             <Ionicons name="plus" size={20} color={'white'} />
-                        </TouchableOpacity>
+                        </Pressable>
                     </View>
                     <ScrollView style={styles.scrollview}>
                         {Object.values(products)?.map(item => {
@@ -122,15 +122,15 @@ const OrderModal = (props) => {
                                             onChange={(e) => handleChange(item.id, "productName", e.name)}
 
                                         />
-                                        <TouchableOpacity style={styles.minus} onPress={() => removeItem(item.id)}>
+                                        <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
                                             <Ionicons name="minus" size={20} color={'white'} />
-                                        </TouchableOpacity>
+                                        </Pressable>
                                     </View>
                                     <View style={styles.inlineInput}>
                                         <TextInput
                                             name="quantity"
                                             style={[styles.input, { flex: 1, marginRight: 10 }]}
-                                            keyboardType="numeric"
+                                            inputMode="numeric"
                                             placeholder="Quantity"
                                             value={item.quantity}
                                             onChangeText={(e) => handleChange(item.id, "quantity", Number(e))}
@@ -138,7 +138,7 @@ const OrderModal = (props) => {
                                         <TextInput
                                             name="sellPrice"
                                             style={[styles.input, { flex: 1, marginRight: 10 }]}
-                                            keyboardType="numeric"
+                                            inputMode="numeric"
                                             placeholder="Price"
                                             value={item.sellPrice}
                                             onChangeText={(e) => handleChange(item.id, "sellPrice", Number(e))}
@@ -160,7 +160,7 @@ const OrderModal = (props) => {
                             name="gstPrice"
                             style={[styles.input, { flex: 1, marginRight: 10 }]}
                             placeholder="GST Amount"
-                            keyboardType="numeric"
+                            inputMode="numeric"
                             value={orderData.gstPrice}
                             onChangeText={(e) => setOrderData(prev => ({ ...prev, gstPrice: e }))}
                         />
@@ -168,7 +168,7 @@ const OrderModal = (props) => {
                             name="gst"
                             style={[styles.gst, { flex: 1, marginRight: 10}]}
                             placeholder="GST %"
-                            keyboardType="numeric"
+                            inputMode="numeric"
                             value={orderData.gst}
                             onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: e }))}
                         />
@@ -180,12 +180,12 @@ const OrderModal = (props) => {
                             editable={false}
                         />
                     </View>
-                    <TouchableOpacity style={styles.saveButton} onPress={() => saveForm(isEdit)}>
+                    <Pressable style={styles.saveButton} onPress={() => saveForm(isEdit)}>
                         <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
+                    </Pressable>
+                    <Pressable style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
             </View>
         </Modal>

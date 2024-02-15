@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData } from "../slices/user";
@@ -54,13 +54,13 @@ const UserScreen = () => {
                 <ScrollView>
 
                     <View style={styles.container}>
-                        {data.map(item => <UserData data={item} editUser={editUser} />)}
+                        {data.map(item => <UserData key={item._id} data={item} editUser={editUser} />)}
                     </View>
                 </ScrollView>
             }
-            <TouchableOpacity style={styles.fab} onPress={openForm}>
+            <Pressable style={styles.fab} onPress={openForm}>
                 <Ionicons name="plus" size={30} color={'white'} />
-            </TouchableOpacity>
+            </Pressable>
             {modalAddUser &&
                 <UserModal userModalData={{ modalAddUser, userData, isEdit, id }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
             }

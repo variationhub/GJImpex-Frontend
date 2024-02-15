@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductData } from "../slices/product";
@@ -49,13 +49,13 @@ const ProductScreen = () => {
                 <ScrollView>
 
                     <View style={styles.container}>
-                        {data.map(item => <ProductData data={item} editProduct={editProduct} />)}
+                        {data.map(item => <ProductData key={item._id} data={item} editProduct={editProduct} />)}
                     </View>
                 </ScrollView>
             }
-            <TouchableOpacity style={styles.fab} onPress={openForm}>
+            <Pressable style={styles.fab} onPress={openForm}>
                 <Ionicons name="plus" size={30} color={'white'} />
-            </TouchableOpacity>
+            </Pressable>
             {modalAddProduct &&
                 <ProductModal productModalData={{ modalAddProduct, productData, isEdit, id }} productModalFn={{ setModalAddProduct, setProductData, setIsEdit, setId }} />
             }
