@@ -6,6 +6,7 @@ import OrderData from "../Components/OrderData";
 import OrderModal from "../Modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { fetchProductData } from "../slices/product";
+import CheckBox from '@react-native-community/checkbox';
 
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({

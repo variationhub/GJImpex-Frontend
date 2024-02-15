@@ -43,4 +43,11 @@ export const updateOrderData = (id, data) => async(dispatch) => {
   }
 }
 
+export const updateStatus = (id, value, data) => async(dispatch) => {
+  const response = await axiosInstance.put(`/orders/${id}/status?${value}=${data}`);
+  if(response.data.status){
+    dispatch(fetchOrderData());
+  }
+}
+
 export default orderSlice.reducer
