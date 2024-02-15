@@ -21,9 +21,7 @@ export const fetchOrderData = () => async(dispatch) => {
 }
 
 export const createOrderData = (data) => async(dispatch) => {
-  console.log(data);
   const response = await axiosInstance.post('/orders',data);
-  console.log(response);
   if(response.data.status){
     dispatch(fetchOrderData());
   }

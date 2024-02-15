@@ -6,7 +6,7 @@ import { deleteProductData } from "../slices/product";
 
 const ProductData = (props) => {
 
-    const { name, description, stock, _id } = props.data;
+    const { productName, description, stock, _id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -27,7 +27,7 @@ const ProductData = (props) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.name} numberOfLines={1}>{name}</Text>
+            <Text style={styles.name} numberOfLines={1}>{productName}</Text>
             <Text style={styles.description}>{description}</Text>
             <Pressable  style={styles.stock}><Text style={styles.stockText}>{stock}</Text></Pressable>
             <View style={styles.icons}>

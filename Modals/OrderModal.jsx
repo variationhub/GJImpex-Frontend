@@ -8,25 +8,20 @@ import { fetchProductData } from '../slices/product';
 
 
 const OrderModal = (props) => {
-    const { modalAddOrder, orderData, isEdit, id } = props.orderModalData;
-    const { setModalAddOrder, setOrderData, setIsEdit, setId } = props.orderModalFn;
+    const { modalAddOrder, orderData, isEdit, id, products } = props.orderModalData;
+    const { setModalAddOrder, setOrderData, setIsEdit, setId, setProduct } = props.orderModalFn;
 
     const dispatch = useDispatch();
 
-    const [products, setProduct] = useState({})
-
     useEffect(() => {
         dispatch(fetchProductData());
-        const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { id, productName: "", quantity: 0, sellPrice: "", total: 0 } }))
     }, []);
 
     const { data } = useSelector((state) => state.product);
 
     const openForm = () => {
         const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { id, productName: "", quantity: 0, sellPrice: "", total: 0 } }))
-
+        setProduct((prev) => ({ ...prev, [id]: { _id:id, productName: "", quantity: 0, sellPrice: "", total: 0 } }))
     }
 
     const removeItem = (id) => {
@@ -43,20 +38,23 @@ const OrderModal = (props) => {
             name: "",
             transport: "",
             gst: "",
-            gstPrice: 0,
+            gstPrice: "",
             total: 0
         });
         setModalAddOrder(false);
+        setId("")
+        const id = Date.now();
+        setProduct({ [id]: { _id: id, productName: "", quantity: "", sellPrice: "", total: "" } })
     };
 
     const saveForm = (isEdit) => {
         const data = {
-            partyName : orderData.name,
-            transport : orderData.transport,
-            orders: Object.values(products)?.map((item)=> {
-                return{
+            partyName: orderData.name,
+            transport: orderData.transport,
+            orders: Object.values(products)?.map((item) => {
+                return {
                     productName: item.productName,
-                    quantity : item.quantity,
+                    quantity: item.quantity,
                     sellPrice: item.sellPrice
                 }
             }),
@@ -66,7 +64,6 @@ const OrderModal = (props) => {
         if (isEdit) {
             dispatch(updateOrderData(id, orderData));
             setIsEdit(false);
-            setId('');
         } else {
             dispatch(createOrderData(data));
         }
@@ -115,11 +112,11 @@ const OrderModal = (props) => {
                                             inputSearchStyle={styles.inputSearchStyle}
                                             data={data}
                                             maxHeight={300}
-                                            labelField="name"
-                                            valueField="name"
+                                            labelField="productName"
+                                            valueField="productName"
                                             value={item.productName}
-                                            placeholder="Select item"
-                                            onChange={(e) => handleChange(item.id, "productName", e.name)}
+                                            placeholder="Select product"
+                                            onChange={(e) => handleChange(item._id, "productName", e.productName)}
 
                                         />
                                         <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
@@ -132,16 +129,16 @@ const OrderModal = (props) => {
                                             style={[styles.input, { flex: 1, marginRight: 10 }]}
                                             inputMode="numeric"
                                             placeholder="Quantity"
-                                            value={item.quantity}
-                                            onChangeText={(e) => handleChange(item.id, "quantity", Number(e))}
+                                            value={String(item.quantity)}
+                                            onChangeText={(e) => handleChange(item._id, "quantity", Number(e))}
                                         />
                                         <TextInput
                                             name="sellPrice"
                                             style={[styles.input, { flex: 1, marginRight: 10 }]}
                                             inputMode="numeric"
                                             placeholder="Price"
-                                            value={item.sellPrice}
-                                            onChangeText={(e) => handleChange(item.id, "sellPrice", Number(e))}
+                                            value={String(item.sellPrice)}
+                                            onChangeText={(e) => handleChange(item._id, "sellPrice", Number(e))}
                                         />
                                         <TextInput
                                             name="total"
@@ -160,23 +157,23 @@ const OrderModal = (props) => {
                             name="gstPrice"
                             style={[styles.input, { flex: 1, marginRight: 10 }]}
                             placeholder="GST Amount"
-                            inputMode="numeric"
-                            value={orderData.gstPrice}
+                            keyboardType="numeric"
+                            value={String(orderData.gstPrice)}
                             onChangeText={(e) => setOrderData(prev => ({ ...prev, gstPrice: e }))}
                         />
                         <TextInput
                             name="gst"
-                            style={[styles.gst, { flex: 1, marginRight: 10}]}
+                            style={[styles.gst, { flex: 1, marginRight: 10 }]}
                             placeholder="GST %"
                             inputMode="numeric"
-                            value={orderData.gst}
+                            value={String(orderData.gst)}
                             onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: e }))}
                         />
                         <TextInput
                             name="total"
                             placeholder="Total Value"
                             style={[styles.input, { flex: 1, marginRight: 10 }]}
-                            value={orderData.total}
+                            value={String(orderData.total)}
                             editable={false}
                         />
                     </View>
@@ -270,12 +267,12 @@ const styles = StyleSheet.create({
         padding: 2,
     },
     scrollview: {
-        padding:12,
-        borderColor:'lightgray',
-        borderWidth:1,
-        borderRadius:5,
-        marginBottom:12,
-        backgroundColor:'whitesmoke'
+        padding: 12,
+        borderColor: 'lightgray',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: 12,
+        backgroundColor: 'whitesmoke'
     },
     addProduct: {
         display: 'flex',
@@ -295,16 +292,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 10,
     },
-    inlineInput2:{
+    inlineInput2: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    gst:{
+    gst: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 10,
         paddingLeft: 10,
-        maxWidth:65
+        maxWidth: 65
     }
 });
