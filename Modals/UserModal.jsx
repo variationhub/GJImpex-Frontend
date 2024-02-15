@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { StyleSheet, View, Text, Modal, TouchableOpacity, TextInput, Picker } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserData, updateUserData } from '../slices/user';
 import { useDispatch } from 'react-redux';
@@ -78,7 +78,7 @@ const UserModal = (props) => {
                     />
                     <TextInput
                         name="phone"
-                        keyboardType="numeric"
+                        inputMode="numeric"
                         style={styles.input}
                         placeholder="Enter phone number"
                         value={userData.phone}
@@ -127,12 +127,12 @@ const UserModal = (props) => {
 
                     />
 
-                    <TouchableOpacity style={styles.saveButton} onPress={() => saveForm(isEdit)}>
+                    <Pressable style={styles.saveButton} onPress={() => saveForm(isEdit)}>
                         <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
+                    </Pressable>
+                    <Pressable style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
             </View>
         </Modal>

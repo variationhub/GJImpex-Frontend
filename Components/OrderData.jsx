@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert, Pressable, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Pressable, Alert, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
 import { deleteOrderData, updateStatus } from "../slices/order";
@@ -67,12 +67,12 @@ const RenderCheckboxModal = (props) => {
                                 setValue('LR')
                             }}
                         >LR Sent</CheckBox>
-                        <TouchableOpacity style={styles.saveButton} onPress={() => saveForm()}>
+                        <Pressable style={styles.saveButton} onPress={() => saveForm()}>
                             <Text style={styles.saveButtonText}>SAVE</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
+                        </Pressable>
+                        <Pressable style={styles.closeForm} onPress={closeForm}>
                             <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                        </TouchableOpacity>
+                        </Pressable>
                     </View>
                 </View>
             </Modal>
@@ -114,15 +114,15 @@ const OrderData = (props) => {
                 <View style={styles.inline}>
                     <Text style={styles.status}>{status}</Text>
                     <View style={styles.icons}>
-                        <TouchableOpacity style={styles.icon} onPress={() => props.editOrder(_id)}>
+                        <Pressable style={styles.icon} onPress={() => props.editOrder(_id)}>
                             <Ionicons name="marker" size={24} color={'#5F4521'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.icon} onPress={() => handleBookCheck(_id)}>
+                        </Pressable>
+                        <Pressable style={styles.icon} onPress={() => handleBookCheck(_id)}>
                             <Ionicons name="book-check" size={24} color={'#5F4521'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.icon} onPress={deleteHandler}>
+                        </Pressable>
+                        <Pressable style={styles.icon} onPress={deleteHandler}>
                             <Ionicons name="delete" size={24} color={'#5F4521'} />
-                        </TouchableOpacity>
+                        </Pressable>
                     </View>
                 </View>
             </View>

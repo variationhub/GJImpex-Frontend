@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Image } from "react-native";
@@ -34,7 +34,7 @@ const CustomDrawer = (props) => {
                 </View>
             </DrawerContentScrollView>
             <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: "#ccc" }}>
-                <TouchableOpacity style={{ paddingVertical: 15 }} onPress={() => {
+                <Pressable style={{ paddingVertical: 15 }} onPress={() => {
                     AsyncStorage.removeItem('token');
                     dispatch(loginSlice.actions.updateUser(false));
                 }}>
@@ -50,7 +50,7 @@ const CustomDrawer = (props) => {
                             Sign Out
                         </Text>
                     </View>
-                </TouchableOpacity>
+                </Pressable>
             </View>
         </View>
     );

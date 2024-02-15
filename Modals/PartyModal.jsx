@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { StyleSheet, View, Text, Modal, TouchableOpacity, TextInput, Picker } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 
@@ -59,22 +59,22 @@ const PartyModal = (props) => {
                             placeholder="Quantity"
                             // value={quantity}
                             // onChangeText={(text) => setQuantity(text)}
-                            keyboardType="numeric"
+                            inputMode="numeric"
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="Value"
                             // value={value}
                             // onChangeText={(text) => setValue(text)}
-                            keyboardType="numeric"
+                            inputMode="numeric"
                         />
                     </View>
-                    <TouchableOpacity style={styles.saveButton} onPress={saveForm}>
+                    <Pressable style={styles.saveButton} onPress={saveForm}>
                         <Text style={styles.saveButtonText}>Save</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
+                    </Pressable>
+                    <Pressable style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
             </View>
         </Modal>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
 import { deleteUserData } from "../slices/user";
@@ -32,12 +32,12 @@ const UserData = (props) => {
             <Text style={styles.role}>{role}</Text>
             <Text style={styles.phone}>{phone}</Text>
             <View style={styles.icons}>
-            <TouchableOpacity style={styles.icon} onPress={()=>props.editUser(_id)}>
+            <Pressable style={styles.icon} onPress={()=>props.editUser(_id)}>
                 <Ionicons name="marker" size={24} color={'#5F4521'} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.icon} onPress={deleteHandler}>
+            </Pressable>
+            <Pressable style={styles.icon} onPress={deleteHandler}>
                 <Ionicons name="delete" size={24} color={'#5F4521'} />
-            </TouchableOpacity>
+            </Pressable>
             </View>
         </View>
     );

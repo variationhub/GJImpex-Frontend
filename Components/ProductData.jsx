@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert, Pressable, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Pressable, Alert, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
 import { deleteProductData } from "../slices/product";
@@ -31,12 +31,12 @@ const ProductData = (props) => {
             <Text style={styles.description}>{description}</Text>
             <Pressable  style={styles.stock}><Text style={styles.stockText}>{stock}</Text></Pressable>
             <View style={styles.icons}>
-            <TouchableOpacity style={styles.icon} onPress={()=>props.editProduct(_id)}>
+            <Pressable style={styles.icon} onPress={()=>props.editProduct(_id)}>
                 <Ionicons name="marker" size={24} color={'#5F4521'} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.icon} onPress={deleteHandler}>
+            </Pressable>
+            <Pressable style={styles.icon} onPress={deleteHandler}>
                 <Ionicons name="delete" size={24} color={'#5F4521'} />
-            </TouchableOpacity>
+            </Pressable>
             </View>
         </View>
     );
