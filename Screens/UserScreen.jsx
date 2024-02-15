@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData } from "../slices/user";
@@ -8,20 +8,19 @@ import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const UserScreen = () => {
     const [userData, setUserData] = useState({
-        name:"",
-        role:"",
-        phone:"",
-        email:"",
-        password:"",
-        address:""
+        name: "",
+        role: "",
+        phone: "",
+        email: "",
+        password: "",
+        address: ""
     })
     const dispatch = useDispatch();
-    const { data } = useSelector((state) => state.user)
+    const { data, loading } = useSelector((state) => state.user)
 
     const [modalAddUser, setModalAddUser] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
-
 
     const openForm = () => {
         setModalAddUser(true);
@@ -29,6 +28,7 @@ const UserScreen = () => {
     useEffect(() => {
         dispatch(fetchUserData())
     }, [])
+
     const image = require('../assets/logo.png');
 
     const editUser = (id) => {
@@ -48,18 +48,22 @@ const UserScreen = () => {
 
     return (
         <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
-            <ScrollView>
+            {loading ?
+                <ActivityIndicator size="large" style={styles.loader} color="#5F4521"/>
+                :
+                <ScrollView>
 
-                <View style={styles.container}>
-                    {data.map(item => <UserData data={item} editUser={editUser}/>)}
-                </View>
+                    <View style={styles.container}>
+                        {data.map(item => <UserData data={item} editUser={editUser} />)}
+                    </View>
                 </ScrollView>
-                <TouchableOpacity style={styles.fab} onPress={openForm}>
-                    <Ionicons name="plus" size={30} color={'white'} />
-                </TouchableOpacity>
-                {modalAddUser &&
-                    <UserModal userModalData={{ modalAddUser, userData, isEdit, id}} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
-                }
+            }
+            <TouchableOpacity style={styles.fab} onPress={openForm}>
+                <Ionicons name="plus" size={30} color={'white'} />
+            </TouchableOpacity>
+            {modalAddUser &&
+                <UserModal userModalData={{ modalAddUser, userData, isEdit, id }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
+            }
 
         </ImageBackground>
     );
@@ -74,7 +78,7 @@ const styles = StyleSheet.create({
         paddingTop: 10
     },
     backgroundImage: {
-        height:'100%',
+        height: '100%',
     },
     DrawerButton: {
         backgroundColor: "#000",
@@ -94,4 +98,11 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 5,
     },
+    loader:{
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize:"48px"
+    }
 });

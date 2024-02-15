@@ -10,9 +10,11 @@ const AuthService = {
         phone,
         password,
       });
-      return response.data; // Assuming your backend returns some user data upon successful login
+
+      return response?.data;
     } catch (error) {
-      throw error; // You can handle errors in your component
+      console.log(error);
+      return false
     }
   },
 };

@@ -18,7 +18,7 @@ const UserModal = (props) => {
     const { modalAddUser, userData, isEdit, id } = props.userModalData;
     const { setModalAddUser, setUserData, setIsEdit, setId } = props.userModalFn;
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const closeForm = () => {
         setUserData({
             name: "",
@@ -29,28 +29,34 @@ const UserModal = (props) => {
             address: ""
         })
         setModalAddUser(false);
+        setIsEdit(false);
     }
 
     const saveForm = (isEdit) => {
-        console.log(userData);
-        if(isEdit){
+        if (isEdit) {
             dispatch(updateUserData(id, {
-                name:userData.name,
-                role:userData.role,
-                phone:userData.phone,
-                email:userData.email,
-                address:userData.address
+                name: userData.name.trim(),
+                role: userData.role,
+                phone: userData.phone.trim(),
+                email: userData.email.trim(),
+                address: userData.address.trim()
             }))
-            setIsEdit(false)
             setId('')
         }
-        else{
-            dispatch(createUserData(userData))
+        else {
+            dispatch(createUserData({
+                name: userData.name.trim(),
+                role: userData.role,
+                password: userData.password.trim(),
+                phone: userData.phone.trim(),
+                email: userData.email.trim(),
+                address: userData.address.trim()
+            }))
         }
+        setIsEdit(false)
         closeForm();
     };
 
-    const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
     return (
@@ -88,7 +94,7 @@ const UserModal = (props) => {
                         maxHeight={300}
                         labelField="label"
                         valueField="value"
-                        placeholder={!isFocus ? 'Select item' : '...'}
+                        placeholder={!isFocus ? 'Select role' : '...'}
                         value={userData.role}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
@@ -104,7 +110,7 @@ const UserModal = (props) => {
                     />
                     <TextInput
                         name="password"
-                        secureTextEntry={isEdit? true:false}
+                        secureTextEntry={isEdit ? true : false}
                         style={styles.input}
                         editable={isEdit ? false : true}
                         placeholder="Enter password"
@@ -122,7 +128,7 @@ const UserModal = (props) => {
                     />
 
                     <TouchableOpacity style={styles.saveButton} onPress={() => saveForm(isEdit)}>
-                        <Text style={styles.saveButtonText}>{isEdit ? "Update" :"Create"}</Text>
+                        <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />

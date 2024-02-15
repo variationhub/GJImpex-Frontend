@@ -14,11 +14,6 @@ const PartyModal = (props) => {
     }
 
     const saveForm = () => {
-        // Your logic to save form data goes here
-        // For example, you can log the data to the console
-        console.log("Party Name:", partyName);
-        console.log("Quantity:", quantity);
-        console.log("Value:", value);
         const value = { id: new Date(), title: partyName, description: "Information for Row 1" }
         setData([...data, partyData])
 

@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductData } from "../slices/product";
@@ -8,12 +8,12 @@ import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const ProductScreen = () => {
     const [productData, setProductData] = useState({
-        name:"",
-        description:"",
-        stock:"",
+        name: "",
+        description: "",
+        stock: "",
     })
     const dispatch = useDispatch();
-    const { data } = useSelector((state) => state.product)
+    const { data, loading } = useSelector((state) => state.product)
 
     const [modalAddProduct, setModalAddProduct] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -30,6 +30,7 @@ const ProductScreen = () => {
 
     const editProduct = (id) => {
         const value = data.find(value => value._id === id)
+
         setProductData({
             name: value.name,
             description: value.description,
@@ -42,18 +43,22 @@ const ProductScreen = () => {
 
     return (
         <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
-            <ScrollView>
+            {loading ?
+                <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
+                :
+                <ScrollView>
 
-                <View style={styles.container}>
-                    {data.map(item => <ProductData data={item} editProduct={editProduct}/>)}
-                </View>
+                    <View style={styles.container}>
+                        {data.map(item => <ProductData data={item} editProduct={editProduct} />)}
+                    </View>
                 </ScrollView>
-                <TouchableOpacity style={styles.fab} onPress={openForm}>
-                    <Ionicons name="plus" size={30} color={'white'} />
-                </TouchableOpacity>
-                {modalAddProduct &&
-                    <ProductModal productModalData={{ modalAddProduct, productData, isEdit, id}} productModalFn={{ setModalAddProduct, setProductData, setIsEdit, setId }} />
-                }
+            }
+            <TouchableOpacity style={styles.fab} onPress={openForm}>
+                <Ionicons name="plus" size={30} color={'white'} />
+            </TouchableOpacity>
+            {modalAddProduct &&
+                <ProductModal productModalData={{ modalAddProduct, productData, isEdit, id }} productModalFn={{ setModalAddProduct, setProductData, setIsEdit, setId }} />
+            }
 
         </ImageBackground>
     );
@@ -68,7 +73,7 @@ const styles = StyleSheet.create({
         paddingTop: 10
     },
     backgroundImage: {
-        height:'100%',
+        height: '100%',
     },
     DrawerButton: {
         backgroundColor: "#000",
@@ -88,4 +93,11 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 5,
     },
+    loader:{
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize:"48px"
+    }
 });
