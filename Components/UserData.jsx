@@ -28,7 +28,7 @@ const UserData = (props) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.name} numberOfLines={1}>{name}</Text>
             <Text style={styles.role}>{role}</Text>
             <Text style={styles.phone}>{phone}</Text>
             <View style={styles.icons}>
@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "bold",
         marginBottom: 5,
+        width: "75%"
     },
     role: {
         fontSize: 12,

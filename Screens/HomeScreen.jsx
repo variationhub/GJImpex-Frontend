@@ -1,11 +1,10 @@
-import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderData } from "../slices/order";
 import OrderData from "../Components/OrderData";
 import OrderModal from "../Modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-import { fetchProductData } from "../slices/product";
 
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
@@ -17,7 +16,6 @@ const OrderScreen = () => {
     })
     const dispatch = useDispatch();
     const { data } = useSelector((state) => state.order)
-    console.log(data);
     const [modalAddOrder, setModalAddOrder] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');

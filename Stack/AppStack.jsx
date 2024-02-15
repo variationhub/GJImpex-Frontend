@@ -20,25 +20,25 @@ const option = {
     headerTintColor: 'white'
 };
 
-const AppStack = ({token}) => {
-    const { user } = useSelector((state)=> state.login);
+const AppStack = ({ token }) => {
+    const { user } = useSelector((state) => state.login);
     const dispatch = useDispatch();
 
-    useEffect(()=>{
-        if(token){
-        dispatch(loginSlice.actions.updateUser(true))
+    useEffect(() => {
+        if (token) {
+            dispatch(loginSlice.actions.updateUser(true))
         }
-    },[]);
+    }, []);
 
     if (user) {
         // User is authenticated, show the drawer navigator
         return (
-            <Drawer.Navigator initialRouteName="Orders" drawerContent={(props) => <CustomDrawer {...props}/>} 
-            screenOptions={{
-                
-                drawerActiveTintColor: '#fff',
-                drawerActiveBackgroundColor: "#FB611A",
-              }}// Replace with your desired background color
+            <Drawer.Navigator initialRouteName="Users" drawerContent={(props) => <CustomDrawer {...props} />}
+                screenOptions={{
+
+                    drawerActiveTintColor: '#fff',
+                    drawerActiveBackgroundColor: "#FB611A",
+                }}// Replace with your desired background color
             >
                 <Drawer.Screen
                     name="Orders"
@@ -46,9 +46,9 @@ const AppStack = ({token}) => {
                     options={option}
                 />
                 <Drawer.Screen
-                        name="Task"
-                        component={TaskScreen}
-                        options={option}
+                    name="Task"
+                    component={TaskScreen}
+                    options={option}
                 />
                 <Drawer.Screen
                     name="Users"

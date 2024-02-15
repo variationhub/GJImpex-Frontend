@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { deleteProductData } from "../slices/product";
 
 const ProductData = (props) => {
-    const [modalDelete, setModalDelete] = useState(false);
 
     const { name, description, stock, _id } = props.data;
     const dispatch = useDispatch();
@@ -28,7 +27,7 @@ const ProductData = (props) => {
 
     return (
         <View style={styles.container}>
-            <ScrollView horizontal={true}><Text style={styles.name}>{name}</Text></ScrollView>
+            <Text style={styles.name} numberOfLines={1}>{name}</Text>
             <Text style={styles.description}>{description}</Text>
             <Pressable  style={styles.stock}><Text style={styles.stockText}>{stock}</Text></Pressable>
             <View style={styles.icons}>
@@ -62,8 +61,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "bold",
         marginBottom: 5,
-        width: '70%',
-        // overflow: 'scroll',
+        width:"70%"
     },
     stock: {
         fontSize: 15,
