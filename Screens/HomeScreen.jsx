@@ -5,15 +5,13 @@ import { fetchOrderData } from "../slices/order";
 import OrderData from "../Components/OrderData";
 import OrderModal from "../Modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-import { fetchProductData } from "../slices/product";
-import CheckBox from '@react-native-community/checkbox';
 
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
         name: "",
         transport: "",
         gst: "",
-        gstPrice: 0,
+        gstPrice: "",
         total: 0
     })
     const dispatch = useDispatch();
@@ -21,24 +19,36 @@ const OrderScreen = () => {
     const [modalAddOrder, setModalAddOrder] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
-
+    const [products, setProduct] = useState({})
 
     const openForm = () => {
         setModalAddOrder(true);
     };
     useEffect(() => {
         dispatch(fetchOrderData())
+        const id = Date.now();
+        setProduct((prev) => ({ ...prev, [id]: { _id:id, productName: "", quantity: "", sellPrice: "", total: "" } }))
     }, [])
 
     const image = require('../assets/logo.png');
 
     const editOrder = (id) => {
         const value = data.find(value => value._id === id)
+
+        const result = value?.orders?.reduce((acc, obj) => {
+            acc[obj._id] = obj;
+            return acc;
+        }, {});
+
         setOrderData({
-            name: value.name,
-            description: value.description,
-            stock: value.stock
+            name: value.partyName,
+            transport: value.transport,
+            gst: value.gst,
+            gstPrice: value.gstPrice,
+            total: value.totalPrice
         })
+
+        setProduct(result);
         setIsEdit(true)
         setId(id)
         setModalAddOrder(true)
@@ -55,7 +65,7 @@ const OrderScreen = () => {
                 <Ionicons name="plus" size={30} color={'white'} />
             </Pressable>
             {modalAddOrder &&
-                <OrderModal orderModalData={{ modalAddOrder, orderData, isEdit, id }} orderModalFn={{ setModalAddOrder, setOrderData, setIsEdit, setId }} />
+                <OrderModal orderModalData={{ modalAddOrder, orderData, isEdit, id, products }} orderModalFn={{ setModalAddOrder, setOrderData, setIsEdit, setId, setProduct }} />
             }
         </ImageBackground>
     );

@@ -12,7 +12,7 @@ const ProductModal = (props) => {
     const dispatch = useDispatch()
     const closeForm = () => {
         setProductData({
-            name: "",
+            productName: "",
             description: "",
             stock: ""
         })
@@ -44,11 +44,11 @@ const ProductModal = (props) => {
                 <View style={styles.modalContent}>
                     <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} Product</Text>
                     <TextInput
-                        name="name"
+                        name="productName"
                         style={styles.input}
                         placeholder="Enter full name"
-                        value={productData.name}
-                        onChangeText={(e) => setProductData(prev => ({ ...prev, name: e }))}
+                        value={productData.productName}
+                        onChangeText={(e) => setProductData(prev => ({ ...prev, productName: e }))}
                     />
                     <TextInput
                         name="description"

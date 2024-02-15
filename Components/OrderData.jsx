@@ -7,7 +7,7 @@ import { CheckBox } from "@ui-kitten/components";
 import { Modal } from "react-native";
 
 const RenderCheckboxModal = (props) => {
-    const { showModalCheckboxes, setShowModalCheckboxes, handleBookCheck, id, setId, dispatched, billed, LR } = props
+    const { setShowModalCheckboxes, id, setId, dispatched, billed, LR } = props
     const [isBilledChecked, setIsBilledChecked] = useState(billed);
     const [isDispatchChecked, setIsDispatchChecked] = useState(dispatched);
     const [isLrSentChecked, setIsLrSentChecked] = useState(LR);
@@ -16,6 +16,7 @@ const RenderCheckboxModal = (props) => {
     const [value, setValue] = useState("");
     const closeForm = () => {
         setShowModalCheckboxes(false)
+        setId("");
     }
 
     const saveForm = () => {
@@ -31,7 +32,7 @@ const RenderCheckboxModal = (props) => {
         }
         dispatch(updateStatus(id, value, data))
 
-        console.log(value);
+        setId("");
         closeForm();
     };
     return (
@@ -82,7 +83,7 @@ const RenderCheckboxModal = (props) => {
 
 const OrderData = (props) => {
     const [id, setId] = useState('');
-    const [showModalCheckboxes, setShowModalCheckboxes] = useState(false); // State for checkbox modal visibility
+    const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
     const { partyName, status, price, dispatched, billed, LR, transport, gst, updatedDate, orderChanged, _id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
         height: 85,
         backgroundColor: "#f0f0f0",
         padding: 10,
-        paddingBottom:5,
+        paddingBottom: 5,
         marginBottom: 10,
         borderRadius: 4,
         borderWidth: 1,
@@ -163,10 +164,10 @@ const styles = StyleSheet.create({
         top: 5,
     },
     inline: {
-        display:'flex',
-        flexDirection:'row',
+        display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems:'center',
+        alignItems: 'center',
     },
     status: {
         fontSize: 13,
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(251, 97, 26, 0.3)',
         // width: 'auto',
         padding: 5,
-        paddingHorizontal:10,
+        paddingHorizontal: 10,
         borderRadius: 10,
         fontWeight: 'bold',
         textTransform: 'uppercase'
