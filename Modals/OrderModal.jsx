@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, ScrollView, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrderData, updateOrderData } from '../slices/order';
@@ -19,9 +19,11 @@ const OrderModal = (props) => {
 
     const { data } = useSelector((state) => state.product);
 
+    const [loading, setLoading] = useState(false);
+
     const openForm = () => {
         const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { _id:id, productName: "", quantity: 0, sellPrice: "", total: 0 } }))
+        setProduct((prev) => ({ ...prev, [id]: { _id: id, productName: "", quantity: "", sellPrice: "", total: 0 } }))
     }
 
     const removeItem = (id) => {
@@ -32,6 +34,13 @@ const OrderModal = (props) => {
     const handleChange = (id, name, value) => {
         setProduct((prev) => ({ ...prev, [id]: { ...prev[id], [name]: value } }))
     }
+
+    useEffect(() => {
+        const total = Object.values(products)?.reduce((acc, item) => {
+            return acc + Number(item.sellPrice * item.quantity)
+        }, 0)
+        setOrderData((prev) => ({ ...prev, total: total }))
+    }, [products]);
 
     const closeForm = () => {
         setOrderData({
@@ -45,12 +54,13 @@ const OrderModal = (props) => {
         setId("")
         const id = Date.now();
         setProduct({ [id]: { _id: id, productName: "", quantity: "", sellPrice: "", total: "" } })
+        setIsEdit(false);
     };
 
-    const saveForm = (isEdit) => {
+    const saveForm = async (isEdit) => {
         const data = {
-            partyName: orderData.name,
-            transport: orderData.transport,
+            partyName: orderData.name.trim(),
+            transport: orderData.transport.trim(),
             orders: Object.values(products)?.map((item) => {
                 return {
                     productName: item.productName,
@@ -61,13 +71,17 @@ const OrderModal = (props) => {
             gst: orderData.gst,
             gstPrice: orderData.gstPrice
         }
+        setLoading(true);
+        let response = false;
         if (isEdit) {
-            dispatch(updateOrderData(id, orderData));
-            setIsEdit(false);
+            response = await dispatch(updateOrderData(id, data));
         } else {
-            dispatch(createOrderData(data));
+            response = await dispatch(createOrderData(data));
         }
-        closeForm();
+        if (response) {
+            closeForm();
+        }
+        setLoading(false);
     };
 
     return (
@@ -103,8 +117,8 @@ const OrderModal = (props) => {
                     <ScrollView style={styles.scrollview}>
                         {Object.values(products)?.map(item => {
                             return (
-                                <>
-                                    <View style={styles.productAndMinus} key={item.id}>
+                                <View key={item._id}>
+                                    <View style={styles.productAndMinus} >
                                         <Dropdown
                                             style={styles.dropdown}
                                             placeholderStyle={styles.placeholderStyle}
@@ -119,7 +133,7 @@ const OrderModal = (props) => {
                                             onChange={(e) => handleChange(item._id, "productName", e.productName)}
 
                                         />
-                                        <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
+                                        <Pressable style={styles.minus} onPress={() => removeItem(item._id)}>
                                             <Ionicons name="minus" size={20} color={'white'} />
                                         </Pressable>
                                     </View>
@@ -148,7 +162,7 @@ const OrderModal = (props) => {
                                             editable={false}
                                         ></TextInput>
                                     </View>
-                                </>
+                                </View>
                             )
                         })}
                     </ScrollView>
@@ -173,12 +187,16 @@ const OrderModal = (props) => {
                             name="total"
                             placeholder="Total Value"
                             style={[styles.input, { flex: 1, marginRight: 10 }]}
-                            value={String(orderData.total)}
+                            value={String(orderData.total + Number(orderData.gstPrice) / Number(orderData.gst || 1))}
                             editable={false}
                         />
                     </View>
-                    <Pressable style={styles.saveButton} onPress={() => saveForm(isEdit)}>
-                        <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                    <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
+                        {
+                            loading ? <ActivityIndicator color="#ffffff" />
+                                :
+                                <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                        }
                     </Pressable>
                     <Pressable style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />

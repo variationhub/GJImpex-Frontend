@@ -61,7 +61,7 @@ const OrderScreen = () => {
                 :
                 <ScrollView>
                     <View style={styles.container}>
-                        {data.map(item => <OrderData data={item} editOrder={editOrder} />)}
+                        {data.map(item => <OrderData key={item._id} data={item} editOrder={editOrder} />)}
                     </View>
                 </ScrollView>
             }
