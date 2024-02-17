@@ -28,16 +28,18 @@ const ProductData = (props) => {
     return (
         <View style={styles.container}>
             <Text style={styles.name} numberOfLines={1}>{productName}</Text>
-            <Text style={styles.description}>{description}</Text>
-            <Pressable  style={styles.stock}><Text style={styles.stockText}>{stock}</Text></Pressable>
-            <View style={styles.icons}>
-            <Pressable style={styles.icon} onPress={()=>props.editProduct(_id)}>
-                <Ionicons name="marker" size={24} color={'#5F4521'} />
-            </Pressable>
-            <Pressable style={styles.icon} onPress={deleteHandler}>
-                <Ionicons name="delete" size={24} color={'#5F4521'} />
-            </Pressable>
+            <View style={styles.desc}>
+                <Text style={styles.description}>{description}</Text>
+                <View style={styles.icons}>
+                    <Pressable style={styles.icon} onPress={() => props.editProduct(_id)}>
+                        <Ionicons name="marker" size={24} color={'#5F4521'} />
+                    </Pressable>
+                    <Pressable style={styles.icon} onPress={deleteHandler}>
+                        <Ionicons name="delete" size={24} color={'#5F4521'} />
+                    </Pressable>
+                </View>
             </View>
+            <Pressable style={styles.stock}><Text style={styles.stockText}>{stock}</Text></Pressable>
         </View>
     );
 };
@@ -55,20 +57,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#ccc",
         position: 'relative',
-        
+
     },
     name: {
         fontSize: 15,
         fontWeight: "bold",
-        marginBottom: 5,
-        width:"70%"
+        width: "70%"
     },
     stock: {
         fontSize: 15,
-        padding:4,
+        padding: 4,
         backgroundColor: 'rgba(251, 97, 26, 0.3)',
-        width:80,
-        textAlign:'center',
+        width: 80,
+        textAlign: 'center',
         color: "#5f4521",
         marginBottom: 3,
         position: 'absolute',
@@ -80,21 +81,22 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 13,
         color: "#666",
-
     },
     icons: {
-        position: 'absolute',
-        right: 0,
-        bottom: 6,
         flexDirection: 'row',
         gap: 0,
         color: '#5f4521',
     },
     icon: {
         padding: 10,
-        paddingBottom: 2
     },
-    stockText:{
-        textAlign:'center'
+    stockText: {
+        textAlign: 'center'
+    },
+    desc: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     }
 });

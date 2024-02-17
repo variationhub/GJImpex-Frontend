@@ -6,8 +6,8 @@ import AuthService from '../Services/AuthService';
 import { loginSlice } from '../slices/login';
 
 export default function LoginScreen() {
-  const [contactNo, setContactNo] = useState('9328677043');
-  const [password, setPassword] = useState('GJ@2024');
+  const [contactNo, setContactNo] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 

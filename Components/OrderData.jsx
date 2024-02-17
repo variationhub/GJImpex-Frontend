@@ -110,7 +110,7 @@ const OrderData = (props) => {
     return (
         <>
             <View style={styles.container}>
-                <ScrollView horizontal={true}><Text style={styles.name}>{partyName}</Text></ScrollView>
+                <Text style={styles.name} numberOfLines={1}>{partyName}</Text>
                 <Text style={styles.transport}>{transport}</Text>
                 <View style={styles.inline}>
                     <Text style={styles.status}>{status}</Text>
@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: "bold",
         marginBottom: 5,
+        width:"80%"
     },
     transport: {
         fontSize: 15,
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     status: {
-        fontSize: 13,
+        fontSize: 11,
         color: "#666",
         backgroundColor: 'rgba(251, 97, 26, 0.3)',
         // width: 'auto',

@@ -46,7 +46,6 @@ const ProductScreen = () => {
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 <ScrollView>
-
                     <View style={styles.container}>
                         {data.map(item => <ProductData key={item._id} data={item} editProduct={editProduct} />)}
                     </View>
