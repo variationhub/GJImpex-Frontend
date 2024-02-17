@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import axiosInstance from '../utils/axios';
+import { modelSlice } from './model';
 
 export const productSlice = createSlice({
   name: 'product',
@@ -19,9 +20,11 @@ export const productSlice = createSlice({
 
 export const { updateProduct } = productSlice.actions
 
-export const fetchProductData = () => async (dispatch) => {
+export const fetchProductData = (load=true) => async (dispatch) => {
   try {
-    dispatch(productSlice.actions.setLoading(true));
+    if(load){
+      dispatch(productSlice.actions.setLoading(true));
+    }
     const response = await axiosInstance.get('/products');
     dispatch(productSlice.actions.updateProduct(response.data.data));
     dispatch(productSlice.actions.setLoading(false));
@@ -34,9 +37,15 @@ export const fetchProductData = () => async (dispatch) => {
 }
 
 export const createProductData = (data) => async (dispatch) => {
-  const response = await axiosInstance.post('/products', data);
-  if (response.data.status) {
-    dispatch(fetchProductData());
+  try {
+    const response = await axiosInstance.post('/products', data);
+    if (response.data.status) {
+      dispatch(fetchProductData(false));
+    }
+    return true;
+  } catch (err) {
+    dispatch(modelSlice.actions.setModel({ visible: true, message: err.response.data.message || "Something went wrong..!" }));
+    return false;
   }
 }
 
@@ -49,18 +58,15 @@ export const deleteProductData = (id) => async (dispatch) => {
 
 export const updateProductData = (id, data) => async (dispatch) => {
   try {
-    dispatch(productSlice.actions.setLoading(true));
     const response = await axiosInstance.put(`/products/${id}`, data);
     if (response.data.status) {
-      dispatch(fetchProductData());
+      dispatch(fetchProductData(false));
     }
-    dispatch(productSlice.actions.setLoading(false));
     return true;
-  }catch (err) {
-      dispatch(productSlice.actions.updateProduct([]));
-      dispatch(productSlice.actions.setLoading(false));
-      return false;
-    }
+  } catch (err) {
+    dispatch(modelSlice.actions.setModel({ visible: true, message: err.response.data.message || "Something went wrong..!" }));
+    return false;
   }
+}
 
 export default productSlice.reducer

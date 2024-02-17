@@ -8,7 +8,7 @@ import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const ProductScreen = () => {
     const [productData, setProductData] = useState({
-        name: "",
+        productName: "",
         description: "",
         stock: "",
     })
@@ -18,7 +18,6 @@ const ProductScreen = () => {
     const [modalAddProduct, setModalAddProduct] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
-
 
     const openForm = () => {
         setModalAddProduct(true);
@@ -32,7 +31,7 @@ const ProductScreen = () => {
         const value = data.find(value => value._id === id)
 
         setProductData({
-            name: value.name,
+            productName: value.productName,
             description: value.description,
             stock: value.stock
         })

@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderData } from "../slices/order";
@@ -15,7 +15,7 @@ const OrderScreen = () => {
         total: 0
     })
     const dispatch = useDispatch();
-    const { data } = useSelector((state) => state.order)
+    const { data, loading } = useSelector((state) => state.order)
     const [modalAddOrder, setModalAddOrder] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
@@ -27,7 +27,7 @@ const OrderScreen = () => {
     useEffect(() => {
         dispatch(fetchOrderData())
         const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { _id:id, productName: "", quantity: "", sellPrice: "", total: "" } }))
+        setProduct((prev) => ({ ...prev, [id]: { _id: id, productName: "", quantity: "", sellPrice: "", total: "" } }))
     }, [])
 
     const image = require('../assets/logo.png');
@@ -56,11 +56,15 @@ const OrderScreen = () => {
 
     return (
         <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
-            <ScrollView>
-                <View style={styles.container}>
-                    {data.map(item => <OrderData data={item} editOrder={editOrder} />)}
-                </View>
-            </ScrollView>
+            {loading ?
+                <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
+                :
+                <ScrollView>
+                    <View style={styles.container}>
+                        {data.map(item => <OrderData data={item} editOrder={editOrder} />)}
+                    </View>
+                </ScrollView>
+            }
             <Pressable style={styles.fab} onPress={openForm}>
                 <Ionicons name="plus" size={30} color={'white'} />
             </Pressable>
@@ -100,4 +104,11 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 5,
     },
+    loader: {
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: "48px"
+    }
 });

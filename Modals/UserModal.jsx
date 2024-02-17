@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserData, updateUserData } from '../slices/user';
 import { useDispatch } from 'react-redux';
@@ -19,6 +19,9 @@ const UserModal = (props) => {
     const { setModalAddUser, setUserData, setIsEdit, setId } = props.userModalFn;
 
     const dispatch = useDispatch();
+
+    const [loading, setLoading] = useState(false);
+
     const closeForm = () => {
         setUserData({
             name: "",
@@ -30,21 +33,23 @@ const UserModal = (props) => {
         })
         setModalAddUser(false);
         setIsEdit(false);
+        setId('');
     }
 
-    const saveForm = (isEdit) => {
+    const saveForm = async (isEdit) => {
+        let response = false;
+        setLoading(true)
         if (isEdit) {
-            dispatch(updateUserData(id, {
+            response = await dispatch(updateUserData(id, {
                 name: userData.name.trim(),
                 role: userData.role,
                 phone: userData.phone.trim(),
                 email: userData.email.trim(),
                 address: userData.address.trim()
             }))
-            setId('')
         }
         else {
-            dispatch(createUserData({
+            response = await dispatch(createUserData({
                 name: userData.name.trim(),
                 role: userData.role,
                 password: userData.password.trim(),
@@ -53,8 +58,10 @@ const UserModal = (props) => {
                 address: userData.address.trim()
             }))
         }
-        setIsEdit(false)
-        closeForm();
+        if (response) {
+            closeForm();
+        }
+        setLoading(false);
     };
 
     const [isFocus, setIsFocus] = useState(false);
@@ -127,8 +134,11 @@ const UserModal = (props) => {
 
                     />
 
-                    <Pressable style={styles.saveButton} onPress={() => saveForm(isEdit)}>
-                        <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                    <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
+                        {loading ? <ActivityIndicator color="#ffffff" />
+                            :
+                            <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                        }
                     </Pressable>
                     <Pressable style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />

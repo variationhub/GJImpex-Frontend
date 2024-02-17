@@ -2,16 +2,20 @@ import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { useEffect, useState } from 'react';
 import AppStack from "./Stack/AppStack";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./store";
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider } from '@ui-kitten/components';
+import { modelSlice } from "./slices/model";
 
-export default App = () => {
+const Navigation = () => {
   const [loading, setLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
+
+  const { visible, message } = useSelector(state => state.model)
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Check if token exists in AsyncStorage
@@ -25,22 +29,80 @@ export default App = () => {
   }, []);
 
   if (loading) {
-      return (
-      <Provider store={store}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#0000ff" />
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  return (
+    <>
+      <NavigationContainer>
+        <ApplicationProvider {...eva} theme={eva.light}>
+          <AppStack token={userToken} />
+        </ApplicationProvider>
+      </NavigationContainer>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+      // onRequestClose={closeForm}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.message, {marginBottom:5, fontWeight:'bold', fontSize:16}]}>
+              Error
+            </Text>
+            <Text style={styles.message}>{message}</Text>
+            <Pressable style={styles.closeButton} onPress={() => dispatch(modelSlice.actions.setModel({ visible: false, message: "" }))}>
+              <Text style={styles.text}>
+                Close
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </Provider>
-      );
-    } 
+      </Modal>
+    </>
+  );
+};
+
+export default APP = () => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <ApplicationProvider {...eva} theme={eva.light}>
-          <AppStack token={userToken}/>
-        </ApplicationProvider>
-      </NavigationContainer>
+      <Navigation />
     </Provider>
-  );
-};
+  )
+}
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    position: 'relative',
+    backgroundColor: "white",
+    borderRadius: 5,
+    padding: 15,
+    width: '75%',
+    height: '18%',
+    elevation: 5,
+  },
+  closeButton: {
+    position: 'absolute',
+    bottom: 15,
+    right: 20,
+    padding: 4,
+  },
+  text: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#5F4521",
+  }
+});
+

@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
 import { createProductData, updateProductData } from '../slices/product';
+import { modelSlice } from '../slices/model';
 
 const ProductModal = (props) => {
 
     const { modalAddProduct, productData, isEdit, id } = props.productModalData;
     const { setModalAddProduct, setProductData, setIsEdit, setId } = props.productModalFn;
+
+    const [loading, setLoading] = useState(false);
 
     const dispatch = useDispatch()
     const closeForm = () => {
@@ -18,21 +21,34 @@ const ProductModal = (props) => {
         })
         setModalAddProduct(false);
         setId("")
+        setIsEdit(false);
     }
 
-    const saveForm = (isEdit) => {
+    const saveForm = async (isEdit) => {
+        let resposne = false;
+        setLoading(true);
+
+        if(!productData.productName.trim()){
+            dispatch(modelSlice.actions.setModel({visible:true, message:"Product name is required"}));
+            setLoading(false);
+            return;
+        }
         if (isEdit) {
-            dispatch(updateProductData(id, productData))
-            setIsEdit(false)
+            resposne = await dispatch(updateProductData(id, {
+                productName: productData.productName.trim(),
+                description: productData.description.trim(),
+                stock: productData.stock
+            }))
         }
         else {
-            dispatch(createProductData(productData))
+            resposne = await dispatch(createProductData(productData))
         }
-        setId('')
-        closeForm();
+        if (resposne) {
+            closeForm();
+        }
+        setLoading(false);
     };
 
-    console.log(productData)
     return (
         <Modal
             animationType="slide"
@@ -66,8 +82,10 @@ const ProductModal = (props) => {
                         onChangeText={(e) => setProductData(prev => ({ ...prev, stock: e }))}
 
                     />
-                    <Pressable style={styles.saveButton} onPress={() => saveForm(isEdit)}>
-                        <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                    <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
+                        {loading ? <ActivityIndicator color="#ffffff" /> :
+                            <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                        }
                     </Pressable>
                     <Pressable style={styles.closeForm} onPress={closeForm}>
                         <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />

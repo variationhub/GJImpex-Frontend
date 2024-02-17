@@ -3,6 +3,7 @@ import loginReducer from '../slices/login'
 import userReducer from '../slices/user'
 import productReducer from '../slices/product'
 import orderReducer from '../slices/order'
+import modelReducer from '../slices/model'
 import { useDispatch } from 'react-redux';
 
 const store = configureStore({
@@ -10,7 +11,8 @@ const store = configureStore({
         login: loginReducer,
         product: productReducer,
         user: userReducer,
-        order: orderReducer
+        order: orderReducer,
+        model: modelReducer
     }
 });
 

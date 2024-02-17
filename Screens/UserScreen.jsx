@@ -49,7 +49,7 @@ const UserScreen = () => {
     return (
         <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
             {loading ?
-                <ActivityIndicator size="large" style={styles.loader} color="#5F4521"/>
+                <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 <ScrollView>
 
@@ -64,7 +64,7 @@ const UserScreen = () => {
             {modalAddUser &&
                 <UserModal userModalData={{ modalAddUser, userData, isEdit, id }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
             }
-
+           
         </ImageBackground>
     );
 };
@@ -98,11 +98,11 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 5,
     },
-    loader:{
+    loader: {
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize:"48px"
+        fontSize: "48px"
     }
 });
