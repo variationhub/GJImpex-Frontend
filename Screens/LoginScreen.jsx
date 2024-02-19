@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AuthService from '../Services/AuthService';
+import AuthService from '../services/AuthService';
 import { loginSlice } from '../slices/login';
 
 export default function LoginScreen() {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "../Screens/HomeScreen";
-import LoginScreen from "../Screens/LoginScreen";
-import CustomDrawer from "../Components/CustomDrawer";
-import UserScreen from "../Screens/UserScreen";
-import ProductScreen from "../Screens/ProductScreen";
-import TaskScreen from "../Screens/TaskScreen";
+import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
+import CustomDrawer from "../components/CustomDrawer";
+import UserScreen from "../screens/UserScreen";
+import ProductScreen from "../screens/ProductScreen";
+import TaskScreen from "../screens/TaskScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSlice } from "../slices/login";
 
@@ -32,7 +32,7 @@ const AppStack = ({ token }) => {
     if (user) {
         // User is authenticated, show the drawer navigator
         return (
-            <Drawer.Navigator initialRouteName="Orders" drawerContent={(props) => <CustomDrawer {...props} />}
+            <Drawer.Navigator initialRouteName="Task" drawerContent={(props) => <CustomDrawer {...props} />}
                 screenOptions={{
 
                     drawerActiveTintColor: '#fff',

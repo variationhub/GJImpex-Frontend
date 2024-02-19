@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { useEffect, useState } from 'react';
-import AppStack from "./Stack/AppStack";
+import AppStack from "./stack/AppStack";
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider, useDispatch, useSelector } from "react-redux";

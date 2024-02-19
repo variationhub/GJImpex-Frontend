@@ -2,8 +2,8 @@ import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground,
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductData } from "../slices/product";
-import ProductData from "../Components/ProductData";
-import ProductModal from "../Modals/ProductModal";
+import ProductData from "../components/ProductData";
+import ProductModal from "../modals/ProductModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const ProductScreen = () => {

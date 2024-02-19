@@ -2,8 +2,8 @@ import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndic
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderData } from "../slices/order";
-import OrderData from "../Components/OrderData";
-import OrderModal from "../Modals/OrderModal";
+import OrderData from "../components/OrderData";
+import OrderModal from "../modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const OrderScreen = () => {

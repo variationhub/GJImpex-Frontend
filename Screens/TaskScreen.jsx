@@ -1,10 +1,11 @@
 import { StyleSheet, View, Text } from "react-native";
 import React from "react";
+import Card from "../components/card";
 
 const TaskScreen = () => {
     return (
         <View style={styles.container}>
-            <Text>Task Page</Text>
+            <Card></Card>
         </View>
     );
 };

@@ -2,8 +2,8 @@ import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndic
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData } from "../slices/user";
-import UserData from "../Components/UserData";
-import UserModal from "../Modals/UserModal";
+import UserData from "../components/UserData";
+import UserModal from "../modals/UserModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const UserScreen = () => {
