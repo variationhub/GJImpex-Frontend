@@ -1,10 +1,11 @@
 // apiUtils.js
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import JSON from '../url.json'
 
 const axiosInstance = axios.create({
-  baseURL: 'https://tense-jade-sawfish.cyclic.app/api',
-  // baseURL: 'http://192.168.1.9:8000/api',
+  // baseURL: 'https://tense-jade-sawfish.cyclic.app/api',
+  baseURL: JSON.BASE_URL, // Replace this with your actual backend URL
   timeout: 8000, // Timeout after 5 seconds
 });
 

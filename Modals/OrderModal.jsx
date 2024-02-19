@@ -187,7 +187,7 @@ const OrderModal = (props) => {
                             name="total"
                             placeholder="Total Value"
                             style={[styles.input, { flex: 1, marginRight: 10 }]}
-                            value={String(orderData.total + Number(orderData.gstPrice) / Number(orderData.gst || 1))}
+                            value={String(orderData.total + (Number((Number(orderData.gstPrice) / Number(orderData.gst || 1))).toFixed(2)))}
                             editable={false}
                         />
                     </View>
