@@ -7,6 +7,12 @@ import CustomDrawer from "../components/CustomDrawer";
 import UserScreen from "../screens/UserScreen";
 import ProductScreen from "../screens/ProductScreen";
 import TaskScreen from "../screens/TaskScreen";
+import PendingOrderScreen from "../screens/PendingOrderScreen";
+import ProductionScreen from "../screens/ProductionScreen";
+import TransportScreen from "../screens/TransportScreen";
+import PartyScreen from "../screens/PartyScreen";
+import OverviewScreen from "../screens/OverviewScreen";
+
 import { useDispatch, useSelector } from "react-redux";
 import { loginSlice } from "../slices/login";
 
@@ -32,7 +38,7 @@ const AppStack = ({ token }) => {
     if (user) {
         // User is authenticated, show the drawer navigator
         return (
-            <Drawer.Navigator initialRouteName="Task" drawerContent={(props) => <CustomDrawer {...props} />}
+            <Drawer.Navigator initialRouteName="Products" drawerContent={(props) => <CustomDrawer {...props} />}
                 screenOptions={{
 
                     drawerActiveTintColor: '#fff',
@@ -40,23 +46,48 @@ const AppStack = ({ token }) => {
                 }}// Replace with your desired background color
             >
                 <Drawer.Screen
-                    name="Orders"
+                    name="OVERVIEW"
+                    component={OverviewScreen}
+                    options={option}
+                />
+                <Drawer.Screen
+                    name="PARTY (CUSTOMERS)"
+                    component={PartyScreen}
+                    options={option}
+                />
+                <Drawer.Screen
+                    name="CONFIRMED ORDERS"
                     component={HomeScreen}
                     options={option}
                 />
                 <Drawer.Screen
-                    name="Task"
-                    component={TaskScreen}
+                    name="PENDING ORDERS"
+                    component={PendingOrderScreen}
                     options={option}
                 />
                 <Drawer.Screen
-                    name="Users"
+                    name="TRANSPORTATION"
+                    component={TransportScreen}
+                    options={option}
+                />
+                <Drawer.Screen
+                    name="PRODUCTION"
+                    component={ProductionScreen}
+                    options={option}
+                />
+                <Drawer.Screen
+                    name="USERS DETAILS"
                     component={UserScreen}
                     options={option}
                 />
                 <Drawer.Screen
-                    name="Products"
+                    name="PRODUCTS DETAILS"
                     component={ProductScreen}
+                    options={option}
+                />
+                <Drawer.Screen
+                    name="TASKS"
+                    component={TaskScreen}
                     options={option}
                 />
             </Drawer.Navigator>

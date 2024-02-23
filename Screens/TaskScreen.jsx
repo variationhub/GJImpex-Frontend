@@ -3,9 +3,23 @@ import React from "react";
 import Card from "../components/card";
 
 const TaskScreen = () => {
+
+    const checkClick = () => {
+        console.log("Click")
+    }
+
+    const noCheckClick = () => {
+        console.log("noCheckClick")
+    }
     return (
         <View style={styles.container}>
-            <Card></Card>
+            <Card data={{
+                upperleft: "Bhargav",
+                upperright: "900",
+                bottomleft: "Surat"
+            }}
+            fn={{checkClick,noCheckClick}}
+            ></Card>
         </View>
     );
 };

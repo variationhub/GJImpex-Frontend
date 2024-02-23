@@ -5,6 +5,8 @@ import { fetchProductData } from "../slices/product";
 import ProductData from "../components/ProductData";
 import ProductModal from "../modals/ProductModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { productName } from "expo-device";
+import Card from "../components/card";
 
 const ProductScreen = () => {
     const [productData, setProductData] = useState({
@@ -47,7 +49,16 @@ const ProductScreen = () => {
                 :
                 <ScrollView>
                     <View style={styles.container}>
-                        {data.map(item => <ProductData key={item._id} data={item} editProduct={editProduct} />)}
+                        {/* {data.map(item => <ProductData key={item._id} data={item} editProduct={editProduct} />)} */}
+                        {data.map(item => <Card 
+                            data={{
+                                upperleft: item.productName,
+                                upperright: item.stock,
+                                bottomleft: item.description,
+                            }} 
+                            fn={{}} 
+                        ></Card>)}
+                        
                     </View>
                 </ScrollView>
             }
