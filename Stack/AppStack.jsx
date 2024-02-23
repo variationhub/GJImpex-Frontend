@@ -12,6 +12,7 @@ import ProductionScreen from "../screens/ProductionScreen";
 import TransportScreen from "../screens/TransportScreen";
 import PartyScreen from "../screens/PartyScreen";
 import OverviewScreen from "../screens/OverviewScreen";
+import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loginSlice } from "../slices/login";
@@ -44,11 +45,12 @@ const AppStack = ({ token }) => {
                     drawerActiveTintColor: '#fff',
                     drawerActiveBackgroundColor: "#FB611A",
                 }}// Replace with your desired background color
-            >
+            >   
                 <Drawer.Screen
                     name="OVERVIEW"
                     component={OverviewScreen}
                     options={option}
+                    icon={({ color, size }) => <Ionicons name="exit-outline" size={22} />}
                 />
                 <Drawer.Screen
                     name="PARTY (CUSTOMERS)"

@@ -79,6 +79,7 @@ export default APP = () => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
+
     width: '100%',
     justifyContent: "center",
     alignItems: "center",

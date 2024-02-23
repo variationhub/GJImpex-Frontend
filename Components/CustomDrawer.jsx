@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from "react-native";
-import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
+import { DrawerContentScrollView, DrawerItem, DrawerItemList } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -28,9 +28,15 @@ const CustomDrawer = (props) => {
                 }}
             >
                 <View style={{ flex: 1, backgroundColor: "#fff", paddingTop: 10 }}>
+                    {/* <Ionicons name="exit-outline" size={22} /> */}
                     <DrawerItemList {...props} labelStyle={{
                         color: props.focused ? '#fff' : '#fff',
-                    }} activeBackgroundColor="#fff" />
+                    }} activeBackgroundColor="#fff" 
+                    >
+                        <DrawerItem
+                            label="Help"
+                        />
+                    </DrawerItemList>
                 </View>
             </DrawerContentScrollView>
             <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: "#ccc" }}>

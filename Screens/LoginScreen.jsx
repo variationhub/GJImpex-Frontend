@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthService from '../services/AuthService';
 import { loginSlice } from '../slices/login';
+import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function LoginScreen() {
   const [contactNo, setContactNo] = useState('9328677043');
@@ -12,7 +13,7 @@ export default function LoginScreen() {
   const [error, setError] = useState(false);
 
   const dispatch = useDispatch();
-
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const handleLogin = async () => {
     setLoading(true);
     try {
@@ -22,9 +23,9 @@ export default function LoginScreen() {
         dispatch(loginSlice.actions.updateUser(true));
       } else {
         setError(true);
-        setTimeout(()=>{
+        setTimeout(() => {
           setError(false)
-        },3000)
+        }, 3000)
       }
     } catch (error) {
       console.error('Login failed:', error);
@@ -35,24 +36,41 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      {/* <View style={styles.upper}> */}
       <Image style={styles.logo} source={require('../assets/gjimpexlogin.png')} />
-      <View style={styles.formContainer}>
-        <Text style={styles.signInText}>Sign In</Text>
-        {error && <Text style={styles.signInError}>Invalid phone number or password</Text>}
-        <TextInput
-          value={contactNo}
-          onChangeText={setContactNo}
-          style={styles.input}
-          placeholder="Contact No."
-          inputMode="numeric"
-        />
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry
-        />
+        <View style={styles.formContainer}>
+          <Text style={styles.signInText}>Sign In</Text>
+          {error && <Text style={styles.signInError}>Invalid phone number or password</Text>}
+          <View style={styles.contactNumber}>
+            <Ionicons name="phone" size={22} color={'black'} />
+            <TextInput
+              value={contactNo}
+              onChangeText={setContactNo}
+              style={styles.input}
+              placeholder="Contact No."
+              inputMode="numeric"
+            />
+          </View>
+          <View style={styles.password}>
+            <Ionicons name="lock" size={22} color={'black'} />
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              style={[styles.input, { width: '85%' }]}
+              placeholder="Password"
+              secureTextEntry={isPasswordVisible}
+            />
+            <Pressable onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+              {isPasswordVisible ?
+
+                <Ionicons name="eye" size={22} color={'black'} />
+                :
+                <Ionicons name="eye-off" size={22} color={'black'} />
+              }
+            </Pressable>
+          </View>
+        {/* </View> */}
+
         <Pressable style={styles.loginButton} onPress={handleLogin}>
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
@@ -78,7 +96,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   formContainer: {
+    gap: 10,
     width: '90%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   signInText: {
     fontSize: 22,
@@ -87,18 +109,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    borderWidth: 1,
+    width: '95%',
     borderColor: '#ccc',
-    borderRadius: 5,
-    paddingVertical: 10,
+    borderRadius: 50,
     paddingHorizontal: 15,
-    marginBottom: 20,
     fontSize: 15,
   },
   loginButton: {
-    backgroundColor: '#FB611A',
+    width: '50%',
+    marginTop: '10%',
+    // backgroundColor: '#FB611A',
+    backgroundColor: '#5F4521',
     paddingVertical: 15,
-    borderRadius: 5,
+    borderRadius: 50,
     alignItems: 'center',
   },
   loginButtonText: {
@@ -108,10 +131,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase'
   },
-  signInError:{
-    color:"maroon",
+  signInError: {
+    color: "maroon",
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 10
+  },
+  contactNumber: {
+    width: '95%',
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: 'rgba(240, 97, 26, 0.1)',
+    borderWidth: 1,
+    borderRadius: 50,
+    alignItems: 'center',
+    padding: 10,
+  },
+  password: {
+    width: '95%',
+    display: 'flex',
+    flexDirection: 'row',
+    // justifyContent:'space-between',
+    backgroundColor: 'rgba(240, 97, 26, 0.1)',
+    borderWidth: 1,
+    borderRadius: 50,
+    alignItems: 'center',
+    padding: 10,
   }
+
+
 });
