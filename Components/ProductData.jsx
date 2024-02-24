@@ -6,7 +6,7 @@ import { deleteProductData } from "../slices/product";
 
 const ProductData = (props) => {
 
-    const { productName, description, stock, _id } = props.data;
+    const { productName, description, stock, id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -16,7 +16,7 @@ const ProductData = (props) => {
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
-            { text: 'Delete', onPress: () => dispatch(deleteProductData(_id)) },
+            { text: 'Delete', onPress: () => dispatch(deleteProductData(id)) },
 
         ], {
             alertContainerStyle: styles.alertContainer,
@@ -31,7 +31,7 @@ const ProductData = (props) => {
             <View style={styles.desc}>
                 <Text style={styles.description}>{description}</Text>
                 <View style={styles.icons}>
-                    <Pressable style={styles.icon} onPress={() => props.editProduct(_id)}>
+                    <Pressable style={styles.icon} onPress={() => props.editProduct(id)}>
                         <Ionicons name="marker" size={24} color={'#5F4521'} />
                     </Pressable>
                     <Pressable style={styles.icon} onPress={deleteHandler}>

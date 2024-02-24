@@ -3,11 +3,12 @@ import { DrawerContentScrollView, DrawerItem, DrawerItemList } from "@react-navi
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSlice } from "../slices/login";
 
 const CustomDrawer = (props) => {
     const dispatch = useDispatch();
+    const {name, role} = useSelector(state => state.login.data)
     return (
         <View style={{ flex: 1 }}>
             <View style={{ marginTop: 20, padding: 20, display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: "#ccc"}}>
@@ -16,8 +17,8 @@ const CustomDrawer = (props) => {
                     style={{ width: 60, height: 60, borderRadius: 40 }}
                 />
                 <View style={{ marginLeft: 10, }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>GJImpex</Text>
-                    <Text style={{ fontSize: 12, color: 'gray' }}>ADMIN</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{name}</Text>
+                    <Text style={{ fontSize: 12, color: 'gray' }}>{role}</Text>
                 </View>
             </View>
             <DrawerContentScrollView
@@ -43,6 +44,7 @@ const CustomDrawer = (props) => {
                 <Pressable style={{ paddingVertical: 15 }} onPress={() => {
                     AsyncStorage.removeItem('token');
                     dispatch(loginSlice.actions.updateUser(false));
+                    dispatch(loginSlice.actions.setData({}));
                 }}>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Ionicons name="exit-outline" size={22} />

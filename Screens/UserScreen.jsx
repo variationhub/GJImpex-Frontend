@@ -10,10 +10,10 @@ const UserScreen = () => {
     const [userData, setUserData] = useState({
         name: "",
         role: "",
-        phone: "",
+        mobileNumber: "",
         email: "",
         password: "",
-        address: ""
+        nickName: ""
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.user)
@@ -32,14 +32,14 @@ const UserScreen = () => {
     const image = require('../assets/logo.png');
 
     const editUser = (id) => {
-        const value = data.find(value => value._id === id)
+        const value = data.find(value => value.id === id)
         setUserData({
             name: value.name,
             role: value.role,
-            phone: value.phone,
+            mobileNumber: value.mobileNumber,
             email: value.email,
             password: "password",
-            address: value.address
+            nickName: value.nickName
         })
         setIsEdit(true)
         setId(id)
@@ -54,7 +54,7 @@ const UserScreen = () => {
                 <ScrollView>
 
                     <View style={styles.container}>
-                        {data.map(item => <UserData key={item._id} data={item} editUser={editUser} />)}
+                        {data.map(item => <UserData key={item.id} data={item} editUser={editUser} />)}
                     </View>
                 </ScrollView>
             }

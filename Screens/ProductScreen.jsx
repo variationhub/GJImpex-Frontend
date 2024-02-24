@@ -30,7 +30,7 @@ const ProductScreen = () => {
     const image = require('../assets/logo.png');
 
     const editProduct = (id) => {
-        const value = data.find(value => value._id === id)
+        const value = data.find(value => value.id === id)
 
         setProductData({
             productName: value.productName,
@@ -49,7 +49,7 @@ const ProductScreen = () => {
                 :
                 <ScrollView>
                     <View style={styles.container}>
-                        {/* {data.map(item => <ProductData key={item._id} data={item} editProduct={editProduct} />)} */}
+                        {/* {data.map(item => <ProductData key={item.id} data={item} editProduct={editProduct} />)} */}
                         {data.map(item => <Card 
                             data={{
                                 upperleft: item.productName,

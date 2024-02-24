@@ -10,7 +10,10 @@ import { Dropdown } from 'react-native-element-dropdown';
 const data = [
     { label: 'Admin', value: 'Admin' },
     { label: 'Sales', value: 'Sales' },
-    { label: 'Accountant', value: 'Accountant' }
+    { label: 'Accountant', value: 'Accountant' },
+    { label: 'Dispatch', value: 'Dispatcher'},
+    { label: 'Production', value: 'Production'},
+    { label: 'Other', value: 'Other'}
 ];
 
 const UserModal = (props) => {
@@ -26,10 +29,10 @@ const UserModal = (props) => {
         setUserData({
             name: "",
             role: "",
-            phone: "",
+            nickName: "",
+            mobileNumber: "",
             email: "",
-            password: "",
-            address: ""
+            password: ""
         })
         setModalAddUser(false);
         setIsEdit(false);
@@ -43,9 +46,9 @@ const UserModal = (props) => {
             response = await dispatch(updateUserData(id, {
                 name: userData.name.trim(),
                 role: userData.role,
-                phone: userData.phone.trim(),
+                mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
-                address: userData.address.trim()
+                nickName: userData.nickName.trim()
             }))
         }
         else {
@@ -53,9 +56,9 @@ const UserModal = (props) => {
                 name: userData.name.trim(),
                 role: userData.role,
                 password: userData.password.trim(),
-                phone: userData.phone.trim(),
+                mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
-                address: userData.address.trim()
+                nickName: userData.nickName.trim()
             }))
         }
         if (response) {
@@ -84,12 +87,12 @@ const UserModal = (props) => {
                         onChangeText={(e) => setUserData(prev => ({ ...prev, name: e }))}
                     />
                     <TextInput
-                        name="phone"
+                        name="mobileNumber"
                         inputMode="numeric"
                         style={styles.input}
-                        placeholder="Enter phone number"
-                        value={userData.phone}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, phone: e }))}
+                        placeholder="Enter mobile number"
+                        value={userData.mobileNumber}
+                        onChangeText={(e) => setUserData(prev => ({ ...prev, mobileNumber: e }))}
                     />
                     <Dropdown
                         style={[styles.dropdown, isFocus && { borderColor: 'gray' }]}
@@ -126,11 +129,11 @@ const UserModal = (props) => {
 
                     />
                     <TextInput
-                        name="address"
+                        name="nickName"
                         style={styles.input}
-                        placeholder="Enter address"
-                        value={userData.address}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, address: e }))}
+                        placeholder="Enter Nickname"
+                        value={userData.nickName}
+                        onChangeText={(e) => setUserData(prev => ({ ...prev, nickName: e }))}
 
                     />
 

@@ -82,9 +82,9 @@ const RenderCheckboxModal = (props) => {
 };
 
 const OrderData = (props) => {
-    const [id, setId] = useState('');
+    const [orderId, setOrderId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
-    const { partyName, status, price, dispatched, billed, LR, transport, gst, updatedDate, orderChanged, _id } = props.data;
+    const { partyName, status, price, dispatched, billed, LR, transport, gst, updatedDate, orderChanged, id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -94,7 +94,7 @@ const OrderData = (props) => {
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
-            { text: 'Delete', onPress: () => dispatch(deleteOrderData(_id)) },
+            { text: 'Delete', onPress: () => dispatch(deleteOrderData(id)) },
         ], {
             alertContainerStyle: styles.alertContainer,
             titleStyle: styles.alertTitle,
@@ -102,8 +102,8 @@ const OrderData = (props) => {
         })
     }
 
-    const handleBookCheck = (_id) => {
-        setId(_id);
+    const handleBookCheck = (id) => {
+        setOrderId(id);
         setShowModalCheckboxes(!showModalCheckboxes);
     };
 
@@ -115,10 +115,10 @@ const OrderData = (props) => {
                 <View style={styles.inline}>
                     <Text style={styles.status}>{status}</Text>
                     <View style={styles.icons}>
-                        <Pressable style={styles.icon} onPress={() => props.editOrder(_id)}>
+                        <Pressable style={styles.icon} onPress={() => props.editOrder(id)}>
                             <Ionicons name="marker" size={24} color={'#5F4521'} />
                         </Pressable>
-                        <Pressable style={styles.icon} onPress={() => handleBookCheck(_id)}>
+                        <Pressable style={styles.icon} onPress={() => handleBookCheck(id)}>
                             <Ionicons name="book-check" size={24} color={'#5F4521'} />
                         </Pressable>
                         <Pressable style={styles.icon} onPress={deleteHandler}>
@@ -127,7 +127,7 @@ const OrderData = (props) => {
                     </View>
                 </View>
             </View>
-            {showModalCheckboxes && <RenderCheckboxModal dispatched={dispatched} billed={billed} LR={LR} id={id} setId={setId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} />}
+            {showModalCheckboxes && <RenderCheckboxModal dispatched={dispatched} billed={billed} LR={LR} orderId={orderId} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} />}
         </>
     );
 };

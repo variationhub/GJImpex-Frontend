@@ -27,16 +27,16 @@ const OrderScreen = () => {
     useEffect(() => {
         dispatch(fetchOrderData())
         const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { _id: id, productName: "", quantity: "", sellPrice: "", total: "" } }))
+        setProduct((prev) => ({ ...prev, [id]: { id: id, productName: "", quantity: "", sellPrice: "", total: "" } }))
     }, [])
 
     const image = require('../assets/logo.png');
 
     const editOrder = (id) => {
-        const value = data.find(value => value._id === id)
+        const value = data.find(value => value.id === id)
 
         const result = value?.orders?.reduce((acc, obj) => {
-            acc[obj._id] = obj;
+            acc[obj.id] = obj;
             return acc;
         }, {});
 
@@ -61,7 +61,7 @@ const OrderScreen = () => {
                 :
                 <ScrollView>
                     <View style={styles.container}>
-                        {data.map(item => <OrderData key={item._id} data={item} editOrder={editOrder} />)}
+                        {data.map(item => <OrderData key={item.id} data={item} editOrder={editOrder} />)}
                     </View>
                 </ScrollView>
             }

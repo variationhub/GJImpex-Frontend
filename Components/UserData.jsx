@@ -7,7 +7,7 @@ import { deleteUserData } from "../slices/user";
 const UserData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
 
-    const { name, role, phone, _id } = props.data;
+    const { name, role, mobileNumber, id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -17,7 +17,7 @@ const UserData = (props) => {
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
-            { text: 'Delete', onPress: () => dispatch(deleteUserData(_id)) },
+            { text: 'Delete', onPress: () => dispatch(deleteUserData(id)) },
 
         ], {
             alertContainerStyle: styles.alertContainer,
@@ -30,9 +30,9 @@ const UserData = (props) => {
         <View style={styles.container}>
             <Text style={styles.name} numberOfLines={1}>{name}</Text>
             <Text style={styles.role}>{role}</Text>
-            <Text style={styles.phone}>{phone}</Text>
+            <Text style={styles.mobileNumber}>{mobileNumber}</Text>
             <View style={styles.icons}>
-            <Pressable style={styles.icon} onPress={()=>props.editUser(_id)}>
+            <Pressable style={styles.icon} onPress={()=>props.editUser(id)}>
                 <Ionicons name="marker" size={24} color={'#5F4521'} />
             </Pressable>
             <Pressable style={styles.icon} onPress={deleteHandler}>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         top: 5,
 
     },
-    phone: {
+    mobileNumber: {
         fontSize: 13,
         color: "#666",
     },

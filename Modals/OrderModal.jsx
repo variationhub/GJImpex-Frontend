@@ -23,7 +23,7 @@ const OrderModal = (props) => {
 
     const openForm = () => {
         const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { _id: id, productName: "", quantity: "", sellPrice: "", total: 0 } }))
+        setProduct((prev) => ({ ...prev, [id]: { id: id, productName: "", quantity: "", sellPrice: "", total: 0 } }))
     }
 
     const removeItem = (id) => {
@@ -53,7 +53,7 @@ const OrderModal = (props) => {
         setModalAddOrder(false);
         setId("")
         const id = Date.now();
-        setProduct({ [id]: { _id: id, productName: "", quantity: "", sellPrice: "", total: "" } })
+        setProduct({ [id]: { id: id, productName: "", quantity: "", sellPrice: "", total: "" } })
         setIsEdit(false);
     };
 
@@ -117,7 +117,7 @@ const OrderModal = (props) => {
                     <ScrollView style={styles.scrollview}>
                         {Object.values(products)?.map(item => {
                             return (
-                                <View key={item._id}>
+                                <View key={item.id}>
                                     <View style={styles.productAndMinus} >
                                         <Dropdown
                                             style={styles.dropdown}
@@ -130,10 +130,10 @@ const OrderModal = (props) => {
                                             valueField="productName"
                                             value={item.productName}
                                             placeholder="Select product"
-                                            onChange={(e) => handleChange(item._id, "productName", e.productName)}
+                                            onChange={(e) => handleChange(item.id, "productName", e.productName)}
 
                                         />
-                                        <Pressable style={styles.minus} onPress={() => removeItem(item._id)}>
+                                        <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
                                             <Ionicons name="minus" size={20} color={'white'} />
                                         </Pressable>
                                     </View>
@@ -144,7 +144,7 @@ const OrderModal = (props) => {
                                             inputMode="numeric"
                                             placeholder="Quantity"
                                             value={String(item.quantity)}
-                                            onChangeText={(e) => handleChange(item._id, "quantity", Number(e))}
+                                            onChangeText={(e) => handleChange(item.id, "quantity", Number(e))}
                                         />
                                         <TextInput
                                             name="sellPrice"
@@ -152,7 +152,7 @@ const OrderModal = (props) => {
                                             inputMode="numeric"
                                             placeholder="Price"
                                             value={String(item.sellPrice)}
-                                            onChangeText={(e) => handleChange(item._id, "sellPrice", Number(e))}
+                                            onChangeText={(e) => handleChange(item.id, "sellPrice", Number(e))}
                                         />
                                         <TextInput
                                             name="total"

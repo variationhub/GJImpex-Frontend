@@ -4,10 +4,10 @@ import JSON from '../url.json'
 const BASE_URL = JSON.BASE_URL; // Replace this with your actual backend URL
 
 const AuthService = {
-  login: async (phone, password) => {
+  login: async (mobileNumber, password) => {
     try {
       const response = await axios.post(`${BASE_URL}/login`, {
-        phone,
+        mobileNumber,
         password,
       });
 

@@ -13,7 +13,8 @@ import TransportScreen from "../screens/TransportScreen";
 import PartyScreen from "../screens/PartyScreen";
 import OverviewScreen from "../screens/OverviewScreen";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSlice } from "../slices/login";
 
@@ -33,13 +34,16 @@ const AppStack = ({ token }) => {
     useEffect(() => {
         if (token) {
             dispatch(loginSlice.actions.updateUser(true))
+            console.log(token);
+        const decoded = jwtDecode(token);
+            dispatch(loginSlice.actions.setData(decoded || {}))
         }
-    }, []);
+    }, [token]);
 
     if (user) {
         // User is authenticated, show the drawer navigator
         return (
-            <Drawer.Navigator initialRouteName="Products" drawerContent={(props) => <CustomDrawer {...props} />}
+            <Drawer.Navigator initialRouteName="USERS DETAILS" drawerContent={(props) => <CustomDrawer {...props} />}
                 screenOptions={{
 
                     drawerActiveTintColor: '#fff',

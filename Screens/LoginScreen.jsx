@@ -5,6 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthService from '../services/AuthService';
 import { loginSlice } from '../slices/login';
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob";
 
 export default function LoginScreen() {
   const [contactNo, setContactNo] = useState('9328677043');
@@ -20,7 +22,9 @@ export default function LoginScreen() {
       const userData = await AuthService.login(contactNo, password);
       if (userData) {
         await AsyncStorage.setItem('token', userData.token);
+        const decoded = jwtDecode(userData.token);
         dispatch(loginSlice.actions.updateUser(true));
+        dispatch(loginSlice.actions.setData(decoded));
       } else {
         setError(true);
         setTimeout(() => {
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   formContainer: {
-    gap: 10,
+    gap: 15,
     width: '90%',
     display: 'flex',
     justifyContent: 'center',
@@ -118,10 +122,10 @@ const styles = StyleSheet.create({
   loginButton: {
     width: '50%',
     marginTop: '10%',
-    // backgroundColor: '#FB611A',
-    backgroundColor: '#5F4521',
+    backgroundColor: '#FB611A',
+    // backgroundColor: '#5F4521',
     paddingVertical: 15,
-    borderRadius: 50,
+    borderRadius: 10,
     alignItems: 'center',
   },
   loginButtonText: {
