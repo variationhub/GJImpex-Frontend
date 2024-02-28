@@ -5,6 +5,7 @@ import { fetchUserData } from "../slices/user";
 import UserData from "../components/UserData";
 import UserModal from "../modals/UserModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const UserScreen = () => {
     const [userData, setUserData] = useState({
@@ -47,7 +48,10 @@ const UserScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
+        <LinearGradient
+        colors={['#ffdfb2', '#fbcca2', '#f6b896', '#f0a48d', '#e89187']}
+        style={styles.backgroundImage}>
+        {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
@@ -65,7 +69,8 @@ const UserScreen = () => {
                 <UserModal userModalData={{ modalAddUser, userData, isEdit, id }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
             }
            
-        </ImageBackground>
+        {/* </ImageBackground> */}
+        </LinearGradient>
     );
 };
 
@@ -75,7 +80,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        paddingTop: 10
+        paddingTop: 10,
+        backgroundImage: 'linear-gradient(to bottom, #ffdfb2, #fbcca2, #f6b896, #f0a48d, #e89187)'
+
     },
     backgroundImage: {
         height: '100%',

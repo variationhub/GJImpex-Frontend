@@ -7,7 +7,7 @@ import { deleteUserData } from "../slices/user";
 const UserData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
 
-    const { name, role, mobileNumber, id } = props.data;
+    const { name, role, mobileNumber, nickName, id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -28,18 +28,27 @@ const UserData = (props) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.name} numberOfLines={1}>{name}</Text>
+
             <Text style={styles.role}>{role}</Text>
-            <Text style={styles.mobileNumber}>{mobileNumber}</Text>
-            <View style={styles.icons}>
-            <Pressable style={styles.icon} onPress={()=>props.editUser(id)}>
-                <Ionicons name="marker" size={24} color={'#5F4521'} />
-            </Pressable>
-            <Pressable style={styles.icon} onPress={deleteHandler}>
-                <Ionicons name="delete" size={24} color={'#5F4521'} />
-            </Pressable>
+            <View style={styles.parent}>
+                <View style={styles.first}>
+                    <Text style={styles.nickname} >{nickName}</Text>
+                </View>
+                <View style={styles.middle}>
+                    <Text style={styles.name} numberOfLines={1}>{name}</Text>
+                    <Text style={styles.mobileNumber}>{mobileNumber}</Text>
+                </View>
+                <View style={styles.icons}>
+                    <Pressable style={styles.icon} onPress={() => props.editUser(id)}>
+                        <Ionicons name="marker" size={24} color={'#5F4521'} />
+                    </Pressable>
+                    <Pressable style={styles.icon} onPress={deleteHandler}>
+                        <Ionicons name="delete" size={24} color={'#5F4521'} />
+                    </Pressable>
+                </View>
             </View>
         </View>
+
     );
 };
 
@@ -47,14 +56,32 @@ export default UserData;
 
 const styles = StyleSheet.create({
     container: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    parent: {
         width: '95%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         backgroundColor: "#f0f0f0",
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 4,
+        borderRadius: 10,
         borderWidth: 1,
+        padding: 10,
         borderColor: "#ccc",
-        position: 'relative'
+        position: 'relative',
+        // Shadow for iOS
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        // Shadow for Android
+        elevation: 6,
     },
     name: {
         fontSize: 15,
@@ -77,15 +104,30 @@ const styles = StyleSheet.create({
         color: "#666",
     },
     icons: {
-        position: 'absolute',
-        right: 0,
-        bottom: 6,
         flexDirection: 'row',
-        gap: 0,
         color: '#5f4521',
+        flex: 0
     },
     icon: {
         padding: 10,
-        paddingBottom: 2
     },
+    first: {
+        flex: 0,
+        borderRadius: 50,
+        height: 40,
+        width:40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: '7%',
+        backgroundColor: 'rgba(251, 97, 26, 0.2)'
+    },
+    middle: {
+        flex: 1,
+    },
+    nickname: {
+        fontWeight: 'bold',
+        color: '#FB611A',
+        fontSize: 13,
+    }
 });

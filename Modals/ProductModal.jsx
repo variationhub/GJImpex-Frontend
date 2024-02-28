@@ -16,8 +16,11 @@ const ProductModal = (props) => {
     const closeForm = () => {
         setProductData({
             productName: "",
-            description: "",
-            stock: ""
+            productType: "",
+            stock: "",
+            minStock: "",
+            price: ""
+            
         })
         setModalAddProduct(false);
         setId("")
@@ -36,8 +39,10 @@ const ProductModal = (props) => {
         if (isEdit) {
             resposne = await dispatch(updateProductData(id, {
                 productName: productData.productName.trim(),
-                description: productData.description.trim(),
-                stock: productData.stock
+                productType: productData.productType.trim(),
+                stock: productData.stock,
+                minStock: productData.minStock,
+                price: productData.price
             }))
         }
         else {
@@ -67,11 +72,11 @@ const ProductModal = (props) => {
                         onChangeText={(e) => setProductData(prev => ({ ...prev, productName: e }))}
                     />
                     <TextInput
-                        name="description"
+                        name="productType"
                         style={styles.input}
-                        placeholder="Enter description"
-                        value={productData.description}
-                        onChangeText={(e) => setProductData(prev => ({ ...prev, description: e }))}
+                        placeholder="Enter productType"
+                        value={productData.productType}
+                        onChangeText={(e) => setProductData(prev => ({ ...prev, productType: e }))}
                     />
                     <TextInput
                         name="stock"
@@ -80,7 +85,22 @@ const ProductModal = (props) => {
                         placeholder="Enter stock"
                         value={String(productData.stock)}
                         onChangeText={(e) => setProductData(prev => ({ ...prev, stock: e }))}
-
+                    />
+                    <TextInput
+                        name="minStock"
+                        style={styles.input}
+                        inputMode="numeric"
+                        placeholder="Enter minimum stock"
+                        value={String(productData.minStock)}
+                        onChangeText={(e) => setProductData(prev => ({ ...prev, minStock: e }))}
+                    />
+                    <TextInput
+                        name="price"
+                        style={styles.input}
+                        inputMode="numeric"
+                        placeholder="Enter price"
+                        value={String(productData.price)}
+                        onChangeText={(e) => setProductData(prev => ({ ...prev, price: e }))}
                     />
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" /> :
