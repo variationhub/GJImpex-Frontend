@@ -54,7 +54,7 @@ const UserScreen = () => {
                 <ScrollView>
 
                     <View style={styles.container}>
-                        {data.map(item => <UserData key={item.id} data={item} editUser={editUser} />)}
+                        {data.map((item, index) => <UserData key={item.id} data={{...item, index}} editUser={editUser} />)}
                     </View>
                 </ScrollView>
             }
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        paddingTop: 10
+        paddingTop: 10,
     },
     backgroundImage: {
         height: '100%',

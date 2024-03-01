@@ -3,11 +3,12 @@ import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
 import { deleteUserData } from "../slices/user";
+import CSS from '../styles/gloable.json'
 
 const UserData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
 
-    const { name, role, mobileNumber, id } = props.data;
+    const { name, role, nickName, mobileNumber, id, index } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -27,17 +28,25 @@ const UserData = (props) => {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.name} numberOfLines={1}>{name}</Text>
-            <Text style={styles.role}>{role}</Text>
+        <View style={[styles.container, CSS.card]}>
+            <View style={styles.firstLine}>
+                <View style={{display:"flex", flexDirection:"row", alignItems:"center"}}>
+                    <View style={styles.index}>
+                        <Text>{index + 1}</Text>
+                    </View>
+                    <Text style={styles.name} numberOfLines={1}>{name} </Text>
+                </View>
+                <Text style={styles.nickName}>{nickName}</Text>
+            </View>
+            {/* <Text style={styles.role}>{role}</Text> */}
             <Text style={styles.mobileNumber}>{mobileNumber}</Text>
             <View style={styles.icons}>
-            <Pressable style={styles.icon} onPress={()=>props.editUser(id)}>
-                <Ionicons name="marker" size={24} color={'#5F4521'} />
-            </Pressable>
-            <Pressable style={styles.icon} onPress={deleteHandler}>
-                <Ionicons name="delete" size={24} color={'#5F4521'} />
-            </Pressable>
+                <Pressable style={styles.icon} onPress={() => props.editUser(id)}>
+                    <Ionicons name="marker" size={24} color={CSS.secondaryColor} />
+                </Pressable>
+                <Pressable style={styles.icon} onPress={deleteHandler}>
+                    <Ionicons name="delete" size={24} color={CSS.secondaryColor} />
+                </Pressable>
             </View>
         </View>
     );
@@ -47,20 +56,38 @@ export default UserData;
 
 const styles = StyleSheet.create({
     container: {
-        width: '95%',
-        backgroundColor: "#f0f0f0",
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 4,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        position: 'relative'
+        backgroundColor: CSS.orangeCardColor,
+    },
+    firstLine: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 5,
+        paddingBottom: 10,
+        justifyContent:"space-between"
+    },
+    index: {
+        width: 30,
+        height: 30,
+        borderRadius: 50,
+        backgroundColor: "rgba(255, 255, 255, 0.5)",
+        justifyContent: "center",
+        alignItems: "center",
     },
     name: {
         fontSize: 15,
         fontWeight: "bold",
-        marginBottom: 5,
-        width: "75%"
+        marginLeft: 10,
+        color: CSS.secondaryColor,
+    },
+    nickName: {
+        borderRadius: 50,
+        backgroundColor: "rgba(0,0,0,0.3)",
+        opacity: 1,
+        fontSize: 12,
+        padding: 4,
+        paddingHorizontal: 8,
+        color: "white",
     },
     role: {
         fontSize: 12,
@@ -82,7 +109,7 @@ const styles = StyleSheet.create({
         bottom: 6,
         flexDirection: 'row',
         gap: 0,
-        color: '#5f4521',
+        color: CSS.secondaryColor,
     },
     icon: {
         padding: 10,

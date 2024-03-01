@@ -7,7 +7,7 @@ import { loginSlice } from '../slices/login';
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
-
+import CSS from '../styles/gloable.json'
 export default function LoginScreen() {
   const [contactNo, setContactNo] = useState('9328677043');
   const [password, setPassword] = useState('GJ@2024');
@@ -122,8 +122,7 @@ const styles = StyleSheet.create({
   loginButton: {
     width: '50%',
     marginTop: '10%',
-    backgroundColor: '#FB611A',
-    // backgroundColor: '#5F4521',
+    backgroundColor: CSS.primaryColor,
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',

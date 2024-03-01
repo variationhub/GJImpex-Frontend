@@ -34,22 +34,20 @@ const AppStack = ({ token }) => {
     useEffect(() => {
         if (token) {
             dispatch(loginSlice.actions.updateUser(true))
-            console.log(token);
-        const decoded = jwtDecode(token);
+            const decoded = jwtDecode(token);
             dispatch(loginSlice.actions.setData(decoded || {}))
         }
     }, [token]);
 
     if (user) {
-        // User is authenticated, show the drawer navigator
         return (
             <Drawer.Navigator initialRouteName="USERS DETAILS" drawerContent={(props) => <CustomDrawer {...props} />}
                 screenOptions={{
 
                     drawerActiveTintColor: '#fff',
                     drawerActiveBackgroundColor: "#FB611A",
-                }}// Replace with your desired background color
-            >   
+                }}
+            >
                 <Drawer.Screen
                     name="OVERVIEW"
                     component={OverviewScreen}
@@ -99,7 +97,6 @@ const AppStack = ({ token }) => {
             </Drawer.Navigator>
         );
     } else {
-        // User is not authenticated, show the login stack navigator
         return (
             <Stack.Navigator>
                 <Stack.Screen

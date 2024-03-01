@@ -1,0 +1,13 @@
+{
+    "card":{
+        "width":"95%",
+        "marginBottom": 10,
+        "borderRadius": 4,
+        "borderWidth": 1,
+        "borderColor": "#ccc",
+        "position": "relative"
+    },
+    "primaryColor":"#FB611A",
+    "secondaryColor":"#5F4521",
+    "orangeCardColor":"#CCCCCC"
+}
