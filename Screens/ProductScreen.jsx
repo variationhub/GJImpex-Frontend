@@ -1,18 +1,18 @@
-import { StyleSheet, View, Text, SafeAreaView, VirtualizedList, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductData } from "../slices/product";
 import ProductData from "../components/ProductData";
 import ProductModal from "../modals/ProductModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-import { productName } from "expo-device";
-import Card from "../components/card";
 
 const ProductScreen = () => {
     const [productData, setProductData] = useState({
-        productName: "",
-        description: "",
+        name: "",
+        productType: "",
         stock: "",
+        minimumStock: "",
+        purchasePrice: "",
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.product)
@@ -27,15 +27,18 @@ const ProductScreen = () => {
     useEffect(() => {
         dispatch(fetchProductData())
     }, [])
+
     const image = require('../assets/logo.png');
 
     const editProduct = (id) => {
         const value = data.find(value => value.id === id)
-
         setProductData({
             productName: value.productName,
-            description: value.description,
-            stock: value.stock
+            productType: value.productType,
+            stock: value.stock,
+            minStock: value.minStock,
+            price: value.price,
+
         })
         setIsEdit(true)
         setId(id)
@@ -48,17 +51,9 @@ const ProductScreen = () => {
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 <ScrollView>
+
                     <View style={styles.container}>
-                        {/* {data.map(item => <ProductData key={item.id} data={item} editProduct={editProduct} />)} */}
-                        {data.map(item => <Card 
-                            data={{
-                                upperleft: item.productName,
-                                upperright: item.stock,
-                                bottomleft: item.description,
-                            }} 
-                            fn={{}} 
-                        ></Card>)}
-                        
+                        {data.map(item => <ProductData key={item.id} data={item} editProduct={editProduct} />)}
                     </View>
                 </ScrollView>
             }
@@ -68,7 +63,7 @@ const ProductScreen = () => {
             {modalAddProduct &&
                 <ProductModal productModalData={{ modalAddProduct, productData, isEdit, id }} productModalFn={{ setModalAddProduct, setProductData, setIsEdit, setId }} />
             }
-
+           
         </ImageBackground>
     );
 };
@@ -102,11 +97,11 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 5,
     },
-    loader:{
+    loader: {
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize:"48px"
+        fontSize: "48px"
     }
 });

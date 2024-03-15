@@ -1,34 +1,42 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserData, updateUserData } from '../slices/user';
 import { useDispatch } from 'react-redux';
 import { Dropdown } from 'react-native-element-dropdown';
-
-
-const data = [
-    { label: 'Admin', value: 'Admin' },
-    { label: 'Sales', value: 'Sales' },
-    { label: 'Accountant', value: 'Accountant' },
-    { label: 'Dispatch', value: 'Dispatcher'},
-    { label: 'Production', value: 'Production'},
-    { label: 'Other', value: 'Other'}
-];
+import { Input, Layout, Select, SelectItem } from '@ui-kitten/components';
 
 const UserModal = (props) => {
 
-    const { modalAddUser, userData, isEdit, id } = props.userModalData;
+    const { modalAddUser, userData, isEdit, id, userRoles } = props.userModalData;
     const { setModalAddUser, setUserData, setIsEdit, setId } = props.userModalFn;
 
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
+    const [userRef, setUserRef] = useState({
+        name: useRef(),
+        nickName: useRef(),
+        mobileNumber: useRef(),
+        email: useRef(),
+        password: useRef(),
+        role: useRef(),
+    })
+
+    const [error, setError] = useState({
+        name: false,
+        role: false,
+        nickName: false,
+        mobileNumber: false,
+        email: false,
+        password: false
+    });
 
     const closeForm = () => {
         setUserData({
             name: "",
-            role: "",
+            role: 0,
             nickName: "",
             mobileNumber: "",
             email: "",
@@ -39,13 +47,30 @@ const UserModal = (props) => {
         setId('');
     }
 
+    const checkAllFieldfilled = () => {
+        let button = false;
+        Object.keys(userData).forEach(key => {
+            if (!userData[key]) {
+                setError((prev) => ({ ...prev, [key]: true }))
+                button = true;
+            }
+        })
+
+        return button;
+    }
+
     const saveForm = async (isEdit) => {
+
+        if (checkAllFieldfilled()) {
+            return;
+        }
+
         let response = false;
         setLoading(true)
         if (isEdit) {
             response = await dispatch(updateUserData(id, {
                 name: userData.name.trim(),
-                role: userData.role,
+                role: userRoles[userData.role],
                 mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
                 nickName: userData.nickName.trim()
@@ -54,7 +79,7 @@ const UserModal = (props) => {
         else {
             response = await dispatch(createUserData({
                 name: userData.name.trim(),
-                role: userData.role,
+                role: userRoles[userData.role],
                 password: userData.password.trim(),
                 mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
@@ -67,7 +92,6 @@ const UserModal = (props) => {
         setLoading(false);
     };
 
-    const [isFocus, setIsFocus] = useState(false);
 
     return (
         <Modal
@@ -79,63 +103,141 @@ const UserModal = (props) => {
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} User</Text>
-                    <TextInput
-                        name="name"
-                        style={styles.input}
-                        placeholder="Enter full name"
+
+                    <Input
                         value={userData.name}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, name: e }))}
-                    />
-                    <TextInput
-                        name="mobileNumber"
-                        inputMode="numeric"
+                        label='User name'
+                        name="userName"
+                        status={error.name ? "danger" : "basic"}
+                        placeholder='Ex. John Smith'
                         style={styles.input}
-                        placeholder="Enter mobile number"
-                        value={userData.mobileNumber}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, mobileNumber: e }))}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    name: false
+                                }))
+                            } setUserData(prev => ({ ...prev, name: e }))
+                        }}
+                        ref={userRef.name}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            userRef.nickName.current.focus();
+                        }}
+                        blurOnSubmit={false}
                     />
-                    <Dropdown
-                        style={[styles.dropdown, isFocus && { borderColor: 'gray' }]}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
-                        inputSearchStyle={styles.inputSearchStyle}
-                        iconStyle={styles.iconStyle}
-                        data={data}
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
-                        placeholder={!isFocus ? 'Select role' : '...'}
-                        value={userData.role}
-                        onFocus={() => setIsFocus(true)}
-                        onBlur={() => setIsFocus(false)}
-                        onChange={(e) => setUserData(prev => ({ ...prev, role: e.value }))}
-                    />
-                    <TextInput
-                        name="email"
-                        style={styles.input}
-                        placeholder="Enter email"
-                        value={userData.email}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, email: e }))}
 
-                    />
-                    <TextInput
-                        name="password"
-                        secureTextEntry={isEdit ? true : false}
-                        style={styles.input}
-                        editable={isEdit ? false : true}
-                        placeholder="Enter password"
-                        value={userData.password}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, password: e }))}
-
-                    />
-                    <TextInput
-                        name="nickName"
-                        style={styles.input}
-                        placeholder="Enter Nickname"
+                    <Input
                         value={userData.nickName}
-                        onChangeText={(e) => setUserData(prev => ({ ...prev, nickName: e }))}
-
+                        name="nickName"
+                        label='Nick Name'
+                        status={error.nickName ? "danger" : "basic"}
+                        placeholder='Ex. JS'
+                        style={styles.input}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    nickName: false
+                                }))
+                            } setUserData(prev => ({ ...prev, nickName: e }))
+                        }}
+                        ref={userRef.nickName}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            userRef.mobileNumber.current.focus();
+                        }}
+                        blurOnSubmit={false}
                     />
+
+                    <Input
+                        value={userData.mobileNumber}
+                        name="mobileNumber"
+                        label='Contact Number'
+                        status={error.mobileNumber ? "danger" : "basic"}
+                        placeholder='Ex. 1234567890'
+                        style={styles.input}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    mobileNumber: false
+                                }))
+                            } setUserData(prev => ({ ...prev, mobileNumber: e }))
+                        }}
+                        ref={userRef.mobileNumber}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            userRef.email.current.focus();
+                        }}
+                        blurOnSubmit={false}
+                    />
+
+
+                    <Input
+                        value={userData.email}
+                        name="email"
+                        label='Email Id'
+                        status={error.email ? "danger" : "basic"}
+                        placeholder='Ex. john@gmail.com'
+                        style={styles.input}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    email: false
+                                }))
+                            } setUserData(prev => ({ ...prev, email: e }))
+                        }}
+                        ref={userRef.email}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            userRef.password.current.focus();
+                        }}
+                        blurOnSubmit={false}
+                    />
+
+                    {!isEdit &&
+                        <Input
+                            value={userData.password}
+                            name="password"
+                            label='Password'
+                            status={error.password ? "danger" : "basic"}
+                            placeholder='Ex. JOhn@5m1th'
+                            style={styles.input}
+                            secureTextEntry={true}
+                            onChangeText={(e) => {
+                                if (e.length > 2) {
+                                    setError((prev) => ({
+                                        ...prev,
+                                        password: false
+                                    }))
+                                } setUserData(prev => ({ ...prev, password: e }))
+                            }}
+                            ref={userRef.password}
+                            returnKeyType='next'
+                            onSubmitEditing={() => {
+                                userRef.role.current.focus();
+                            }}
+                            blurOnSubmit={false}
+                        />
+                    }
+
+                    <Layout
+                        style={styles.selection}
+                        level='1'
+                    >
+                        <Select
+                            label='Select Role'
+                            placeholder="Ex. Admin"
+                            value={userRoles[userData.row]}
+                            selectedIndex={userData.role}
+                            ref={userRef.role}
+                            onSelect={index => setUserData(prev => ({ ...prev, role: index }))}
+                        >
+                            {userRoles.map((value) => <SelectItem title={value} key={value} />)}
+                        </Select>
+                    </Layout>
 
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" />
@@ -190,11 +292,8 @@ const styles = StyleSheet.create({
         color: '#5F4521',
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 10,
+        backgroundColor: 'white',
+        marginVertical: 5
     },
     saveButton: {
         backgroundColor: '#5F4521',
@@ -211,21 +310,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 16,
     },
-    dropdown: {
-        height: 40,
-        marginBottom: 10,
-        borderColor: '#808080',
-        borderWidth: 1,
-        borderRadius: 0,
-        paddingHorizontal: 8,
-    },
-    placeholderStyle: {
-        fontSize: 15,
-        color: 'gray',
-        fontFamily: ''
-    },
-    selectedTextStyle: {
-        fontSize: 15,
-    },
-
+    selection: {
+        backgroundColor: 'white',
+        marginVertical: 5
+    }
 });

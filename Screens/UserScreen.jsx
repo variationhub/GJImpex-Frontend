@@ -5,11 +5,15 @@ import { fetchUserData } from "../slices/user";
 import UserData from "../components/UserData";
 import UserModal from "../modals/UserModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
+
+const userRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', 'Other'];
+
 
 const UserScreen = () => {
     const [userData, setUserData] = useState({
         name: "",
-        role: "",
+        role: 0,
         mobileNumber: "",
         email: "",
         password: "",
@@ -35,7 +39,7 @@ const UserScreen = () => {
         const value = data.find(value => value.id === id)
         setUserData({
             name: value.name,
-            role: value.role,
+            role: userRoles.findIndex(value.role),
             mobileNumber: value.mobileNumber,
             email: value.email,
             password: "password",
@@ -47,7 +51,10 @@ const UserScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
+        <LinearGradient
+        colors={['#ffdfb2', '#fbcca2', '#f6b896', '#f0a48d', '#e89187']}
+        style={styles.backgroundImage}>
+        {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
@@ -62,10 +69,11 @@ const UserScreen = () => {
                 <Ionicons name="plus" size={30} color={'white'} />
             </Pressable>
             {modalAddUser &&
-                <UserModal userModalData={{ modalAddUser, userData, isEdit, id }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
+                <UserModal userModalData={{ modalAddUser, userData, isEdit, id, userRoles }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
             }
            
-        </ImageBackground>
+        {/* </ImageBackground> */}
+        </LinearGradient>
     );
 };
 
@@ -76,6 +84,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         paddingTop: 10,
+        backgroundImage: 'linear-gradient(to bottom, #ffdfb2, #fbcca2, #f6b896, #f0a48d, #e89187)'
+
     },
     backgroundImage: {
         height: '100%',
