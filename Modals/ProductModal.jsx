@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
+import React, { useRef, useState } from 'react'
+import { StyleSheet, View, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
 import { createProductData, updateProductData } from '../slices/product';
 import { modelSlice } from '../slices/model';
+import { Input, Text } from '@ui-kitten/components';
 
 const ProductModal = (props) => {
 
@@ -13,31 +14,67 @@ const ProductModal = (props) => {
     const [loading, setLoading] = useState(false);
 
     const dispatch = useDispatch()
+
+    const productName = useRef();
+    const productType = useRef();
+    const stock = useRef();
+    const minStock = useRef();
+    const price = useRef();
+
+    const [error, setError] = useState({
+        productName: false,
+        stock: false,
+        minStock: false,
+        price: false
+    });
+
     const closeForm = () => {
         setProductData({
             productName: "",
-            description: "",
-            stock: ""
+            productType: "",
+            stock: "",
+            minStock: "",
+            price: ""
+
         })
         setModalAddProduct(false);
         setId("")
         setIsEdit(false);
     }
 
+    const checkAllFieldfilled = () => {
+        let button = false;
+        Object.keys(productData).forEach(key => {
+            if (!productData[key]) {
+                setError((prev) => ({ ...prev, [key]: true }))
+                button = true;
+            }
+        })
+
+        return button;
+    }
+
     const saveForm = async (isEdit) => {
+
+        if (checkAllFieldfilled()) {
+            return;
+        }
+
         let resposne = false;
         setLoading(true);
 
-        if(!productData.productName.trim()){
-            dispatch(modelSlice.actions.setModel({visible:true, message:"Product name is required"}));
+        if (!productData.productName.trim()) {
+            dispatch(modelSlice.actions.setModel({ visible: true, message: "Product name is required" }));
             setLoading(false);
             return;
         }
         if (isEdit) {
             resposne = await dispatch(updateProductData(id, {
                 productName: productData.productName.trim(),
-                description: productData.description.trim(),
-                stock: productData.stock
+                productType: productData.productType.trim(),
+                stock: productData.stock,
+                minStock: productData.minStock,
+                price: productData.price
             }))
         }
         else {
@@ -59,32 +96,110 @@ const ProductModal = (props) => {
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} Product</Text>
-                    <TextInput
-                        name="productName"
-                        style={styles.input}
-                        placeholder="Enter full name"
+                    <Input
                         value={productData.productName}
-                        onChangeText={(e) => setProductData(prev => ({ ...prev, productName: e }))}
-                    />
-                    <TextInput
-                        name="description"
+                        label='Product Name'
+                        status={error.productName ? "danger" : "basic"}
+                        placeholder='Ex. loadcell'
                         style={styles.input}
-                        placeholder="Enter description"
-                        value={productData.description}
-                        onChangeText={(e) => setProductData(prev => ({ ...prev, description: e }))}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    productName: false
+                                }))
+                            } setProductData(prev => ({ ...prev, productName: e }))
+                        }}
+                        ref={productName}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            productType.current.focus();
+                        }}
+                        blurOnSubmit={false}
                     />
-                    <TextInput
-                        name="stock"
-                        style={styles.input}
-                        inputMode="numeric"
-                        placeholder="Enter stock"
-                        value={String(productData.stock)}
-                        onChangeText={(e) => setProductData(prev => ({ ...prev, stock: e }))}
 
+                    <Input
+                        value={productData.productType}
+                        label='Product Description'
+                        placeholder='Ex. 200Kg'
+                        style={styles.input}
+                        onChangeText={(e) => setProductData(prev => ({ ...prev, productType: e }))}
+                        ref={productType}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            stock.current.focus();
+                        }}
+                        blurOnSubmit={false}
                     />
+
+                    <Input
+                        value={String(productData.stock)}
+                        label='Stock'
+                        placeholder='Ex. 50'
+                        style={styles.input}
+                        status={error.stock ? "danger" : "basic"}
+                        inputMode='numeric'
+                        onChangeText={(e) => {
+                            if (e) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    stock: false
+                                }))
+                            }
+                            setProductData(prev => ({ ...prev, stock: Number(e) }))
+                        }}
+                        ref={stock}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            minStock.current.focus();
+                        }}
+                        blurOnSubmit={false}
+                    />
+
+                    <Input
+                        value={String(productData.minStock)}
+                        label='Minimum Stock'
+                        placeholder='Ex. 50'
+                        style={styles.input}
+                        status={error.minStock ? "danger" : "basic"}
+                        inputMode='numeric'
+                        onChangeText={(e) => {
+                            if (e) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    minStock: false
+                                }))
+                            }
+                            setProductData(prev => ({ ...prev, minStock: Number(e) }))
+                        }}
+                        ref={minStock}
+                        returnKeyType='next'
+                        onSubmitEditing={() => {
+                            price.current.focus();
+                        }}
+                        blurOnSubmit={false}
+                    />
+                    <Input
+                        value={String(productData.price)}
+                        label='Purchase Price'
+                        placeholder='Ex. 50'
+                        status={error.price ? "danger" : "basic"}
+                        style={styles.input}
+                        inputMode='numeric'
+                        onChangeText={(e) => {
+                            if (e) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    price: false
+                                }))
+                            } setProductData(prev => ({ ...prev, price: Number(e) }))
+                        }}
+                        ref={price}
+                    />
+
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" /> :
-                            <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                            <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Add"}</Text>
                         }
                     </Pressable>
                     <Pressable style={styles.closeForm} onPress={closeForm}>
@@ -133,14 +248,13 @@ const styles = StyleSheet.create({
         color: '#5F4521',
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 10,
+        backgroundColor: 'white',
+        marginVertical: 5
     },
     saveButton: {
         backgroundColor: '#5F4521',
+        borderWidth: 1,
+        borderColor: '#5F4521',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',

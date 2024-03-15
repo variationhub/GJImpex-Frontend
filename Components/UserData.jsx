@@ -49,6 +49,7 @@ const UserData = (props) => {
                 </Pressable>
             </View>
         </View>
+
     );
 };
 
@@ -104,15 +105,30 @@ const styles = StyleSheet.create({
         color: "#666",
     },
     icons: {
-        position: 'absolute',
-        right: 0,
-        bottom: 6,
         flexDirection: 'row',
         gap: 0,
         color: CSS.secondaryColor,
     },
     icon: {
         padding: 10,
-        paddingBottom: 2
     },
+    first: {
+        flex: 0,
+        borderRadius: 50,
+        height: 40,
+        width:40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: '7%',
+        backgroundColor: 'rgba(251, 97, 26, 0.2)'
+    },
+    middle: {
+        flex: 1,
+    },
+    nickname: {
+        fontWeight: 'bold',
+        color: '#FB611A',
+        fontSize: 13,
+    }
 });

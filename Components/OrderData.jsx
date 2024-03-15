@@ -84,7 +84,7 @@ const RenderCheckboxModal = (props) => {
 const OrderData = (props) => {
     const [orderId, setOrderId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
-    const { partyName, status, price, dispatched, billed, LR, transport, gst, updatedDate, orderChanged, id } = props.data;
+    const { party, status, dispatched, billed, LR, id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -107,11 +107,12 @@ const OrderData = (props) => {
         setShowModalCheckboxes(!showModalCheckboxes);
     };
 
+    console.log(party)
     return (
         <>
             <View style={styles.container}>
-                <Text style={styles.name} numberOfLines={1}>{partyName}</Text>
-                <Text style={styles.transport}>{transport}</Text>
+                <Text style={styles.name} numberOfLines={1}>{party?.partyName}</Text>
+                <Text style={styles.transport}>{party?.mobileNumber}</Text>
                 <View style={styles.inline}>
                     <Text style={styles.status}>{status}</Text>
                     <View style={styles.icons}>

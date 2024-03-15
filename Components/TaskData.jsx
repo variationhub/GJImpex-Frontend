@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, Pressable, Alert, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from 'react-redux';
-import { deleteProductData } from "../slices/product";
+import { deleteTaskData } from "../slices/task";
 
-const ProductData = (props) => {
+const TaskData = (props) => {
 
-    const { productName, productType, stock, id } = props.data;
+    const { topic, description, type, id } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -16,7 +16,7 @@ const ProductData = (props) => {
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },
-            { text: 'Delete', onPress: () => dispatch(deleteProductData(id)) },
+            { text: 'Delete', onPress: () => dispatch(deleteTaskData(id)) },
 
         ], {
             alertContainerStyle: styles.alertContainer,
@@ -27,11 +27,11 @@ const ProductData = (props) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.name} numberOfLines={1}>{productName}</Text>
+            <Text style={styles.name} numberOfLines={1}>{topic}</Text>
             <View style={styles.desc}>
-                <Text style={styles.productType}>{productType}</Text>
+                <Text style={styles.taskType} numberOfLines={2}>{description}</Text>
                 <View style={styles.icons}>
-                    <Pressable style={styles.icon} onPress={() => props.editProduct(id)}>
+                    <Pressable style={styles.icon} onPress={() => props.editTask(id)}>
                         <Ionicons name="marker" size={24} color={'#5F4521'} />
                     </Pressable>
                     <Pressable style={styles.icon} onPress={deleteHandler}>
@@ -39,12 +39,12 @@ const ProductData = (props) => {
                     </Pressable>
                 </View>
             </View>
-            <Pressable style={styles.stock}><Text style={styles.stockText}>{stock}</Text></Pressable>
+            <View style={styles.stock}><Text style={styles.stockText}>{type}</Text></View>
         </View>
     );
 };
 
-export default ProductData;
+export default TaskData;
 
 const styles = StyleSheet.create({
     container: {
@@ -78,9 +78,10 @@ const styles = StyleSheet.create({
         right: 10,
         top: 5,
     },
-    productType: {
+    taskType: {
         fontSize: 13,
         color: "#666",
+        width: '70%'
     },
     icons: {
         flexDirection: 'row',

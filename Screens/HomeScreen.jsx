@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderData } from "../slices/order";
@@ -59,11 +59,16 @@ const OrderScreen = () => {
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
+                data.length ?
                 <ScrollView>
                     <View style={styles.container}>
                         {data.map(item => <OrderData key={item.id} data={item} editOrder={editOrder} />)}
                     </View>
                 </ScrollView>
+                :
+                <View>
+                    <Text>No Oreder yet...</Text>
+                </View>
             }
             <Pressable style={styles.fab} onPress={openForm}>
                 <Ionicons name="plus" size={30} color={'white'} />
