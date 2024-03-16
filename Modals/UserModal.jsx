@@ -230,7 +230,7 @@ const UserModal = (props) => {
                         <Select
                             label='Select Role'
                             placeholder="Ex. Admin"
-                            value={userRoles[userData.row]}
+                            value={userRoles[userData.role]}
                             selectedIndex={userData.role}
                             ref={userRef.role}
                             onSelect={index => setUserData(prev => ({ ...prev, role: index }))}

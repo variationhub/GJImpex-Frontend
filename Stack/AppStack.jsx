@@ -41,7 +41,7 @@ const AppStack = ({ token }) => {
 
     if (user) {
         return (
-            <Drawer.Navigator initialRouteName="USERS DETAILS" drawerContent={(props) => <CustomDrawer {...props} />}
+            <Drawer.Navigator initialRouteName="CONFIRMED ORDERS" drawerContent={(props) => <CustomDrawer {...props} />}
                 screenOptions={{
 
                     drawerActiveTintColor: '#fff',

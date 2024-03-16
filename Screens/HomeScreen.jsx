@@ -8,11 +8,16 @@ import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
-        name: "",
-        transport: "",
+        party: "",
+        city:"",
+        mobile:"",
+        transports:[],
+        companyName: "",
         gst: "",
         gstPrice: "",
-        total: 0
+        totalPrice: 0,
+        confirmOrder: true,
+        narration: "",
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.order)
@@ -41,11 +46,13 @@ const OrderScreen = () => {
         }, {});
 
         setOrderData({
-            name: value.partyName,
-            transport: value.transport,
+            party: value.party,
+            companyName: value.companyName,
             gst: value.gst,
             gstPrice: value.gstPrice,
-            total: value.totalPrice
+            totalPrice: value.totalPrice,
+            confirmOrder: value.confirmOrder,
+            narration: value.narration,
         })
 
         setProduct(result);
@@ -60,15 +67,15 @@ const OrderScreen = () => {
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 data.length ?
-                <ScrollView>
-                    <View style={styles.container}>
-                        {data.map(item => <OrderData key={item.id} data={item} editOrder={editOrder} />)}
+                    <ScrollView>
+                        <View style={styles.container}>
+                            {data.map(item => <OrderData key={item.id} data={item} editOrder={editOrder} />)}
+                        </View>
+                    </ScrollView>
+                    :
+                    <View>
+                        <Text>No Oreder yet...</Text>
                     </View>
-                </ScrollView>
-                :
-                <View>
-                    <Text>No Oreder yet...</Text>
-                </View>
             }
             <Pressable style={styles.fab} onPress={openForm}>
                 <Ionicons name="plus" size={30} color={'white'} />
