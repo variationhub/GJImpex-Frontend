@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import loginReducer from '../slices/login'
 import userReducer from '../slices/user'
+import partyReducer from '../slices/party'
 import productReducer from '../slices/product'
 import taskReducer from '../slices/task'
 import orderReducer from '../slices/order'
@@ -16,7 +17,8 @@ const store = configureStore({
         order: orderReducer,
         model: modelReducer,
         transport: transportReducer,
-        task: taskReducer
+        task: taskReducer,
+        party: partyReducer
     }
 });
 
