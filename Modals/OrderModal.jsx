@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Modal, Pressable, TextInput, ScrollView, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrderData, updateOrderData } from '../slices/order';
 import { Dropdown } from 'react-native-element-dropdown';
 import { fetchProductData } from '../slices/product';
+import { Autocomplete, AutocompleteItem, Input } from '@ui-kitten/components';
+
+const filter = (item, query) => item.title.toLowerCase().includes(query.toLowerCase());
+
+const movies = [
+    { title: 'Star Wars' },
+    { title: 'Back to the Future' },
+    { title: 'The Matrix' },
+    { title: 'Inception' },
+    { title: 'Interstellar' },
+  ];
 
 
 const OrderModal = (props) => {
@@ -57,6 +68,15 @@ const OrderModal = (props) => {
         setIsEdit(false);
     };
 
+    const [error, setError] = useState({
+        name: false,
+        role: false,
+        nickName: false,
+        mobileNumber: false,
+        email: false,
+        password: false
+    });
+
     const saveForm = async (isEdit) => {
         const data = {
             partyName: orderData.name.trim(),
@@ -84,6 +104,32 @@ const OrderModal = (props) => {
         setLoading(false);
     };
 
+    const [value, setValue] = useState(null);
+    const [data1, setData1] = useState(movies);
+
+    const onSelect = useCallback((index) => {
+        setValue(data1[index].title);
+    }, [data1]);
+
+    const onChangeText = useCallback((query) => {
+        const data = movies.filter(item => filter(item, query))
+        if(data.length){
+            setValue(query);
+            setData1(data);
+        }
+        else{
+            setValue("");
+            setData1(data);
+        }
+    }, []);
+
+    const renderOption = (item, index) => (
+        <AutocompleteItem
+            key={index}
+            title={item.title}
+        />
+    );
+
     return (
         <Modal
             animationType="slide"
@@ -94,20 +140,45 @@ const OrderModal = (props) => {
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} Order</Text>
-                    <TextInput
+
+                    {/* <Input
+                        value={orderData.party}
+                        label='Select Party Name'
+                        name="party"
+                        placeholder='Ex. John Smith'
+                        style={styles.input}
+                        onChangeText={(e) => setOrderData(prev => ({ ...prev, party: e }))}
+                    /> */}
+
+                    <Autocomplete
+                        placeholder='Select Party Name'
+                        value={value}
+                        placement='inner top'
+                        onSelect={onSelect}
+                        onChangeText={onChangeText}
+                    >
+                        {data1.map(renderOption)}
+                    </Autocomplete>
+
+                    {/* <TextInput
                         name="name"
                         style={styles.input}
                         placeholder="Enter Party & City name"
                         value={orderData.name}
                         onChangeText={(e) => setOrderData(prev => ({ ...prev, name: e }))}
-                    />
-                    <TextInput
+                    /> */}
+
+                    <Text>Hello</Text>
+
+
+                    {/* <TextInput
                         name="transport"
                         style={styles.input}
                         placeholder="Enter transport name"
                         value={orderData.transport}
                         onChangeText={(e) => setOrderData(prev => ({ ...prev, transport: e }))}
-                    />
+                    /> */}
+
                     <View style={styles.addProduct}>
                         <Text style={styles.productTitle}>{isEdit ? "Edit" : "Add"} Product </Text>
                         <Pressable style={styles.plus} onPress={openForm}>
@@ -237,11 +308,8 @@ const styles = StyleSheet.create({
         color: '#5F4521',
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 10,
+        marginVertical: 5,
+        backgroundColor: 'white'
     },
     saveButton: {
         backgroundColor: '#5F4521',

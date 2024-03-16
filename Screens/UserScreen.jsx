@@ -39,7 +39,7 @@ const UserScreen = () => {
         const value = data.find(value => value.id === id)
         setUserData({
             name: value.name,
-            role: userRoles.findIndex(value.role),
+            role: userRoles.indexOf(value.role),
             mobileNumber: value.mobileNumber,
             email: value.email,
             password: "password",
