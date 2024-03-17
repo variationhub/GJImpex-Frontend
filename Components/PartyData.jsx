@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 50,
         backgroundColor: "rgba(240, 97, 26, 0.2)",
-
     },
     role: {
         fontSize: 12,

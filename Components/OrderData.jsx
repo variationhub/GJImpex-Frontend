@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Pressable, Alert, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useDispatch } from 'react-redux';
 import { deleteOrderData, updateStatus } from "../slices/order";
-import { CheckBox } from "@ui-kitten/components";
+import CSS from '../styles/gloable.json'
 import { Modal } from "react-native";
+import { CheckBox } from "@ui-kitten/components";
 
 const RenderCheckboxModal = (props) => {
-    const { setShowModalCheckboxes, id, setId, dispatched, billed, LR } = props
+    const { setShowModalCheckboxes, orderId, setId, dispatched, billed, LR } = props
     const [isBilledChecked, setIsBilledChecked] = useState(billed);
     const [isDispatchChecked, setIsDispatchChecked] = useState(dispatched);
     const [isLrSentChecked, setIsLrSentChecked] = useState(LR);
@@ -30,7 +33,7 @@ const RenderCheckboxModal = (props) => {
         if (value == 'LR' && isLrSentChecked) {
             data = true
         }
-        dispatch(updateStatus(id, value, data))
+        dispatch(updateStatus(orderId, value, data))
 
         setId("");
         closeForm();
@@ -82,9 +85,11 @@ const RenderCheckboxModal = (props) => {
 };
 
 const OrderData = (props) => {
+    const [modalDelete, setModalDelete] = useState(false);
     const [orderId, setOrderId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
-    const { party, status, dispatched, billed, LR, id } = props.data;
+
+    const { party, mobileNumber, status, dispatched, billed, LR, id, index} = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -95,6 +100,7 @@ const OrderData = (props) => {
                 style: 'cancel',
             },
             { text: 'Delete', onPress: () => dispatch(deleteOrderData(id)) },
+
         ], {
             alertContainerStyle: styles.alertContainer,
             titleStyle: styles.alertTitle,
@@ -108,27 +114,40 @@ const OrderData = (props) => {
     };
 
     return (
-        <>
-            <View style={styles.container}>
-                <Text style={styles.name} numberOfLines={1}>{party?.partyName}</Text>
-                <Text style={styles.transport}>{party?.mobileNumber}</Text>
-                <View style={styles.inline}>
+        <View style={[styles.container, CSS.card]}>
+            <View style={styles.firstLine}>
+                {/* style={{ display: "flex", flexDirection: "row", alignItems: "center" }} */}
+                <View style={styles.index}>
+                    <Text style={styles.indexText}>{index + 1}</Text>
+                </View>
+                <View style={styles.statusParent}>
                     <Text style={styles.status}>{status}</Text>
-                    <View style={styles.icons}>
-                        <Pressable style={styles.icon} onPress={() => props.editOrder(id)}>
-                            <Ionicons name="marker" size={24} color={'#5F4521'} />
-                        </Pressable>
-                        <Pressable style={styles.icon} onPress={() => handleBookCheck(id)}>
-                            <Ionicons name="book-check" size={24} color={'#5F4521'} />
-                        </Pressable>
-                        <Pressable style={styles.icon} onPress={deleteHandler}>
-                            <Ionicons name="delete" size={24} color={'#5F4521'} />
-                        </Pressable>
-                    </View>
                 </View>
             </View>
-            {showModalCheckboxes && <RenderCheckboxModal dispatched={dispatched} billed={billed} LR={LR} orderId={orderId} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} />}
-        </>
+            <View style={styles.secondLine}>
+                <View style={styles.logo}>
+                    <FontAwesome5 name="money-bill-wave" size={22} color={CSS.primaryColor} />
+                </View>
+                <View style={styles.nameContact}>
+                    <Text style={styles.name} numberOfLines={1}>{party?.partyName} </Text>
+                    <Text style={styles.mobileNumber}>{party?.mobileNumber}</Text>
+                </View>
+                <View style={styles.icons}>
+                    <Pressable style={styles.iconEdit} onPress={() => props.editOrder(id)}>
+                        <FontAwesome5 name="edit" size={14} color={'white'} />
+                    </Pressable>
+                    <Pressable style={styles.iconDelete} onPress={() => handleBookCheck(id)}>
+                        <Ionicons name="book-check" size={18} color={CSS.primaryColor} />
+                    </Pressable>
+                    <Pressable style={styles.iconDelete} onPress={deleteHandler}>
+                        <Ionicons name="delete" size={18} color={CSS.primaryColor} />
+                    </Pressable>
+                </View>
+            </View>
+            {showModalCheckboxes && <RenderCheckboxModal dispatched={dispatched} billed={billed} LR={LR} orderId={orderId} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
+
+        </View>
+
     );
 };
 
@@ -136,62 +155,121 @@ export default OrderData;
 
 const styles = StyleSheet.create({
     container: {
-        width: '95%',
-        height: 85,
-        backgroundColor: "#f0f0f0",
-        padding: 10,
-        paddingBottom: 5,
-        marginBottom: 10,
-        borderRadius: 4,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        position: 'relative',
-        fontWeight: 'bold'
-
+        paddingVertical: 8,
+        backgroundColor: 'white',
+        display: "flex",
+        flexDirection: "column",
+        position:'relative'
+    },
+    firstLine: {
+        width:'100%',
+        display:'flex',
+        position:'absolute',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+    index: {
+        width: 30,
+        height: 30,
+        borderTopLeftRadius:12,
+        borderBottomRightRadius: 50,
+        backgroundColor: CSS.primaryColor,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    indexText:{
+        top:3,
+        left:8,
+        position: 'absolute',
+        color:'white',
+        fontWeight:'bold',
+    },
+    nameContact: {
+        display: "flex",
+        flexDirection: "column",
+        marginRight: 'auto',
+        marginLeft: 15
     },
     name: {
-        fontSize: 17,
-        fontWeight: "bold",
-        marginBottom: 5,
-        width:"80%"
-    },
-    transport: {
+        fontFamily:'Ubuntu-Title',
         fontSize: 15,
-        textAlign: 'center',
-        color: "#5f4521",
-        marginBottom: 3,
-        position: 'absolute',
-        right: 10,
-        top: 5,
+        fontWeight: "bold",
+        color: CSS.secondaryColor,
     },
-    inline: {
+    mobileNumber: {
+        fontSize: 13,
+        color: "#666",
+    },
+    logo: {
+        width: 45,
+        height: 45,
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius:50,
+        backgroundColor: "rgba(240, 97, 26, 0.2)",
     },
     status: {
-        fontSize: 11,
-        color: "#666",
-        backgroundColor: 'rgba(251, 97, 26, 0.3)',
-        // width: 'auto',
-        padding: 5,
-        paddingHorizontal: 10,
-        borderRadius: 10,
-        fontWeight: 'bold',
-        textTransform: 'uppercase'
+        fontSize: 12,
+        fontWeight: '900',
+        color: CSS.primaryColor,
+    },
+    statusParent:{
+        top: 0,
+        position: 'absolute',
+        right: 100,
+        display:'flex',
+        backgroundColor:'rgba(240, 97, 26, 0.2)',
+        alignItems:'center',
+        justifyContent:'center',
+        borderBottomLeftRadius:15,
+        borderBottomRightRadius:15,
+        width:'18%',
+        padding:5
     },
     icons: {
         flexDirection: 'row',
-        gap: 0,
-        color: '#5f4521',
+        gap: 3,
     },
-    icon: {
-        padding: 10,
-        paddingBottom: 2
+    iconEdit: {
+        height:35,
+        width:35,
+        backgroundColor: CSS.primaryColor,
+        borderRadius: 40,
+        display:'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    quantity: {
-        textAlign: 'center'
+    iconDelete: {
+        height:35,
+        width:35,
+        backgroundColor: 'white',
+        borderWidth:2,
+        borderColor: CSS.primaryColor,
+        borderRadius: 40,
+        display:'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    first: {
+        flex: 0,
+        borderRadius: 50,
+        height: 40,
+        width: 40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: '7%',
+        backgroundColor: 'rgba(251, 97, 26, 0.2)'
+    },
+    secondLine: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems:'center',
+        flexDirection: "row",
+        paddingHorizontal:15,
+        paddingVertical:20
     },
     centeredView: {
         flex: 1,
