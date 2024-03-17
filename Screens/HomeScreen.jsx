@@ -5,14 +5,15 @@ import { fetchOrderData } from "../slices/order";
 import OrderData from "../components/OrderData";
 import OrderModal from "../modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { IndexPath } from "@ui-kitten/components";
 
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
-        party: "",
+        partyId: "",
         city:"",
         mobile:"",
-        transports:[],
-        companyName: "",
+        transportId:"",
+        companyName: new IndexPath(0),
         gst: "",
         gstPrice: "",
         totalPrice: 0,

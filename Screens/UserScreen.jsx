@@ -6,6 +6,7 @@ import UserData from "../components/UserData";
 import UserModal from "../modals/UserModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { IndexPath } from "@ui-kitten/components";
 
 const userRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', 'Other'];
 
@@ -13,7 +14,7 @@ const userRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', '
 const UserScreen = () => {
     const [userData, setUserData] = useState({
         name: "",
-        role: 0,
+        role: new IndexPath(0),
         mobileNumber: "",
         email: "",
         password: "",
@@ -39,7 +40,7 @@ const UserScreen = () => {
         const value = data.find(value => value.id === id)
         setUserData({
             name: value.name,
-            role: userRoles.indexOf(value.role),
+            role: new IndexPath(userRoles.indexOf(value.role)),
             mobileNumber: value.mobileNumber,
             email: value.email,
             password: "password",
@@ -52,16 +53,16 @@ const UserScreen = () => {
 
     return (
         <LinearGradient
-        colors={['#ffdfb2', '#fbcca2', '#f6b896', '#f0a48d', '#e89187']}
-        style={styles.backgroundImage}>
-        {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
+            colors={['#ffdfb2', '#fbcca2', '#f6b896', '#f0a48d', '#e89187']}
+            style={styles.backgroundImage}>
+            {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 <ScrollView>
 
                     <View style={styles.container}>
-                        {data.map((item, index) => <UserData key={item.id} data={{...item, index}} editUser={editUser} />)}
+                        {data.map((item, index) => <UserData key={item.id} data={{ ...item, index }} editUser={editUser} />)}
                     </View>
                 </ScrollView>
             }
@@ -71,8 +72,8 @@ const UserScreen = () => {
             {modalAddUser &&
                 <UserModal userModalData={{ modalAddUser, userData, isEdit, id, userRoles }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
             }
-           
-        {/* </ImageBackground> */}
+
+            {/* </ImageBackground> */}
         </LinearGradient>
     );
 };

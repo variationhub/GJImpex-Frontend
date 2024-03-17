@@ -26,7 +26,6 @@ export const fetchPartyData = (load=true) => async (dispatch) => {
       dispatch(partySlice.actions.setLoading(true));
     }
     const response = await axiosInstance.get('/party');
-    console.log(response.data.data);
     dispatch(partySlice.actions.updateParty(response.data.data));
     dispatch(partySlice.actions.setLoading(false));
     return true;

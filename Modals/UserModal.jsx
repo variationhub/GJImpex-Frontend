@@ -5,7 +5,7 @@ import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserData, updateUserData } from '../slices/user';
 import { useDispatch } from 'react-redux';
 import { Dropdown } from 'react-native-element-dropdown';
-import { Input, Layout, Select, SelectItem } from '@ui-kitten/components';
+import { IndexPath, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
 
 const UserModal = (props) => {
 
@@ -36,7 +36,7 @@ const UserModal = (props) => {
     const closeForm = () => {
         setUserData({
             name: "",
-            role: 0,
+            role: new IndexPath(0),
             nickName: "",
             mobileNumber: "",
             email: "",
@@ -70,7 +70,7 @@ const UserModal = (props) => {
         if (isEdit) {
             response = await dispatch(updateUserData(id, {
                 name: userData.name.trim(),
-                role: userRoles[userData.role],
+                role: userRoles[userData.role?.row],
                 mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
                 nickName: userData.nickName.trim()
@@ -79,7 +79,7 @@ const UserModal = (props) => {
         else {
             response = await dispatch(createUserData({
                 name: userData.name.trim(),
-                role: userRoles[userData.role],
+                role: userRoles[userData.role?.row],
                 password: userData.password.trim(),
                 mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
@@ -192,7 +192,7 @@ const UserModal = (props) => {
                         ref={userRef.email}
                         returnKeyType='next'
                         onSubmitEditing={() => {
-                            userRef.password.current.focus();
+                            { !isEdit ? userRef.password.current.focus() : userRef.role.current.focus() };
                         }}
                         blurOnSubmit={false}
                     />
@@ -230,8 +230,8 @@ const UserModal = (props) => {
                         <Select
                             label='Select Role'
                             placeholder="Ex. Admin"
-                            value={userRoles[userData.role]}
-                            selectedIndex={userData.role}
+                            value={userRoles[userData.role?.row]}
+                            selectedIndex={userData?.role}
                             ref={userRef.role}
                             onSelect={index => setUserData(prev => ({ ...prev, role: index }))}
                         >

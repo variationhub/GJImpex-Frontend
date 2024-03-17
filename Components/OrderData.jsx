@@ -107,7 +107,6 @@ const OrderData = (props) => {
         setShowModalCheckboxes(!showModalCheckboxes);
     };
 
-    console.log(party)
     return (
         <>
             <View style={styles.container}>
