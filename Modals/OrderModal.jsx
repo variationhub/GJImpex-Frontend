@@ -56,10 +56,14 @@ const OrderModal = (props) => {
         setOrderData({
             name: "",
             transport: "",
-            gst: "",
-            gstPrice: "",
+            gst: 0,
+            gstPrice: 0,
             total: 0
         });
+        setError1(() => ({
+            party: false,
+            company: false
+        }))
         setModalAddOrder(false);
         setId("")
         const id = Date.now();
@@ -67,13 +71,9 @@ const OrderModal = (props) => {
         setIsEdit(false);
     };
 
-    const [error, setError] = useState({
-        name: false,
-        role: false,
-        nickName: false,
-        mobileNumber: false,
-        email: false,
-        password: false
+    const [error1, setError1] = useState({
+        party: false,
+        company: false,
     });
 
     const saveForm = async (isEdit) => {
@@ -83,7 +83,7 @@ const OrderModal = (props) => {
             companyName: companyNameEnum[orderData.companyName?.row],
             orders: Object.values(products)?.map((item) => {
                 return {
-                    productId: item?.productId,
+                    productId: item?.productId || item?.id,
                     quantity: item?.quantity,
                     sellPrice: item?.sellPrice
                 }
@@ -92,6 +92,7 @@ const OrderModal = (props) => {
             gstPrice: orderData?.gstPrice || 0,
             narration: orderData?.narration || ""
         }
+        console.log(data);
         setLoading(true);
         let response = false;
         if (isEdit) {
@@ -106,21 +107,29 @@ const OrderModal = (props) => {
     };
 
     const onSelect = useCallback((index) => {
-        setTransport(data1[index].transport)
-        setValue(data1[index]);
-        setOrderData((prev) => ({ ...prev, transportId: data1[index].transport[0].id }))
-    }, [data1]);
+        console.log(partyData[index])
+        setTransport(partyData[index].transport)
+        setValue(partyData[index]);
+        setOrderData((prev) => ({ ...prev, transportId: partyData[index].transport[0].id }))
+        setError1((prev) => ({
+            ...prev,
+            party: false
+        }))
+    }, [partyData]);
 
     const onChangeText = useCallback((query) => {
         const data = partyData.filter(item => filter(item, query))
         if (data.length) {
-            setValue(query);
             setData1(data);
         }
         else {
-            setValue("");
             setData1(data);
         }
+        setValue(query);
+        setError1((prev) => ({
+            ...prev,
+            party: false
+        }))
     }, []);
 
     const onSelectProduct = useCallback((index, id) => {
@@ -129,28 +138,27 @@ const OrderModal = (props) => {
             ...prev,
             [id]: {
                 id,
-                productId: data2[index].id,
-                productName: data2[index].productName,
-                productType: data2[index].productType,
+                productId: productsData[index].id,
+                productName: productsData[index].productName,
+                productType: productsData[index].productType,
                 quantity: "",
                 sellPrice: "",
                 total: ""
             }
         }))
 
-    }, [data2]);
+    }, [productsData]);
 
     const onChangeTextProduct = useCallback((query) => {
         const data = productsData.filter(item => filterProduct(item, query))
         if (data.length) {
-            setValue1(query);
             setData2(data);
         }
         else {
-            setValue1("");
             setData2(data);
         }
-    }, []);
+        setValue1(query);
+    }, [productsData]);
 
     const renderOption = (item, index) => (
         <AutocompleteItem
@@ -189,13 +197,14 @@ const OrderModal = (props) => {
                         <Autocomplete
                             placeholder='Select Party Name'
                             value={value?.partyName}
+                            status={error1.party ? 'danger' : 'basic'}
                             placement='inner top'
                             label="Party Name"
                             onSelect={onSelect}
                             style={{ border: "10px solid blue" }}
                             onChangeText={onChangeText}
                         >
-                            {data1.map(renderOption)}
+                            {partyData.map(renderOption)}
                         </Autocomplete>
 
                         {value?.mobileNumber &&
@@ -218,9 +227,14 @@ const OrderModal = (props) => {
                             <Select
                                 label='Company'
                                 placeholder="Ex. GJ Impex"
+                                status={error1.company ? 'danger' : 'basic'}
+
                                 value={companyNameEnum[orderData.companyName?.row]}
                                 selectedIndex={orderData.companyName}
-                                onSelect={index => setOrderData(prev => ({ ...prev, companyName: index }))}
+                                onSelect={index => {
+                                    setError1((prev) => ({ ...prev, company: false }))
+                                    setOrderData(prev => ({ ...prev, companyName: index }))
+                                }}
                             >
                                 {companyNameEnum.map((value) => <SelectItem title={value} key={value} />)}
                             </Select>
@@ -238,7 +252,16 @@ const OrderModal = (props) => {
                             }}
                         />
 
-                        <Pressable style={styles.saveButton} onPress={() => setCurrentPage(1)}>
+                        <Pressable style={styles.saveButton} onPress={() => {
+                            setError1(() => ({
+                                party: !Boolean(value),
+                                company: !Boolean(orderData.companyName)
+                            }))
+
+                            if (Boolean(orderData.companyName) && Boolean(value)) {
+                                setCurrentPage(1)
+                            }
+                        }}>
                             <Text style={styles.saveButtonText}>Next</Text>
                         </Pressable>
                     </View>
@@ -268,7 +291,7 @@ const OrderModal = (props) => {
                                                     onSelect={(index) => onSelectProduct(index, item.id)}
                                                     onChangeText={onChangeTextProduct}
                                                 >
-                                                    {data2?.map(renderOptionProduct)}
+                                                    {productsData?.map(renderOptionProduct)}
                                                 </Autocomplete>
                                                 <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
                                                     <Ionicons name="minus" size={20} color={'white'} />
@@ -333,18 +356,20 @@ const OrderModal = (props) => {
                                 }
                             </Text>
                         </View>
-                        <Pressable style={styles.saveButton} onPress={() => setCurrentPage(0)}>
-                            {
-                                <Text style={styles.saveButtonText}>Back</Text>
-                            }
-                        </Pressable>
-                        <Pressable style={styles.saveButton} onPress={() => saveForm(isEdit)}>
-                            {
-                                loading ? <ActivityIndicator color="#ffffff" />
-                                    :
-                                    <Text style={styles.saveButtonText}>Create Order</Text>
-                            }
-                        </Pressable>
+                        <View style={styles.buttons}>
+                            <Pressable style={[styles.saveButton, styles.btn]} onPress={() => setCurrentPage(0)}>
+                                {
+                                    <Text style={styles.saveButtonText}>Back</Text>
+                                }
+                            </Pressable>
+                            <Pressable style={[styles.saveButton, styles.btn]} onPress={() => !loading && saveForm(isEdit)}>
+                                {
+                                    loading ? <ActivityIndicator color="#ffffff" />
+                                        :
+                                        <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"} Order</Text>
+                                }
+                            </Pressable>
+                        </View>
 
                     </View>
                 }
@@ -525,5 +550,15 @@ const styles = StyleSheet.create({
         fontWeight: "800",
         width: 90,
         textAlign: 'right',
+    },
+    buttons: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+    },
+    btn: {
+        width: '45%'
     }
 });

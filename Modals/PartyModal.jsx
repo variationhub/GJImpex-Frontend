@@ -19,7 +19,7 @@ const PartyModal = (props) => {
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
-    const [value, setValue] = React.useState(null);
+    const [value, setValue] = React.useState(partyData.transport ? partyData.transport : null);
     const [data, setData] = React.useState(transportData);
 
     const [partyRef, setPartyRef] = useState({
@@ -66,27 +66,27 @@ const PartyModal = (props) => {
 
     const onSelect = useCallback((index) => {
         setValue(transportData[index]);
-      }, [transportData]);
-    
-      const onChangeText = useCallback((query) => {
+        setPartyData(prev => ({ ...prev, transport: transportData[index] }))
+    }, [transportData]);
+
+    const onChangeText = useCallback((query) => {
         const data = transportData.filter(item => filter(item, query))
-        if(data.length){
-            setValue(query);
+        if (data.length) {
             setData(data.filter(item => filter(item, query)));
         }
-        else{
-            setValue("");
+        else {
             setData(data);
         }
-      }, []);
+        setValue(query);
+    }, []);
 
     const renderOption = (item, index) => (
         <AutocompleteItem
-          key={index}
-          title={item.transportName}
-          style={{width:352}}
+            key={index}
+            title={item.transportName}
+            style={{ width: 352 }}
         />
-      );
+    );
     const saveForm = async (isEdit) => {
         if (checkAllFieldfilled()) {
             return;
@@ -99,7 +99,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: [value]
+                transport: partyData.transport
             }))
         }
         else {
@@ -107,7 +107,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: [value]
+                transport: partyData.transport
             }))
         }
         if (response) {
@@ -130,7 +130,7 @@ const PartyModal = (props) => {
 
                     <Input
                         value={partyData.partyName}
-                        label='Party partyName'
+                        label='Party Name'
                         partyName="partyName"
                         status={error.partyName ? "danger" : "basic"}
                         placeholder='Ex. John Smith'
@@ -204,7 +204,7 @@ const PartyModal = (props) => {
                         placement='inner top'
                         onSelect={onSelect}
                         onChangeText={onChangeText}
-                        >
+                    >
                         {transportData?.map(renderOption)}
                     </Autocomplete>
 
