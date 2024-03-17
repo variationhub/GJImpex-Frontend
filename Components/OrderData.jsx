@@ -11,11 +11,11 @@ import { CheckBox, Input } from "@ui-kitten/components";
 
 
 const RenderCheckboxModal = (props) => {
-    const { setShowModalCheckboxes, orderId, setId, dispatched, billed, LR, billNumber } = props
-    const [isBilledChecked, setIsBilledChecked] = useState(true);
+    const { setShowModalCheckboxes, orderId, setId, dispatched, billed, lrSent, billNumber } = props
+    const [isBilledChecked, setIsBilledChecked] = useState(billed);
     const [isDispatchChecked, setIsDispatchChecked] = useState(dispatched);
-    const [isLrSentChecked, setIsLrSentChecked] = useState(LR);
-    const [billNo, setBillNumber] = useState(billNumber);
+    const [isLrSentChecked, setIsLrSentChecked] = useState(lrSent);
+    const [billNo, setBillNumber] = useState(billNumber || "");
     const dispatch = useDispatch();
 
     const closeForm = () => {
@@ -32,22 +32,36 @@ const RenderCheckboxModal = (props) => {
             }, 2000)
             return;
         }
-        if (isBilledChecked && billNo.trim() !== '') {
-            dispatch(updateStatus(orderId, 'billed', { isBilledChecked, billNo }))
-        }
-        if(isDispatchChecked){
-            dispatch(updateStatus(orderId, 'dispatched', { isBilledChecked, billNo }))
-        }
+ 
         if(isLrSentChecked){
             dispatch(updateStatus(orderId, 'lrSent', { isBilledChecked, billNo }))
+        }
+        else if(isDispatchChecked){
+            dispatch(updateStatus(orderId, 'dispatched', { isBilledChecked, billNo }))
+        }
+        else if (isBilledChecked && billNo.trim() !== '') {
+            dispatch(updateStatus(orderId, 'billed', { isBilledChecked, billNumber :billNo }))
         }
 
         setId("");
         closeForm();
     };
 
-    const reset = () => {
-        dispatch(updateStatus(orderId, 'billed', { isBilledChecked:false, billNo }))
+    const reset = (e) => {
+        e.stopPropagation()
+        Alert.alert('Reset ', 'Are You Sure ?', [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            { text: 'Reset', onPress: () => dispatch(updateStatus(orderId, 'billed', { isBilledChecked:false, billNo }))},
+
+        ], {
+            alertContainerStyle: styles.alertContainer,
+            titleStyle: styles.alertTitle,
+            messageStyle: styles.alertMessage,
+        })
         setId("");
         closeForm();
     };
@@ -81,7 +95,7 @@ const RenderCheckboxModal = (props) => {
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isDispatchChecked}
-                            disabled={!billed}
+                            disabled={!billed || dispatched}
                             onChange={() => setIsDispatchChecked(!isDispatchChecked)}
                         >
                             Dispatch
@@ -89,17 +103,17 @@ const RenderCheckboxModal = (props) => {
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isLrSentChecked}
-                            disabled={!billed}
+                            disabled={!billed || !dispatched || lrSent}
                             onChange={() => setIsLrSentChecked(!isLrSentChecked)}
                         >
                             LR Sent
                         </CheckBox>
                         <View style={styles.button}>
-                            <Pressable style={styles.saveButton} onPress={saveForm}>
-                                <Text style={styles.saveButtonText}>SAVE</Text>
-                            </Pressable>
                             <Pressable style={styles.resetButton} onPress={reset}>
                                 <Text style={styles.resetButtonText}>RESET</Text>
+                            </Pressable>
+                            <Pressable style={styles.saveButton} onPress={saveForm}>
+                                <Text style={styles.saveButtonText}>SAVE</Text>
                             </Pressable>
                         </View>
                         <Pressable style={styles.closeForm} onPress={closeForm}>
@@ -118,7 +132,7 @@ const OrderData = (props) => {
     const [orderId, setOrderId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
 
-    const { party, mobileNumber, status, billNumber, dispatched, billed, LR, id, index} = props.data;
+    const { party, mobileNumber, status, billNumber, dispatched, billed, lrSent, id, index} = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -173,7 +187,7 @@ const OrderData = (props) => {
                     </Pressable>
                 </View>
             </View>
-            {showModalCheckboxes && <RenderCheckboxModal billNumber={billNumber} dispatched={dispatched} billed={billed} LR={LR} orderId={orderId} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
+            {showModalCheckboxes && <RenderCheckboxModal billNumber={billNumber} dispatched={dispatched} billed={billed} lrSent={lrSent} orderId={orderId} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
 
         </View>
 
@@ -254,7 +268,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         borderBottomLeftRadius:15,
         borderBottomRightRadius:15,
-        width:'18%',
+        width:'25%',
         padding:5
     },
     icons: {

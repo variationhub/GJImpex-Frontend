@@ -198,6 +198,7 @@ const PartyModal = (props) => {
                     />
                     <Autocomplete
                         placeholder='Transport..'
+                        label={"Transport"}
                         value={value?.transportName}
                         style={styles.assignTo}
                         placement='inner top'
