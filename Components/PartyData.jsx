@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useDispatch } from 'react-redux';
 import { deletePartyData } from "../slices/party";
 import CSS from '../styles/gloable.json'
+import { useFonts } from 'expo-font';
 
 const PartyData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
 
-    const { partyName, city, mobileNumber, index, transport } = props.data;
+    const { partyName, city, mobileNumber, id, index } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -30,25 +33,31 @@ const PartyData = (props) => {
     return (
         <View style={[styles.container, CSS.card]}>
             <View style={styles.firstLine}>
-                <View style={{display:"flex", flexDirection:"row", alignItems:"center"}}>
-                    <View style={styles.index}>
-                        <Text>{index + 1}</Text>
-                    </View>
-                    <Text style={styles.partyName} numberOfLines={1}>{partyName} </Text>
+                {/* style={{ display: "flex", flexDirection: "row", alignItems: "center" }} */}
+                <View style={styles.index}>
+                    <Text style={[styles.indexText]}>{index + 1}</Text>
                 </View>
-                <Text style={styles.nickName}>{city}</Text>
+                {<Text style={styles.role}>{city}</Text>}
             </View>
-            {/* <Text style={styles.role}>{role}</Text> */}
-            <Text style={styles.mobileNumber}>{mobileNumber}</Text>
-            <View style={styles.icons}>
-                <Pressable style={styles.icon} onPress={() => props.editParty(id)}>
-                    <Ionicons partyName="marker" size={24} color={CSS.secondaryColor} />
-                </Pressable>
-                <Pressable style={styles.icon} onPress={deleteHandler}>
-                    <Ionicons partyName="delete" size={24} color={CSS.secondaryColor} />
-                </Pressable>
+            <View style={styles.secoundLine}>
+                <View style={styles.logo}>
+                    <MaterialIcons name="person" size={30} color={CSS.primaryColor} />
+                </View>
+                <View style={styles.nameContact}>
+                    <Text style={styles.name} numberOfLines={1}>{partyName} </Text>
+                    <Text style={styles.mobileNumber}>{mobileNumber}</Text>
+                </View>
+                <View style={styles.icons}>
+                    <Pressable style={styles.iconEdit} onPress={() => props.editParty(id)}>
+                        <FontAwesome5 name="edit" size={14} color={'white'} />
+                    </Pressable>
+                    <Pressable style={styles.iconDelete} onPress={deleteHandler}>
+                        <Ionicons name="delete" size={16} color={CSS.primaryColor} />
+                    </Pressable>
+                </View>
             </View>
         </View>
+
     );
 };
 
@@ -56,42 +65,64 @@ export default PartyData;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: CSS.orangeCardColor,
+        fontFamily: 'Ubuntu-Title',
+        backgroundColor: 'white',
+        display: "flex",
+        flexDirection: "column",
+        position:'relative'
     },
     firstLine: {
-        display: "flex",
+        width:'100%',
+        display:'flex',
+        position:'absolute',
         flexDirection: "row",
         alignItems: "center",
-        padding: 5,
-        paddingBottom: 10,
-        justifyContent:"space-between"
+        justifyContent: "space-between"
     },
     index: {
         width: 30,
         height: 30,
-        borderRadius: 50,
-        backgroundColor: "rgba(255, 255, 255, 0.5)",
+        borderTopLeftRadius:12,
+        borderBottomRightRadius: 50,
+        backgroundColor: CSS.primaryColor,
         justifyContent: "center",
         alignItems: "center",
     },
-    partyName: {
+    indexText:{
+        top:3,
+        left:8,
+        position: 'absolute',
+        color:'white',
+        fontWeight:'bold',
+    },
+    nameContact: {
+        display: "flex",
+        flexDirection: "column",
+        marginRight: 'auto',
+        marginLeft: 25
+    },
+    name: {
+        fontFamily:'Ubuntu-Title',
         fontSize: 15,
         fontWeight: "bold",
-        marginLeft: 10,
         color: CSS.secondaryColor,
     },
-    nickName: {
+    mobileNumber: {
+        fontSize: 13,
+        color: "#666",
+    },
+    logo: {
+        width: 45,
+        height: 45,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 50,
-        backgroundColor: "rgba(0,0,0,0.3)",
-        opacity: 1,
-        fontSize: 12,
-        padding: 4,
-        paddingHorizontal: 8,
-        color: "white",
+        backgroundColor: "rgba(240, 97, 26, 0.2)",
+
     },
     role: {
         fontSize: 12,
-        opacity: 0.4,
         color: "#333",
         marginBottom: 3,
         position: 'absolute',
@@ -99,35 +130,48 @@ const styles = StyleSheet.create({
         top: 5,
 
     },
-    mobileNumber: {
-        fontSize: 13,
-        color: "#666",
-    },
     icons: {
         flexDirection: 'row',
-        gap: 0,
-        color: CSS.secondaryColor,
+        gap: 3,
     },
-    icon: {
-        padding: 10,
+    iconEdit: {
+        height:35,
+        width:35,
+        backgroundColor: CSS.primaryColor,
+        borderRadius: 40,
+        display:'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    iconDelete: {
+        height:35,
+        width:35,
+        backgroundColor: 'white',
+        borderWidth:2,
+        borderColor: CSS.primaryColor,
+        borderRadius: 40,
+        display:'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     first: {
         flex: 0,
         borderRadius: 50,
         height: 40,
-        width:40,
+        width: 40,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: '7%',
         backgroundColor: 'rgba(251, 97, 26, 0.2)'
     },
-    middle: {
-        flex: 1,
+    secoundLine: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems:'center',
+        flexDirection: "row",
+        paddingHorizontal:15,
+        paddingVertical:20
     },
-    nickname: {
-        fontWeight: 'bold',
-        color: '#FB611A',
-        fontSize: 13,
-    }
+
 });

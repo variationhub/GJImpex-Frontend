@@ -1,20 +1,27 @@
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createPartyData, updatePartyData } from '../slices/party';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown } from 'react-native-element-dropdown';
-import { Input, Layout, Select, SelectItem } from '@ui-kitten/components';
+import { Autocomplete, AutocompleteItem, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
+import { fetchTransportData } from '../slices/transport';
+import TransportData from '../components/TransportData';
+
+const filter = (item, query) => item.transportName.toLowerCase().includes(query.toLowerCase());
 
 const PartyModal = (props) => {
 
     const { modalAddParty, partyData, isEdit, id, partyRoles } = props.partyModalData;
     const { setModalAddParty, setPartyData, setIsEdit, setId } = props.partyModalFn;
-
+    const transportData = useSelector(state => state.transport.data)
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
+    const [value, setValue] = React.useState(null);
+    const [data, setData] = React.useState(transportData);
+
     const [partyRef, setPartyRef] = useState({
         partyName: useRef(),
         city: useRef(),
@@ -22,6 +29,11 @@ const PartyModal = (props) => {
         transport: useRef(),
     })
 
+    useEffect(() => {
+        dispatch(fetchTransportData())
+    }, [])
+
+    console.log(transportData);
     const [error, setError] = useState({
         partyName: false,
         city: false,
@@ -53,8 +65,30 @@ const PartyModal = (props) => {
         return button;
     }
 
-    const saveForm = async (isEdit) => {
+    const onSelect = useCallback((index) => {
+        setValue(transportData[index]);
+      }, [transportData]);
+    
+      const onChangeText = useCallback((query) => {
+        const data = transportData.filter(item => filter(item, query))
+        if(data.length){
+            setValue(query);
+            setData(data.filter(item => filter(item, query)));
+        }
+        else{
+            setValue("");
+            setData(data);
+        }
+      }, []);
 
+    const renderOption = (item, index) => (
+        <AutocompleteItem
+          key={index}
+          title={item.transportName}
+          style={{width:352}}
+        />
+      );
+    const saveForm = async (isEdit) => {
         if (checkAllFieldfilled()) {
             return;
         }
@@ -66,7 +100,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: partyData.transport.trim()
+                transport: [value]
             }))
         }
         else {
@@ -74,7 +108,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: partyData.transport.trim()
+                transport: [value]
             }))
         }
         if (response) {
@@ -159,10 +193,20 @@ const PartyModal = (props) => {
                         ref={partyRef.mobileNumber}
                         returnKeyType='next'
                         onSubmitEditing={() => {
-                            partyRef.email.current.focus();
+                            partyRef.transportName.current.focus();
                         }}
                         blurOnSubmit={false}
                     />
+                    <Autocomplete
+                        placeholder='Transport..'
+                        value={value?.transportName}
+                        style={styles.assignTo}
+                        placement='inner top'
+                        onSelect={onSelect}
+                        onChangeText={onChangeText}
+                        >
+                        {transportData?.map(renderOption)}
+                    </Autocomplete>
 
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" />
@@ -171,7 +215,7 @@ const PartyModal = (props) => {
                         }
                     </Pressable>
                     <Pressable style={styles.closeForm} onPress={closeForm}>
-                        <Ionicons style={styles.closeIcon} partyName="close" size={30} color={'#5F4521'} />
+                        <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
                     </Pressable>
                 </View>
             </View>

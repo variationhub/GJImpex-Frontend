@@ -52,7 +52,7 @@ export const createPartyData = (data) => async (dispatch) => {
 }
 
 export const deletePartyData = (id) => async (dispatch) => {
-  const response = await axiosInstance.delete(`/partys/${id}`);
+  const response = await axiosInstance.delete(`/party/${id}`);
   if (response.data.status) {
     dispatch(fetchPartyData());
   }
@@ -60,7 +60,7 @@ export const deletePartyData = (id) => async (dispatch) => {
 
 export const updatePartyData = (id, data) => async (dispatch) => {
   try {
-    const response = await axiosInstance.put(`/partys/${id}`, data);
+    const response = await axiosInstance.put(`/party/${id}`, data);
     if (response.data.status) {
       dispatch(fetchPartyData(false));
     }
