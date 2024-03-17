@@ -72,7 +72,7 @@ export const updateOrderData = (id, data) => async (dispatch) => {
 
 export const updateStatus = (id, value, data) => async (dispatch) => {
   try {
-    const response = await axiosInstance.put(`/orders/${id}/status?${value}=${data}`);
+    const response = await axiosInstance.put(`/orders/${id}/status?${value}=${data.isBilledChecked}&billNumber=${data.billNumber}`);
     if (response.data.status) {
       dispatch(fetchOrderData(false));
     }

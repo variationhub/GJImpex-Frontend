@@ -6,6 +6,7 @@ import OrderData from "../components/OrderData";
 import OrderModal from "../modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { IndexPath } from "@ui-kitten/components";
+import { LinearGradient } from "expo-linear-gradient";
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
 
@@ -66,14 +67,17 @@ const OrderScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
+        <LinearGradient
+            colors={['#FFDFB2', '#E89187']}
+            style={styles.backgroundImage}>
+            {/*  <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 data.length ?
                     <ScrollView>
                         <View style={styles.container}>
-                            {data.map(item => <OrderData key={item.id} data={item} editOrder={editOrder} />)}
+                            {data.map((item, index) => <OrderData key={item.id} data={{ ...item, index }} editOrder={editOrder} setId={setId} />)}
                         </View>
                     </ScrollView>
                     :
@@ -87,7 +91,8 @@ const OrderScreen = () => {
             {modalAddOrder &&
                 <OrderModal orderModalData={{ modalAddOrder, orderData, isEdit, id, products }} orderModalFn={{ setModalAddOrder, setOrderData, setIsEdit, setId, setProduct }} />
             }
-        </ImageBackground>
+        </LinearGradient>
+        // </ImageBackground>
     );
 };
 
