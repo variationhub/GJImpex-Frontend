@@ -7,12 +7,15 @@ import OrderModal from "../modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { IndexPath } from "@ui-kitten/components";
 
+const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
+
+
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
         partyId: "",
-        city:"",
-        mobile:"",
-        transportId:"",
+        city: "",
+        mobile: "",
+        transportId: "",
         companyName: new IndexPath(0),
         gst: "",
         gstPrice: "",
@@ -39,20 +42,20 @@ const OrderScreen = () => {
     const image = require('../assets/logo.png');
 
     const editOrder = (id) => {
-        const value = data.find(value => value.id === id)
+        const value = data?.find(value => value.id === id)
 
-        const result = value?.orders?.reduce((acc, obj) => {
+        const result = value?.products?.reduce((acc, obj) => {
             acc[obj.id] = obj;
             return acc;
         }, {});
 
         setOrderData({
-            party: value.party,
-            companyName: value.companyName,
+            partyId: value.party?.id,
+            transportId: value.transportId,
+            companyName: new IndexPath(companyNameEnum.indexOf(value.companyName)),
             gst: value.gst,
             gstPrice: value.gstPrice,
-            totalPrice: value.totalPrice,
-            confirmOrder: value.confirmOrder,
+            // confirmOrder: value.confirmOrder,
             narration: value.narration,
         })
 

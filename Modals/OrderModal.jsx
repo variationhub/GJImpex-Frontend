@@ -28,11 +28,17 @@ const OrderModal = (props) => {
     const partyData = useSelector((state) => state.party.data);
 
     const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [value, setValue] = useState(orderData.partyId ? partyData.find(item => item.id === orderData.partyId) : null);
+    const [data1, setData1] = useState(partyData);
+    const [transport, setTransport] = useState([]);
+
+    const [value1, setValue1] = useState(null);
+    const [data2, setData2] = useState(productsData);
 
     const openForm = () => {
         const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { id: id, productName: "", quantity: "", sellPrice: "", total: 0 } }))
+        setProduct((prev) => ({ ...prev, [id]: { id, quantity: "", sellPrice: "", total: 0 } }))
     }
 
     const removeItem = (id) => {
@@ -41,12 +47,13 @@ const OrderModal = (props) => {
     }
 
     const handleChange = (id, name, value) => {
+        console.log(products, id)
         setProduct((prev) => ({ ...prev, [id]: { ...prev[id], [name]: value } }))
     }
 
     useEffect(() => {
         const total = Object.values(products)?.reduce((acc, item) => {
-            return acc + Number(item.sellPrice * item.quantity)
+            return Number(acc) + Number(item.sellPrice * item.quantity)
         }, 0)
         setOrderData((prev) => ({ ...prev, total: total }))
     }, [products]);
@@ -77,17 +84,19 @@ const OrderModal = (props) => {
 
     const saveForm = async (isEdit) => {
         const data = {
-            partyName: orderData.name.trim(),
-            transport: orderData.transport.trim(),
+            partyId: value?.id,
+            transportId: orderData.transportId.trim(),
+            companyName: companyNameEnum[orderData.companyName?.row],
             orders: Object.values(products)?.map((item) => {
                 return {
-                    productName: item.productName,
-                    quantity: item.quantity,
-                    sellPrice: item.sellPrice
+                    productId: item?.productId,
+                    quantity: item?.quantity,
+                    sellPrice: item?.sellPrice
                 }
             }),
-            gst: orderData.gst,
-            gstPrice: orderData.gstPrice
+            gst: orderData?.gst || 0,
+            gstPrice: orderData?.gstPrice || 0,
+            narration: orderData?.narration || ""
         }
         setLoading(true);
         let response = false;
@@ -102,16 +111,10 @@ const OrderModal = (props) => {
         setLoading(false);
     };
 
-    const [value, setValue] = useState(null);
-    const [data1, setData1] = useState(partyData);
-    const [transport, setTransport] = useState([]);
-
-    const [value1, setValue1] = useState(null);
-    const [data2, setData2] = useState(productsData);
-
     const onSelect = useCallback((index) => {
         setTransport(data1[index].transport)
         setValue(data1[index]);
+        console.log(data1[index]);
         setOrderData((prev) => ({ ...prev, transportId: data1[index].transport[0].id }))
     }, [data1]);
 
@@ -127,12 +130,21 @@ const OrderModal = (props) => {
         }
     }, []);
 
-    const onSelectProduct = useCallback((index) => {
-        console.log(data2)
-        // setValue1(data2[index]);
-        // console.log(produ)
-        // setOrderData((prev) => ({ ...prev, orders: data2[index] }))
-        setProduct
+    const onSelectProduct = useCallback((index, id) => {
+
+        setProduct((prev) => ({
+            ...prev,
+            [id]: {
+                id,
+                productId: data2[index].id,
+                productName: data2[index].productName,
+                productType: data2[index].productType,
+                quantity: "",
+                sellPrice: "",
+                total: ""
+            }
+        }))
+
     }, [data2]);
 
     const onChangeTextProduct = useCallback((query) => {
@@ -164,6 +176,7 @@ const OrderModal = (props) => {
         )
     }
 
+    console.log(Object.values(products))
     return (
         <Modal
             animationType="slide"
@@ -251,99 +264,92 @@ const OrderModal = (props) => {
                             {Object.values(products)?.map(item => {
                                 return (
                                     <View key={item.id}>
-                                        <View style={styles.productAndMinus} >
-                                            <Autocomplete
-                                                placeholder='Product Name'
-                                                value={value?.productName}
-                                                style={{ width: 250 }}
-                                                placement='inner top'
-                                                onSelect={onSelectProduct}
-                                                onChangeText={onChangeTextProduct}
-                                            >
-                                                {data2?.map(renderOptionProduct)}
-                                            </Autocomplete>
-                                            {/* <Dropdown
-                                                style={styles.dropdown}
-                                                placeholderStyle={styles.placeholderStyle}
-                                                selectedTextStyle={styles.selectedTextStyle}
-                                                inputSearchStyle={styles.inputSearchStyle}
-                                                data={data}
-                                                maxHeight={300}
-                                                labelField="productName"
-                                                valueField="productName"
-                                                value={item.productName}
-                                                placeholder="Select product"
-
-                                            /> */}
-
-                                            <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
-                                                <Ionicons name="minus" size={20} color={'white'} />
-                                            </Pressable>
+                                        <View>
+                                            <View style={styles.productAndMinus}>
+                                                <Autocomplete
+                                                    placeholder='Product Name'
+                                                    value={item?.productName}
+                                                    style={{ width: 250 }}
+                                                    placement='inner top'
+                                                    size="small"
+                                                    onSelect={(index) => onSelectProduct(index, item.id)}
+                                                    onChangeText={onChangeTextProduct}
+                                                >
+                                                    {data2?.map(renderOptionProduct)}
+                                                </Autocomplete>
+                                                <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
+                                                    <Ionicons name="minus" size={20} color={'white'} />
+                                                </Pressable>
+                                            </View>
+                                            {item.productType &&
+                                                <Text style={styles.productType}>Desc: {item.productType}</Text>
+                                            }
                                         </View>
+
                                         <View style={styles.inlineInput}>
                                             <Input
                                                 name="quantity"
                                                 style={[styles.input, { flex: 1, marginRight: 10 }]}
                                                 inputMode="numeric"
                                                 placeholder="Quantity"
-                                                value={String(item.quantity)}
-                                                onChangeText={(e) => handleChange(item.id, "quantity", Number(e))}
+                                                size='small'
+                                                value={String(item?.quantity || 0)}
+                                                onChangeText={(e) => handleChange(item?.id, "quantity", Number(e))}
                                             />
                                             <Input
                                                 name="sellPrice"
                                                 style={[styles.input, { flex: 1, marginRight: 10 }]}
                                                 inputMode="numeric"
                                                 placeholder="Price"
-                                                value={String(item.sellPrice)}
-                                                onChangeText={(e) => handleChange(item.id, "sellPrice", Number(e))}
+                                                size='small'
+                                                value={String(item?.sellPrice || 0)}
+                                                onChangeText={(e) => handleChange(item?.id, "sellPrice", Number(e))}
                                             />
-                                            <Input
-                                                name="total"
-                                                style={[styles.input, { flex: 1 }]}
-                                                value={(Number(item.quantity) * Number(item.sellPrice)).toFixed(2)}
-                                                placeholder='Total Value'
-                                                editable={false}
-                                            ></Input>
+                                            <Text style={styles.totalPrice}>
+                                                {(Number(item.quantity) * Number(item.sellPrice)).toFixed(2)}
+                                            </Text>
                                         </View>
                                     </View>
                                 )
                             })}
                         </ScrollView>
                         <View style={styles.inlineInput2}>
-                            <TextInput
+                            <Input
                                 name="gstPrice"
                                 style={[styles.input, { flex: 1, marginRight: 10 }]}
                                 placeholder="GST Amount"
                                 keyboardType="numeric"
-                                value={String(orderData.gstPrice)}
-                                onChangeText={(e) => setOrderData(prev => ({ ...prev, gstPrice: e }))}
+                                size="small"
+                                value={String(orderData.gstPrice || 0)}
+                                onChangeText={(e) => setOrderData(prev => ({ ...prev, gstPrice: Number(e) }))}
                             />
-                            <TextInput
+                            <Input
                                 name="gst"
                                 style={[styles.gst, { flex: 1, marginRight: 10 }]}
                                 placeholder="GST %"
                                 inputMode="numeric"
-                                value={String(orderData.gst)}
-                                onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: e }))}
+                                size='small'
+                                value={String(orderData.gst || 0) }
+                                onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: Number(e) }))}
                             />
-                            <TextInput
-                                name="total"
-                                placeholder="Total Value"
-                                style={[styles.input, { flex: 1, marginRight: 10 }]}
-                                value={String(orderData.total + (Number((Number(orderData.gstPrice) / Number(orderData.gst || 1))).toFixed(2)))}
-                                editable={false}
-                            />
+                            <Text style={styles.totalPrice}>
+                                {orderData.gst ?
+                                    Number(orderData.total + (orderData.gstPrice / orderData.gst)).toFixed(2)
+                                    :
+                                    Number(orderData.total + orderData.gstPrice).toFixed(2)
+                                }
+                            </Text>
                         </View>
                         <Pressable style={styles.saveButton} onPress={() => setCurrentPage(0)}>
                             {
                                 <Text style={styles.saveButtonText}>Back</Text>
                             }
                         </Pressable>
-                        <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
+                        <Pressable style={styles.saveButton} onPress={() => saveForm(isEdit)}>
                             {
                                 loading ? <ActivityIndicator color="#ffffff" />
                                     :
-                                    <Text style={styles.saveButtonText}>Next</Text>
+                                    <Text style={styles.saveButtonText}>Create Order</Text>
                             }
                         </Pressable>
 
@@ -417,6 +423,8 @@ const styles = StyleSheet.create({
     inlineInput: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
     },
     plus: {
         backgroundColor: 'rgba(50, 250, 150, 0.7)',
@@ -437,12 +445,12 @@ const styles = StyleSheet.create({
         padding: 2,
     },
     scrollview: {
-        padding: 12,
-        borderColor: 'lightgray',
-        borderWidth: 1,
+        marginTop: 10,
+        // borderColor: 'lightgray',
+        // borderWidth: 1,
         borderRadius: 5,
         marginBottom: 12,
-        backgroundColor: 'whitesmoke'
+        // backgroundColor: 'whitesmoke'
     },
     addProduct: {
         display: 'flex',
@@ -460,18 +468,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
-        marginBottom: 10,
     },
     inlineInput2: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
     },
     gst: {
-        height: 40,
-        borderColor: 'gray',
         borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 10,
         maxWidth: 65
     },
     mobileandcity: {
@@ -516,4 +520,17 @@ const styles = StyleSheet.create({
         color: "#8F9BB3",
         fontWeight: "800",
     },
+    productType: {
+        fontSize: 12,
+        color: "#8F9BB3",
+        fontWeight: "800",
+        marginLeft: 4,
+    },
+    totalPrice: {
+        fontSize: 14,
+        color: "#8F9BB3",
+        fontWeight: "800",
+        width: 90,
+        textAlign: 'right',
+    }
 });
