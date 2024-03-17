@@ -8,7 +8,7 @@ const OverviewScreen = () => {
         colors={['#FFDFB2', '#E89187']}
         style={styles.backgroundImage}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'ubuntu', fontSize:30 }}>Coming Soon....!</Text>
+                <Text>Coming Soon....!</Text>
             </View>
         </LinearGradient>
     )

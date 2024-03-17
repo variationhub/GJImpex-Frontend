@@ -5,7 +5,6 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useDispatch } from 'react-redux';
 import { deleteUserData } from "../slices/user";
 import CSS from '../styles/gloable.json'
-import { useFonts } from 'expo-font';
 
 const UserData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);

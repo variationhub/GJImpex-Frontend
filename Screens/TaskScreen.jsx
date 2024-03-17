@@ -5,7 +5,6 @@ import { fetchTaskData } from "../slices/task";
 import TaskData from "../components/TaskData";
 import TaskModal from "../modals/TaskModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useFonts } from "expo-font";
 import { LinearGradient } from "expo-linear-gradient";
 
 const TaskScreen = () => {
@@ -46,15 +45,6 @@ const TaskScreen = () => {
         setId(id)
         setModalAddTask(true)
     }
-    const [loaded] = useFonts({
-        'Ubuntu-Title': require('../assets/ubuntu_title/Ubuntu-Title.ttf'),
-        'ubuntu' : require('../assets/ubuntu_title/ubuntu.ttf')
-        // You can include other fonts here if needed
-      });
-    
-      if (!loaded) {
-        return <Text>Loading...</Text>;
-      }
 
 
     return (
@@ -62,7 +52,7 @@ const TaskScreen = () => {
         colors={['#FFDFB2', '#E89187']}
         style={styles.backgroundImage}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'ubuntu', fontSize:30 }}>Coming Soon....!</Text>
+                <Text >Coming Soon....!</Text>
             </View>
         </LinearGradient>
         

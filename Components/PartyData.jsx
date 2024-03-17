@@ -6,7 +6,6 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useDispatch } from 'react-redux';
 import { deletePartyData } from "../slices/party";
 import CSS from '../styles/gloable.json'
-import { useFonts } from 'expo-font';
 
 const PartyData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);

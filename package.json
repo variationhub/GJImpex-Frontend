@@ -39,8 +39,7 @@
     "react-native-screens": "^3.29.0",
     "react-native-web": "~0.19.6",
     "react-navigation": "^5.0.0",
-    "react-redux": "^9.1.0",
-    "expo-font": "~11.10.3"
+    "react-redux": "^9.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
