@@ -52,7 +52,7 @@ const PartyScreen = () => {
 
     return (
         <LinearGradient
-        colors={['#ffdfb2', '#fbcca2', '#f6b896', '#f0a48d', '#e89187']}
+        colors={['#FFDFB2', '#E89187']}
         style={styles.backgroundImage}>
         {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?

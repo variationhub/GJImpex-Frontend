@@ -5,6 +5,7 @@ import { fetchTransportData } from "../slices/transport";
 import TransportData from "../components/TransportData";
 import TransportModal from "../modals/TransportModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const TransportScreen = () => {
     const [transportData, setTransportData] = useState({
@@ -37,14 +38,16 @@ const TransportScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
+        <LinearGradient
+        colors={['#FFDFB2', '#E89187']}
+        style={styles.backgroundImage}>
+        {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 <ScrollView>
-
                     <View style={styles.container}>
-                        {data?.map(item => <TransportData key={item.id} data={item} editTransport={editTransport} />)}
+                        {data.map((item, index) => <TransportData key={item.id} data={{...item, index}} editTransport={editTransport} />)}
                     </View>
                 </ScrollView>
             }
@@ -54,8 +57,8 @@ const TransportScreen = () => {
             {modalAddTransport &&
                 <TransportModal transportModalData={{ modalAddTransport, transportData, isEdit, id }} transportModalFn={{ setModalAddTransport, setTransportData, setIsEdit, setId }} />
             }
-           
-        </ImageBackground>
+           </LinearGradient>
+        //  </ImageBackground> 
     );
 };
 
