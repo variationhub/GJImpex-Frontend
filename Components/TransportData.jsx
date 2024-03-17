@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useDispatch } from 'react-redux';
 import { deleteTransportData } from "../slices/transport";
 import CSS from '../styles/gloable.json'
@@ -39,7 +38,7 @@ const TransportData = (props) => {
             </View>
             <View style={styles.secoundLine}>
                 <View style={styles.logo}>
-                    <MaterialIcons name="person" size={30} color={CSS.primaryColor} />
+                    <FontAwesome5 name="shipping-fast" size={24} color={CSS.primaryColor} />
                 </View>
                 <View style={styles.nameContact}>
                     <Text style={styles.name} numberOfLines={1}>{transportName} </Text>

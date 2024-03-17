@@ -5,6 +5,7 @@ import { fetchProductData } from "../slices/product";
 import ProductData from "../components/ProductData";
 import ProductModal from "../modals/ProductModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const ProductScreen = () => {
     const [productData, setProductData] = useState({
@@ -46,14 +47,17 @@ const ProductScreen = () => {
     }
 
     return (
-        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
+        <LinearGradient
+        colors={['#FFDFB2', '#E89187']}
+        style={styles.backgroundImage}>
+        {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 <ScrollView>
 
                     <View style={styles.container}>
-                        {data.map(item => <ProductData key={item.id} data={item} editProduct={editProduct} />)}
+                        {data.map((item, index) => <ProductData key={item.id} data={{...item, index}} editProduct={editProduct} />)}
                     </View>
                 </ScrollView>
             }
@@ -63,8 +67,8 @@ const ProductScreen = () => {
             {modalAddProduct &&
                 <ProductModal productModalData={{ modalAddProduct, productData, isEdit, id }} productModalFn={{ setModalAddProduct, setProductData, setIsEdit, setId }} />
             }
-           
-        </ImageBackground>
+           </LinearGradient>
+        //  </ImageBackground>
     );
 };
 
