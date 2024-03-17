@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useDispatch } from 'react-redux';
 import { deleteUserData } from "../slices/user";
 import CSS from '../styles/gloable.json'
+import { useFonts } from 'expo-font';
 
 const UserData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
@@ -28,25 +30,30 @@ const UserData = (props) => {
     }
 
     return (
-        <View style={[styles.container, CSS.card]}>
+        <View style={[styles.container, CSS.card, { fontFamily: 'Ubuntu-Title' }]}>
             <View style={styles.firstLine}>
-                <View style={{display:"flex", flexDirection:"row", alignItems:"center"}}>
-                    <View style={styles.index}>
-                        <Text>{index + 1}</Text>
-                    </View>
-                    <Text style={styles.name} numberOfLines={1}>{name} </Text>
+                {/* style={{ display: "flex", flexDirection: "row", alignItems: "center" }} */}
+                <View style={styles.index}>
+                    <Text style={[styles.indexText, { fontFamily: 'Ubuntu-Title' }]}>{index + 1}</Text>
                 </View>
-                <Text style={styles.nickName}>{nickName}</Text>
+                {<Text style={styles.role}>{role}</Text>}
             </View>
-            {/* <Text style={styles.role}>{role}</Text> */}
-            <Text style={styles.mobileNumber}>{mobileNumber}</Text>
-            <View style={styles.icons}>
-                <Pressable style={styles.icon} onPress={() => props.editUser(id)}>
-                    <Ionicons name="marker" size={24} color={CSS.secondaryColor} />
-                </Pressable>
-                <Pressable style={styles.icon} onPress={deleteHandler}>
-                    <Ionicons name="delete" size={24} color={CSS.secondaryColor} />
-                </Pressable>
+            <View style={styles.secoundLine}>
+                <View style={styles.nickName}>
+                    <Text style={[{fontFamily: 'Ubuntu-Title'}, styles.nickNameText]}>{nickName}</Text>
+                </View>
+                <View style={styles.nameContact}>
+                    <Text style={styles.name} numberOfLines={1}>{name} </Text>
+                    <Text style={styles.mobileNumber}>{mobileNumber}</Text>
+                </View>
+                <View style={styles.icons}>
+                    <Pressable style={styles.iconEdit} onPress={() => props.editUser(id)}>
+                        <FontAwesome5 name="edit" size={14} color={'white'} />
+                    </Pressable>
+                    <Pressable style={styles.iconDelete} onPress={deleteHandler}>
+                        <Ionicons name="delete" size={16} color={CSS.primaryColor} />
+                    </Pressable>
+                </View>
             </View>
         </View>
 
@@ -57,42 +64,69 @@ export default UserData;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: CSS.orangeCardColor,
+        fontFamily: 'Ubuntu-Title',
+        backgroundColor: 'white',
+        display: "flex",
+        flexDirection: "column",
+        position:'relative'
     },
     firstLine: {
-        display: "flex",
+        width:'100%',
+        display:'flex',
+        position:'absolute',
         flexDirection: "row",
         alignItems: "center",
-        padding: 5,
-        paddingBottom: 10,
-        justifyContent:"space-between"
+        justifyContent: "space-between"
     },
     index: {
         width: 30,
         height: 30,
-        borderRadius: 50,
-        backgroundColor: "rgba(255, 255, 255, 0.5)",
+        borderTopLeftRadius:12,
+        borderBottomRightRadius: 50,
+        backgroundColor: CSS.primaryColor,
         justifyContent: "center",
         alignItems: "center",
     },
+    indexText:{
+        top:3,
+        left:8,
+        position: 'absolute',
+        color:'white',
+        fontWeight:'bold',
+    },
+    nameContact: {
+        display: "flex",
+        flexDirection: "column",
+        marginRight: 'auto',
+        marginLeft: 25
+    },
     name: {
+        fontFamily:'Ubuntu-Title',
         fontSize: 15,
         fontWeight: "bold",
-        marginLeft: 10,
         color: CSS.secondaryColor,
     },
+    mobileNumber: {
+        fontSize: 13,
+        color: "#666",
+    },
     nickName: {
+        width: 45,
+        height: 45,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 50,
-        backgroundColor: "rgba(0,0,0,0.3)",
-        opacity: 1,
-        fontSize: 12,
-        padding: 4,
-        paddingHorizontal: 8,
-        color: "white",
+        backgroundColor: "rgba(240, 97, 26, 0.2)",
+
+    },
+    nickNameText:{
+        color: CSS.primaryColor,
+        fontSize: 17,
+        fontWeight: 'bold',
     },
     role: {
         fontSize: 12,
-        opacity: 0.4,
         color: "#333",
         marginBottom: 3,
         position: 'absolute',
@@ -100,23 +134,35 @@ const styles = StyleSheet.create({
         top: 5,
 
     },
-    mobileNumber: {
-        fontSize: 13,
-        color: "#666",
-    },
     icons: {
         flexDirection: 'row',
-        gap: 0,
-        color: CSS.secondaryColor,
+        gap: 3,
     },
-    icon: {
-        padding: 10,
+    iconEdit: {
+        height:35,
+        width:35,
+        backgroundColor: CSS.primaryColor,
+        borderRadius: 40,
+        display:'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    iconDelete: {
+        height:35,
+        width:35,
+        backgroundColor: 'white',
+        borderWidth:2,
+        borderColor: CSS.primaryColor,
+        borderRadius: 40,
+        display:'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     first: {
         flex: 0,
         borderRadius: 50,
         height: 40,
-        width:40,
+        width: 40,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -126,9 +172,13 @@ const styles = StyleSheet.create({
     middle: {
         flex: 1,
     },
-    nickname: {
-        fontWeight: 'bold',
-        color: '#FB611A',
-        fontSize: 13,
-    }
+    secoundLine: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems:'center',
+        flexDirection: "row",
+        paddingHorizontal:15,
+        paddingVertical:20
+    },
+
 });

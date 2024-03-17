@@ -6,6 +6,7 @@ import PartyData from "../components/PartyData";
 import PartyModal from "../modals/PartyModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { fetchTransportData } from "../slices/transport";
 
 const partyRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', 'Other'];
 
@@ -42,7 +43,7 @@ const PartyScreen = () => {
             partyName: value.partyName,
             city: value.city,
             mobileNumber: value.mobileNumber,
-            transport: value.transport
+            transport: value.transport[0]
         })
         setIsEdit(true)
         setId(id)

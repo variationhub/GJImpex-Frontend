@@ -1,13 +1,16 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, View } from "react-native";
 
 const ProductionScreen = () => {
 
     return (
-        <View style={styles.container}>
-            <Text>
-                This Is Production Screen
-            </Text>
-        </View>
+        <LinearGradient
+        colors={['#FFDFB2', '#E89187']}
+        style={styles.backgroundImage}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontFamily: 'ubuntu', fontSize:30 }}>Coming Soon....!</Text>
+            </View>
+        </LinearGradient>
     )
 }
 
@@ -18,5 +21,8 @@ const styles = StyleSheet.create({
         flex:1,
         justifyContent:'center',
         alignItems:'center'
-    }
+    },
+    backgroundImage: {
+        height: '100%',
+    },
 })
