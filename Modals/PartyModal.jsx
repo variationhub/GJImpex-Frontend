@@ -33,7 +33,6 @@ const PartyModal = (props) => {
         dispatch(fetchTransportData())
     }, [])
 
-    console.log(transportData);
     const [error, setError] = useState({
         partyName: false,
         city: false,

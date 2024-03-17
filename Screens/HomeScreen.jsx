@@ -7,6 +7,8 @@ import OrderModal from "../modals/OrderModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { IndexPath } from "@ui-kitten/components";
 import { LinearGradient } from "expo-linear-gradient";
+import { fetchProductData } from "../slices/product";
+import { fetchPartyData } from "../slices/party";
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
 
@@ -39,6 +41,11 @@ const OrderScreen = () => {
         const id = Date.now();
         setProduct((prev) => ({ ...prev, [id]: { id: id, productName: "", quantity: "", sellPrice: "", total: "" } }))
     }, [])
+
+    useEffect(() => {
+        dispatch(fetchProductData());
+        dispatch(fetchPartyData())
+    }, []);
 
     const image = require('../assets/logo.png');
 

@@ -19,11 +19,6 @@ const OrderModal = (props) => {
 
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(fetchProductData());
-        dispatch(fetchPartyData())
-    }, []);
-
     const productsData = useSelector((state) => state.product.data);
     const partyData = useSelector((state) => state.party.data);
 
@@ -47,7 +42,6 @@ const OrderModal = (props) => {
     }
 
     const handleChange = (id, name, value) => {
-        console.log(products, id)
         setProduct((prev) => ({ ...prev, [id]: { ...prev[id], [name]: value } }))
     }
 
@@ -114,7 +108,6 @@ const OrderModal = (props) => {
     const onSelect = useCallback((index) => {
         setTransport(data1[index].transport)
         setValue(data1[index]);
-        console.log(data1[index]);
         setOrderData((prev) => ({ ...prev, transportId: data1[index].transport[0].id }))
     }, [data1]);
 
@@ -161,6 +154,7 @@ const OrderModal = (props) => {
 
     const renderOption = (item, index) => (
         <AutocompleteItem
+            style={{ width: 318 }}
             key={index}
             title={item.partyName}
         />
@@ -176,7 +170,6 @@ const OrderModal = (props) => {
         )
     }
 
-    console.log(Object.values(products))
     return (
         <Modal
             animationType="slide"
@@ -329,7 +322,7 @@ const OrderModal = (props) => {
                                 placeholder="GST %"
                                 inputMode="numeric"
                                 size='small'
-                                value={String(orderData.gst || 0) }
+                                value={String(orderData.gst || 0)}
                                 onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: Number(e) }))}
                             />
                             <Text style={styles.totalPrice}>
