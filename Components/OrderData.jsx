@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
+import { StyleSheet, View, Text, Pressable, Alert, TextInput } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -7,34 +7,47 @@ import { useDispatch } from 'react-redux';
 import { deleteOrderData, updateStatus } from "../slices/order";
 import CSS from '../styles/gloable.json'
 import { Modal } from "react-native";
-import { CheckBox } from "@ui-kitten/components";
+import { CheckBox, Input } from "@ui-kitten/components";
+
 
 const RenderCheckboxModal = (props) => {
-    const { setShowModalCheckboxes, orderId, setId, dispatched, billed, LR } = props
-    const [isBilledChecked, setIsBilledChecked] = useState(billed);
+    const { setShowModalCheckboxes, orderId, setId, dispatched, billed, LR, billNumber } = props
+    const [isBilledChecked, setIsBilledChecked] = useState(true);
     const [isDispatchChecked, setIsDispatchChecked] = useState(dispatched);
     const [isLrSentChecked, setIsLrSentChecked] = useState(LR);
+    const [billNo, setBillNumber] = useState(billNumber);
+    const dispatch = useDispatch();
 
-    const dispatch = useDispatch()
-    const [value, setValue] = useState("");
     const closeForm = () => {
         setShowModalCheckboxes(false)
         setId("");
     }
+    const [error, setError] = useState(false);
 
     const saveForm = () => {
-        let data = false
-        if (value == 'billed' && isBilledChecked) {
-            data = true
+        if (!billNo) {
+            setError(true);
+            setTimeout(() => {
+                setError(false)
+            }, 2000)
+            return;
         }
-        if (value == 'dispatched' && isDispatchChecked) {
-            data = true
+        if (isBilledChecked && billNo.trim() !== '') {
+            dispatch(updateStatus(orderId, 'billed', { isBilledChecked, billNo }))
         }
-        if (value == 'LR' && isLrSentChecked) {
-            data = true
+        if(isDispatchChecked){
+            dispatch(updateStatus(orderId, 'dispatched', { isBilledChecked, billNo }))
         }
-        dispatch(updateStatus(orderId, value, data))
+        if(isLrSentChecked){
+            dispatch(updateStatus(orderId, 'lrSent', { isBilledChecked, billNo }))
+        }
 
+        setId("");
+        closeForm();
+    };
+
+    const reset = () => {
+        dispatch(updateStatus(orderId, 'billed', { isBilledChecked:false, billNo }))
         setId("");
         closeForm();
     };
@@ -50,30 +63,45 @@ const RenderCheckboxModal = (props) => {
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isBilledChecked}
-                            onChange={(newValue) => {
-                                setIsBilledChecked(newValue)
-                                setValue('billed')
-                            }}
-                        >Billed</CheckBox>
+                            disabled={billed}
+                            onChange={() => setIsBilledChecked(!isBilledChecked)} // Use onPress instead of onChange
+                        >
+                            Billed
+                        </CheckBox>
+                        {isBilledChecked && (
+                            <Input
+                                style={styles.input}
+                                value={billNo}
+                                disabled={billed}
+                                onChangeText={setBillNumber}
+                                status={error ? "danger" : "basic"}
+                                placeholder="Enter Bill Number"
+                            />
+                        )}
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isDispatchChecked}
-                            onChange={(newValue) => {
-                                setIsDispatchChecked(newValue)
-                                setValue('dispatched')
-                            }}
-                        >Dispatch</CheckBox>
+                            disabled={!billed}
+                            onChange={() => setIsDispatchChecked(!isDispatchChecked)}
+                        >
+                            Dispatch
+                        </CheckBox>
                         <CheckBox
                             style={styles.modalCheckbox}
                             checked={isLrSentChecked}
-                            onChange={(newValue) => {
-                                setIsLrSentChecked(newValue)
-                                setValue('LR')
-                            }}
-                        >LR Sent</CheckBox>
-                        <Pressable style={styles.saveButton} onPress={() => saveForm()}>
-                            <Text style={styles.saveButtonText}>SAVE</Text>
-                        </Pressable>
+                            disabled={!billed}
+                            onChange={() => setIsLrSentChecked(!isLrSentChecked)}
+                        >
+                            LR Sent
+                        </CheckBox>
+                        <View style={styles.button}>
+                            <Pressable style={styles.saveButton} onPress={saveForm}>
+                                <Text style={styles.saveButtonText}>SAVE</Text>
+                            </Pressable>
+                            <Pressable style={styles.resetButton} onPress={reset}>
+                                <Text style={styles.resetButtonText}>RESET</Text>
+                            </Pressable>
+                        </View>
                         <Pressable style={styles.closeForm} onPress={closeForm}>
                             <Ionicons style={styles.closeIcon} name="close" size={30} color={'#5F4521'} />
                         </Pressable>
@@ -84,12 +112,13 @@ const RenderCheckboxModal = (props) => {
     );
 };
 
+
 const OrderData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
     const [orderId, setOrderId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
 
-    const { party, mobileNumber, status, dispatched, billed, LR, id, index} = props.data;
+    const { party, mobileNumber, status, billNumber, dispatched, billed, LR, id, index} = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -144,7 +173,7 @@ const OrderData = (props) => {
                     </Pressable>
                 </View>
             </View>
-            {showModalCheckboxes && <RenderCheckboxModal dispatched={dispatched} billed={billed} LR={LR} orderId={orderId} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
+            {showModalCheckboxes && <RenderCheckboxModal billNumber={billNumber} dispatched={dispatched} billed={billed} LR={LR} orderId={orderId} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
 
         </View>
 
@@ -315,16 +344,33 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
     },
+    button:{
+        justifyContent:'space-between',
+        display:'flex',
+        flexDirection:'row',
+        width:'100%',
+    },
     saveButton: {
         backgroundColor: '#5F4521',
-        padding: 10,
         borderRadius: 5,
-        alignItems: 'center',
-        marginTop: 10,
+        width:'45%',
+        padding:10,
     },
     saveButtonText: {
         color: 'white',
         fontWeight: 'bold',
+        textAlign:'center'
+    },
+    resetButton: {
+        backgroundColor: '#5F4521',
+        borderRadius: 5,
+        width:'45%',
+        padding:10,
+    },
+    resetButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign:'center'
     },
     closeForm: {
         position: 'absolute',
@@ -337,4 +383,8 @@ const styles = StyleSheet.create({
         top: '3%',
         right: '3%',
     },
+    input: {
+        borderWidth:1,
+        marginBottom:18
+    }
 });
