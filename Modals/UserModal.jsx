@@ -95,7 +95,6 @@ const UserModal = (props) => {
         setLoading(false);
     };
 
-
     return (
         <Modal
             animationType="slide"
@@ -236,7 +235,7 @@ const UserModal = (props) => {
                             label='Select Role'
                             placeholder="Ex. Admin"
                             value={userRoles[userData?.role?.row]}
-                            selectedIndex={userData?.role}
+                            selectedIndex={userData?.role?.row}
                             ref={userRef.role}
                             onSelect={index => setUserData(prev => ({ ...prev, role: index }))}
                         >

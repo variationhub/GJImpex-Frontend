@@ -233,7 +233,7 @@ const OrderModal = (props) => {
                                 status={error1.company ? 'danger' : 'basic'}
 
                                 value={companyNameEnum[orderData?.companyName?.row]}
-                                selectedIndex={orderData?.companyName}
+                                selectedIndex={orderData?.companyName?.row}
                                 onSelect={index => {
                                     setError1((prev) => ({ ...prev, company: false }))
                                     setOrderData(prev => ({ ...prev, companyName: index }))
