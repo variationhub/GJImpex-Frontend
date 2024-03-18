@@ -14,7 +14,7 @@ const UserModal = (props) => {
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
-    const [userRef, setUserRef] = useState({
+    const [userRef] = useState({
         name: useRef(),
         nickName: useRef(),
         mobileNumber: useRef(),
@@ -49,7 +49,11 @@ const UserModal = (props) => {
     const checkAllFieldfilled = () => {
         let button = false;
         Object.keys(userData).forEach(key => {
-            if (!userData[key]) {
+            if (key === 'password' && userData[key].length <= 6) {
+                setError((prev) => ({ ...prev, [key]: true }))
+                button = true;
+            }
+            else if (!userData[key]) {
                 setError((prev) => ({ ...prev, [key]: true }))
                 button = true;
             }
@@ -104,7 +108,7 @@ const UserModal = (props) => {
                     <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} User</Text>
 
                     <Input
-                        value={userData.name}
+                        value={userData?.name}
                         label='User name'
                         name="userName"
                         status={error.name ? "danger" : "basic"}
@@ -203,6 +207,7 @@ const UserModal = (props) => {
                             name="password"
                             label='Password'
                             status={error.password ? "danger" : "basic"}
+                            caption={error.password && <Text>Password is too short</Text>}
                             placeholder='Ex. JOhn@5m1th'
                             style={styles.input}
                             secureTextEntry={true}
@@ -230,12 +235,12 @@ const UserModal = (props) => {
                         <Select
                             label='Select Role'
                             placeholder="Ex. Admin"
-                            value={userRoles[userData.role?.row]}
+                            value={userRoles[userData?.role?.row]}
                             selectedIndex={userData?.role}
                             ref={userRef.role}
                             onSelect={index => setUserData(prev => ({ ...prev, role: index }))}
                         >
-                            {userRoles.map((value) => <SelectItem title={value} key={value} />)}
+                            {userRoles?.map((value) => <SelectItem title={value} key={value} />)}
                         </Select>
                     </Layout>
 

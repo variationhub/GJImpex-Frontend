@@ -207,7 +207,7 @@ const OrderModal = (props) => {
                             onSelect={onSelect}
                             onChangeText={onChangeText}
                         >
-                            {data1.map(renderOption)}
+                            {data1?.map(renderOption)}
                         </Autocomplete>
 
                         {value?.mobileNumber &&
@@ -215,7 +215,7 @@ const OrderModal = (props) => {
                                 <Text style={styles.mobileandcity}>Mobile : {value?.mobileNumber}, City : {value?.city}</Text>
                                 <Text style={styles.transportation}>Transportation</Text>
                                 <View style={styles.transportList}>
-                                    {transport.map(value => <Pressable onPress={() => setOrderData(prev => ({ ...prev, transportId: value.id }))} style={value.id === orderData.transportId ? styles.transportSelected : styles.transportSelect}>
+                                    {transport?.map(value => <Pressable key={value.id} onPress={() => setOrderData(prev => ({ ...prev, transportId: value.id }))} style={value.id === orderData.transportId ? styles.transportSelected : styles.transportSelect}>
                                         <Text style={styles.transportName}>{value.transportName}</Text>
                                     </Pressable>)}
                                 </View>
@@ -232,14 +232,14 @@ const OrderModal = (props) => {
                                 placeholder="Ex. GJ Impex"
                                 status={error1.company ? 'danger' : 'basic'}
 
-                                value={companyNameEnum[orderData.companyName?.row]}
-                                selectedIndex={orderData.companyName}
+                                value={companyNameEnum[orderData?.companyName?.row]}
+                                selectedIndex={orderData?.companyName}
                                 onSelect={index => {
                                     setError1((prev) => ({ ...prev, company: false }))
                                     setOrderData(prev => ({ ...prev, companyName: index }))
                                 }}
                             >
-                                {companyNameEnum.map((value) => <SelectItem title={value} key={value} />)}
+                                {companyNameEnum?.map((value) => <SelectItem title={value} key={value} />)}
                             </Select>
                         </Layout>
 

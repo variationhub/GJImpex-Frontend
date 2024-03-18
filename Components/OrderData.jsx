@@ -180,12 +180,12 @@ const OrderData = (props) => {
                 <View style={styles.logo}>
                     <FontAwesome5 name="money-bill-wave" size={22} color={CSS.primaryColor} />
                 </View>
-                <Pressable onPress={() => props.editOrder(id, true)} >
-                    <View style={styles.nameContact}>
+                <View style={styles.nameContact}>
+                    <Pressable onPress={() => props.editOrder(id, true)} >
                         <Text style={styles.name} numberOfLines={1}>{party?.partyName} </Text>
                         <Text style={styles.mobileNumber}>{party?.mobileNumber}</Text>
-                    </View>
-                </Pressable>
+                    </Pressable>
+                </View>
                 <View style={styles.icons}>
                     <Pressable disabled={user?.id !== login.id} style={user?.id !== login.id ? styles.iconEditDisable : styles.iconEdit} onPress={() => props.editOrder(id)}>
                         <FontAwesome5 name="edit" size={14} color={'white'} />
@@ -247,7 +247,8 @@ const styles = StyleSheet.create({
     nameContact: {
         display: "flex",
         flexDirection: "column",
-        marginRight: 'auto',
+        marginRight: "auto",
+        marginLeft:10
     },
     name: {
         // fontFamily: 'Ubuntu-Title',

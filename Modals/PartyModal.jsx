@@ -1,13 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createPartyData, updatePartyData } from '../slices/party';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown } from 'react-native-element-dropdown';
-import { Autocomplete, AutocompleteItem, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
+import { Autocomplete, AutocompleteItem, Input } from '@ui-kitten/components';
 import { fetchTransportData } from '../slices/transport';
-import TransportData from '../components/TransportData';
 
 const filter = (item, query) => item.transportName.toLowerCase().includes(query.toLowerCase());
 
@@ -65,9 +63,9 @@ const PartyModal = (props) => {
     }
 
     const onSelect = useCallback((index) => {
-        setValue(transportData[index]);
-        setPartyData(prev => ({ ...prev, transport: transportData[index] }))
-    }, [transportData]);
+        setValue(data[index]);
+        setPartyData(prev => ({ ...prev, transport: data[index] }))
+    }, [data]);
 
     const onChangeText = useCallback((query) => {
         const data = transportData.filter(item => filter(item, query))
@@ -205,7 +203,7 @@ const PartyModal = (props) => {
                         onSelect={onSelect}
                         onChangeText={onChangeText}
                     >
-                        {transportData?.map(renderOption)}
+                        {data?.map(renderOption)}
                     </Autocomplete>
 
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>

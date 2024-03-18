@@ -3,6 +3,7 @@ import React from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import Feather from "react-native-vector-icons/Feather";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import CSS from '../styles/gloable.json'
 
@@ -66,12 +67,16 @@ const OrderDetails = (props) => {
 
                             <View style={styles.logo}>
                                 <FontAwesome5 name="building" size={20} color={CSS.primaryColor} />
-                                <Text style={[styles.textStyle, {marginLeft: 14}]}>{orderData.company}</Text>
+                                <Text style={[styles.textStyle, { marginLeft: 14 }]}>{orderData.company}</Text>
                             </View>
                         </View>
                         {orderData?.narration &&
-                            <Text>{orderData.narration}</Text>
+                            <View style={[styles.logo, { width: "95%" }]}>
+                                <Feather name="message-square" size={20} color={CSS.primaryColor} />
+                                <Text style={[styles.textStyle]}>{orderData.narration}</Text>
+                            </View>
                         }
+
                     </View>
                     <Text style={styles.productList}>Products Details</Text>
                     <View>
@@ -182,6 +187,7 @@ const styles = StyleSheet.create({
         marginTop: 'auto'
     },
     productList: {
+        marginTop: 4,
         fontSize: 14,
         fontWeight: 'bold',
         color: '#5F4521',
@@ -190,7 +196,7 @@ const styles = StyleSheet.create({
     textStyle: {
         marginLeft: 10
     },
-    contact:{
+    contact: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',

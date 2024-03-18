@@ -34,6 +34,7 @@ const PartyScreen = () => {
     };
     useEffect(() => {
         dispatch(fetchPartyData())
+        dispatch(fetchTransportData())
     }, [])
 
 
@@ -58,8 +59,7 @@ const PartyScreen = () => {
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 data.length ?
-                    <ScrollView>
-
+                    <ScrollView style={styles.view}>
                         <View style={styles.container}>
                             {data.map((item, index) => <PartyData key={item.id} data={{ ...item, index }} editParty={editParty} />)}
                         </View>
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         paddingTop: 10,
-        backgroundImage: 'linear-gradient(to bottom, #ffdfb2, #fbcca2, #f6b896, #f0a48d, #e89187)'
-
+        backgroundImage: 'linear-gradient(to bottom, #ffdfb2, #fbcca2, #f6b896, #f0a48d, #e89187)',
+        marginBottom: 50
     },
     backgroundImage: {
         height: '100%',
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
-    },imageView:{
+    }, imageView: {
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -132,10 +132,10 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200
     },
-    noData:{
+    noData: {
         fontSize: 30,
         fontWeight: "bold",
         color: '#5F4521',
         textAlign: 'center'
-    }
+    },
 });
