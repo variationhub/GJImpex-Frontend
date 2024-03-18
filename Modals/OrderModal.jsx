@@ -11,19 +11,19 @@ const filter = (item, query) => item.partyName.toLowerCase().includes(query.toLo
 const filterProduct = (item, query) => item.productName.toLowerCase().includes(query.toLowerCase());
 
 const OrderModal = (props) => {
-    const { modalAddOrder, orderData, isEdit, id, products } = props.orderModalData;
-    const { setModalAddOrder, setOrderData, setIsEdit, setId, setProduct } = props.orderModalFn;
+    const { modalAddOrder, orderData, isEdit, id, products } = props?.orderModalData;
+    const { setModalAddOrder, setOrderData, setIsEdit, setId, setProduct } = props?.orderModalFn;
 
     const dispatch = useDispatch();
 
-    const productsData = useSelector((state) => state.product.data);
-    const partyData = useSelector((state) => state.party.data);
+    const productsData = useSelector((state) => state.product?.data);
+    const partyData = useSelector((state) => state.party?.data);
 
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
-    const [value, setValue] = useState(orderData.partyId ? partyData.find(item => item.id === orderData.partyId) : null);
+    const [value, setValue] = useState(orderData?.partyId ? partyData?.find(item => item.id === orderData?.partyId) : null);
     const [data1, setData1] = useState(partyData || []);
-    const [transport, setTransport] = useState(orderData.partyId ? partyData.find(item => item.id === orderData.partyId).transport : []);
+    const [transport, setTransport] = useState(orderData?.partyId ? partyData?.find(item => item.id === orderData?.partyId).transport : []);
     
     const [value1, setValue1] = useState(null);
     const [data2, setData2] = useState(productsData);

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserData, updateUserData } from '../slices/user';
 import { useDispatch } from 'react-redux';
@@ -8,8 +8,8 @@ import { IndexPath, Input, Layout, Select, SelectItem } from '@ui-kitten/compone
 
 const UserModal = (props) => {
 
-    const { modalAddUser, userData, isEdit, id, userRoles } = props.userModalData;
-    const { setModalAddUser, setUserData, setIsEdit, setId } = props.userModalFn;
+    const { modalAddUser, userData, isEdit, id, userRoles } = props?.userModalData;
+    const { setModalAddUser, setUserData, setIsEdit, setId } = props?.userModalFn;
 
     const dispatch = useDispatch();
 
