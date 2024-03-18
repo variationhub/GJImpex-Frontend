@@ -4,7 +4,6 @@ import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIn
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserData, updateUserData } from '../slices/user';
 import { useDispatch } from 'react-redux';
-import { Dropdown } from 'react-native-element-dropdown';
 import { IndexPath, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
 
 const UserModal = (props) => {
@@ -156,6 +155,7 @@ const UserModal = (props) => {
                         label='Contact Number'
                         status={error.mobileNumber ? "danger" : "basic"}
                         placeholder='Ex. 1234567890'
+                        keyboardType='numeric'
                         style={styles.input}
                         onChangeText={(e) => {
                             if (e.length > 2) {

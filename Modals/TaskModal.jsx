@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from 'react-redux';
 import { createTaskData, updateTaskData } from '../slices/task';
 import { modelSlice } from '../slices/model';
 import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
 import { fetchUserData } from '../slices/user';
-
 
 const filter = (item, query) => item.name.toLowerCase().includes(query.toLowerCase());
 

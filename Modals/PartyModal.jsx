@@ -22,7 +22,7 @@ const PartyModal = (props) => {
     const [value, setValue] = React.useState(partyData.transport ? partyData.transport : null);
     const [data, setData] = React.useState(transportData);
 
-    const [partyRef, setPartyRef] = useState({
+    const [partyRef] = useState({
         partyName: useRef(),
         city: useRef(),
         mobileNumber: useRef(),
@@ -146,7 +146,7 @@ const PartyModal = (props) => {
                         ref={partyRef.partyName}
                         returnKeyType='next'
                         onSubmitEditing={() => {
-                            partyRef.nickName.current.focus();
+                            partyRef.city.current.focus();
                         }}
                         blurOnSubmit={false}
                     />

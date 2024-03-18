@@ -64,7 +64,7 @@ export default PartyData;
 
 const styles = StyleSheet.create({
     container: {
-        fontFamily: 'Ubuntu-Title',
+        // fontFamily: 'Ubuntu-Title',
         backgroundColor: 'white',
         display: "flex",
         flexDirection: "column",
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         marginLeft: 25
     },
     name: {
-        fontFamily:'Ubuntu-Title',
+        // fontFamily:'Ubuntu-Title',
         fontSize: 15,
         fontWeight: "bold",
         color: CSS.secondaryColor,

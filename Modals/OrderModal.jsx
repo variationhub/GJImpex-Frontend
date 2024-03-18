@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, ScrollView, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Text, Modal, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from 'react-redux';
-import order, { createOrderData, updateOrderData } from '../slices/order';
-import { Dropdown } from 'react-native-element-dropdown';
-import { fetchProductData } from '../slices/product';
-import { Autocomplete, AutocompleteItem, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
-import { fetchPartyData } from '../slices/party';
+import { createOrderData, updateOrderData } from '../slices/order';
+import { Autocomplete, AutocompleteItem, IndexPath, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
 
@@ -25,9 +22,9 @@ const OrderModal = (props) => {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [value, setValue] = useState(orderData.partyId ? partyData.find(item => item.id === orderData.partyId) : null);
-    const [data1, setData1] = useState(partyData);
-    const [transport, setTransport] = useState([]);
-
+    const [data1, setData1] = useState(partyData || []);
+    const [transport, setTransport] = useState(orderData.partyId ? partyData.find(item => item.id === orderData.partyId).transport : []);
+    
     const [value1, setValue1] = useState(null);
     const [data2, setData2] = useState(productsData);
 
@@ -54,11 +51,16 @@ const OrderModal = (props) => {
 
     const closeForm = () => {
         setOrderData({
-            name: "",
-            transport: "",
-            gst: 0,
-            gstPrice: 0,
-            total: 0
+            partyId: "",
+            city: "",
+            mobile: "",
+            transportId: "",
+            companyName: new IndexPath(0),
+            gst: "",
+            gstPrice: "",
+            totalPrice: 0,
+            confirmOrder: true,
+            narration: ""
         });
         setError1(() => ({
             party: false,
@@ -83,7 +85,7 @@ const OrderModal = (props) => {
             companyName: companyNameEnum[orderData.companyName?.row],
             orders: Object.values(products)?.map((item) => {
                 return {
-                    productId: item?.productId || item?.id,
+                    productId: item?.productId,
                     quantity: item?.quantity,
                     sellPrice: item?.sellPrice
                 }
@@ -92,7 +94,6 @@ const OrderModal = (props) => {
             gstPrice: orderData?.gstPrice || 0,
             narration: orderData?.narration || ""
         }
-        console.log(data);
         setLoading(true);
         let response = false;
         if (isEdit) {
@@ -107,15 +108,14 @@ const OrderModal = (props) => {
     };
 
     const onSelect = useCallback((index) => {
-        console.log(partyData[index])
-        setTransport(partyData[index].transport)
-        setValue(partyData[index]);
-        setOrderData((prev) => ({ ...prev, transportId: partyData[index].transport[0].id }))
+        setTransport(data1[index].transport)
+        setValue(data1[index]);
+        setOrderData((prev) => ({ ...prev, transportId: data1[index].transport[0].id }))
         setError1((prev) => ({
             ...prev,
             party: false
         }))
-    }, [partyData]);
+    }, [data1]);
 
     const onChangeText = useCallback((query) => {
         const data = partyData.filter(item => filter(item, query))
@@ -137,19 +137,16 @@ const OrderModal = (props) => {
         setProduct((prev) => ({
             ...prev,
             [id]: {
-                id,
-                productId: productsData[index].id,
-                productName: productsData[index].productName,
-                productType: productsData[index].productType,
-                quantity: "",
-                sellPrice: "",
-                total: ""
+                ...prev[id],
+                productId: data2[index].id,
+                productName: data2[index].productName,
+                productType: data2[index].productType,
             }
         }))
 
-    }, [productsData]);
+    }, [data2]);
 
-    const onChangeTextProduct = useCallback((query) => {
+    const onChangeTextProduct = useCallback((query, id) => {
         const data = productsData.filter(item => filterProduct(item, query))
         if (data.length) {
             setData2(data);
@@ -157,6 +154,13 @@ const OrderModal = (props) => {
         else {
             setData2(data);
         }
+        setProduct((prev) => ({
+            ...prev,
+            [id]: {
+                ...prev[id],
+                productName: query,
+            }
+        }))
         setValue1(query);
     }, [productsData]);
 
@@ -201,10 +205,9 @@ const OrderModal = (props) => {
                             placement='inner top'
                             label="Party Name"
                             onSelect={onSelect}
-                            style={{ border: "10px solid blue" }}
                             onChangeText={onChangeText}
                         >
-                            {partyData.map(renderOption)}
+                            {data1.map(renderOption)}
                         </Autocomplete>
 
                         {value?.mobileNumber &&
@@ -289,9 +292,9 @@ const OrderModal = (props) => {
                                                     placement='inner top'
                                                     size="small"
                                                     onSelect={(index) => onSelectProduct(index, item.id)}
-                                                    onChangeText={onChangeTextProduct}
+                                                    onChangeText={(query) => onChangeTextProduct(query, item.id)}
                                                 >
-                                                    {productsData?.map(renderOptionProduct)}
+                                                    {data2?.map(renderOptionProduct)}
                                                 </Autocomplete>
                                                 <Pressable style={styles.minus} onPress={() => removeItem(item.id)}>
                                                     <Ionicons name="minus" size={20} color={'white'} />

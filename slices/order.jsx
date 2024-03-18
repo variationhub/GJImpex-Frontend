@@ -58,7 +58,6 @@ export const deleteOrderData = (id) => async (dispatch) => {
 }
 
 export const updateOrderData = (id, data) => async (dispatch) => {
-  console.log(id)
   try {
     const response = await axiosInstance.put(`/orders/${id}`, data);
     if (response.data.status) {

@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
         marginLeft: 25
     },
     name: {
-        fontFamily:'Ubuntu-Title',
+        // fontFamily:'Ubuntu-Title',
         fontSize: 15,
         fontWeight: "bold",
         color: CSS.secondaryColor,

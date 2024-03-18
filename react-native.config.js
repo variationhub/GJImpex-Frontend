@@ -3,5 +3,5 @@ module.exports={
         android: {},
         ios: {}
     },
-    assets:["./assets/ubuntu_title"]
+    // assets:["./assets/ubuntu_title"]
 }

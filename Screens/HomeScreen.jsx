@@ -9,9 +9,10 @@ import { IndexPath } from "@ui-kitten/components";
 import { LinearGradient } from "expo-linear-gradient";
 import { fetchProductData } from "../slices/product";
 import { fetchPartyData } from "../slices/party";
+import { Image } from "react-native";
+import OrderDetails from "../modals/OrderDetails";
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
-
 
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
@@ -24,11 +25,13 @@ const OrderScreen = () => {
         gstPrice: "",
         totalPrice: 0,
         confirmOrder: true,
-        narration: "",
+        narration: ""
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.order)
+    const login = useSelector((state) => state.login.data)
     const [modalAddOrder, setModalAddOrder] = useState(false);
+    const [detailsModel, setDetailsModel] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
     const [products, setProduct] = useState({})
@@ -47,59 +50,73 @@ const OrderScreen = () => {
         dispatch(fetchPartyData())
     }, []);
 
-    const image = require('../assets/logo.png');
 
-    const editOrder = (id) => {
+    const editOrder = (id, details = false) => {
         const value = data?.find(value => value.id === id)
 
         const result = value?.products?.reduce((acc, obj) => {
-            acc[obj.id] = obj;
+            acc[obj.id] = { ...obj, productId: obj.id };
             return acc;
         }, {});
 
         setOrderData({
             partyId: value.party?.id,
+            party: value.party,
             transportId: value.transportId,
+            transport: value.party?.transport.find(item => item.id === value.transportId)?.transportName,
             companyName: new IndexPath(companyNameEnum.indexOf(value.companyName)),
+            company: value.companyName,
             gst: value.gst,
             gstPrice: value.gstPrice,
             // confirmOrder: value.confirmOrder,
             narration: value.narration,
+            totalPrice: value.totalPrice,
         })
-
         setProduct(result);
-        setIsEdit(true)
-        setId(id)
-        setModalAddOrder(true)
+        if (!details) {
+            setIsEdit(true)
+            setId(id)
+            setModalAddOrder(true)
+        } else {
+            setDetailsModel(true)
+        }
     }
 
     return (
         <LinearGradient
             colors={['#FFDFB2', '#E89187']}
             style={styles.backgroundImage}>
-            {/*  <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 data.length ?
                     <ScrollView>
                         <View style={styles.container}>
-                            {data.map((item, index) => <OrderData key={item.id} data={{ ...item, index }} editOrder={editOrder} setId={setId} />)}
+                            {data.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index }} editOrder={editOrder} setId={setId} />)}
                         </View>
                     </ScrollView>
                     :
-                    <View>
-                        <Text>No Oreder yet...</Text>
+                    <View style={styles.imageView}>
+                        <Text style={styles.noData}>No Data</Text>
+                        {/* <Image
+                            style={styles.nodataImage}
+                            source={require('../assets/image.png')}
+                        /> */}
                     </View>
             }
-            <Pressable style={styles.fab} onPress={openForm}>
-                <Ionicons name="plus" size={30} color={'white'} />
-            </Pressable>
+            {(login.role === "Admin" || login.role === "Sales") &&
+                <Pressable style={styles.fab} onPress={openForm}>
+                    <Ionicons name="plus" size={30} color={'white'} />
+                </Pressable>
+            }
             {modalAddOrder &&
                 <OrderModal orderModalData={{ modalAddOrder, orderData, isEdit, id, products }} orderModalFn={{ setModalAddOrder, setOrderData, setIsEdit, setId, setProduct }} />
             }
+
+            {detailsModel &&
+                <OrderDetails orderModalData={{ detailsModel, orderData, products }} orderModalFn={{ setDetailsModel, setOrderData, setProduct }} />
+            }
         </LinearGradient>
-        // </ImageBackground>
     );
 };
 
@@ -138,5 +155,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
+    },
+    imageView: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    nodataImage: {
+        width: 200,
+        height: 200
+    },
+    noData: {
+        fontSize: 30,
+        fontWeight: "bold",
+        color: '#5F4521',
+        textAlign: 'center'
     }
 });

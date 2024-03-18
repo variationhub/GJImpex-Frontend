@@ -28,7 +28,7 @@ const option = {
 };
 
 const AppStack = ({ token }) => {
-    const { user } = useSelector((state) => state.login);
+    const { user, data } = useSelector((state) => state.login);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -48,52 +48,60 @@ const AppStack = ({ token }) => {
                     drawerActiveBackgroundColor: "#FB611A",
                 }}
             >
-                <Drawer.Screen
+                {/* <Drawer.Screen
                     name="OVERVIEW"
                     component={OverviewScreen}
                     options={option}
                     icon={({ color, size }) => <Ionicons name="exit-outline" size={22} />}
-                />
+                /> */}
                 <Drawer.Screen
-                    name="PARTY (CUSTOMERS)"
-                    component={PartyScreen}
-                    options={option}
-                />
-                <Drawer.Screen
-                    name="CONFIRMED ORDERS"
+                    name="ORDERS"
                     component={HomeScreen}
                     options={option}
                 />
-                <Drawer.Screen
+                {(data?.role === "Sales" || data?.role === "Admin") &&
+                    <Drawer.Screen
+                        name="PARTY (CUSTOMERS)"
+                        component={PartyScreen}
+                        options={option}
+                    />
+                }
+                {/* <Drawer.Screen
                     name="PENDING ORDERS"
                     component={PendingOrderScreen}
                     options={option}
-                />
-                <Drawer.Screen
-                    name="TRANSPORTATION"
-                    component={TransportScreen}
-                    options={option}
-                />
-                <Drawer.Screen
+                /> */}
+                {/* <Drawer.Screen
                     name="PRODUCTION"
                     component={ProductionScreen}
                     options={option}
-                />
-                <Drawer.Screen
-                    name="USERS DETAILS"
-                    component={UserScreen}
-                    options={option}
-                />
-                <Drawer.Screen
-                    name="PRODUCTS DETAILS"
-                    component={ProductScreen}
-                    options={option}
-                />
-                <Drawer.Screen
+                /> */}
+                {(data?.role === "Accountant" || data?.role === "Admin") &&
+                    <Drawer.Screen
+                        name="PRODUCTS DETAILS"
+                        component={ProductScreen}
+                        options={option}
+                    />
+                }
+                {(data?.role === "Accountant" || data?.role === "Admin") &&
+                    <Drawer.Screen
+                        name="TRANSPORTATION"
+                        component={TransportScreen}
+                        options={option}
+                    />
+                }
+                {data?.role === "Admin" &&
+                    <Drawer.Screen
+                        name="USERS DETAILS"
+                        component={UserScreen}
+                        options={option}
+                    />
+                }
+                {/* <Drawer.Screen
                     name="TASKS"
                     component={TaskScreen}
                     options={option}
-                />
+                /> */}
             </Drawer.Navigator>
         );
     } else {

@@ -7,6 +7,7 @@ import UserModal from "../modals/UserModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { IndexPath } from "@ui-kitten/components";
+import { Text } from "react-native";
 
 const userRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', 'Other'];
 
@@ -22,7 +23,7 @@ const UserScreen = () => {
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.user)
-
+    const login = useSelector((state) => state.login.data)
     const [modalAddUser, setModalAddUser] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
@@ -59,16 +60,27 @@ const UserScreen = () => {
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
-                <ScrollView>
+                data.length ?
+                    <ScrollView>
 
-                    <View style={styles.container}>
-                        {data.map((item, index) => <UserData key={item.id} data={{ ...item, index }} editUser={editUser} />)}
+                        <View style={styles.container}>
+                            {data.map((item, index) => <UserData key={item.id} data={{ ...item, index }} editUser={editUser} />)}
+                        </View>
+                    </ScrollView>
+                    :
+                    <View style={styles.imageView}>
+                        <Text style={styles.noData}>No Data</Text>
+                        {/* <Image
+            style={styles.nodataImage}
+            source={require('../assets/image.png')}
+        /> */}
                     </View>
-                </ScrollView>
             }
-            <Pressable style={styles.fab} onPress={openForm}>
-                <Ionicons name="plus" size={30} color={'white'} />
-            </Pressable>
+            {login.role === "Admin" &&
+                <Pressable style={styles.fab} onPress={openForm}>
+                    <Ionicons name="plus" size={30} color={'white'} />
+                </Pressable>
+            }
             {modalAddUser &&
                 <UserModal userModalData={{ modalAddUser, userData, isEdit, id, userRoles }} userModalFn={{ setModalAddUser, setUserData, setIsEdit, setId }} />
             }
@@ -115,5 +127,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
+    }, imageView: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    nodataImage: {
+        width: 200,
+        height: 200
+    },
+    noData: {
+        fontSize: 30,
+        fontWeight: "bold",
+        color: '#5F4521',
+        textAlign: 'center'
     }
 });

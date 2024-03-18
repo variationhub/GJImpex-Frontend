@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransportData } from "../slices/transport";
@@ -13,7 +13,7 @@ const TransportScreen = () => {
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.transport)
-
+    const login = useSelector((state) => state.login.data)
     const [modalAddTransport, setModalAddTransport] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
@@ -25,7 +25,6 @@ const TransportScreen = () => {
         dispatch(fetchTransportData())
     }, [])
 
-    const image = require('../assets/logo.png');
 
     const editTransport = (id) => {
         const value = data.find(value => value.id === id)
@@ -39,26 +38,35 @@ const TransportScreen = () => {
 
     return (
         <LinearGradient
-        colors={['#FFDFB2', '#E89187']}
-        style={styles.backgroundImage}>
-        {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
+            colors={['#FFDFB2', '#E89187']}
+            style={styles.backgroundImage}>
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
-                <ScrollView>
-                    <View style={styles.container}>
-                        {data.map((item, index) => <TransportData key={item.id} data={{...item, index}} editTransport={editTransport} />)}
+                data.length ?
+                    <ScrollView>
+                        <View style={styles.container}>
+                            {data.map((item, index) => <TransportData key={item.id} data={{ ...item, index }} editTransport={editTransport} />)}
+                        </View>
+                    </ScrollView>
+                    :
+                    <View style={styles.imageView}>
+                        <Text style={styles.noData}>No Data</Text>
+                        {/* <Image
+                    style={styles.nodataImage}
+                    source={require('../assets/image.png')}
+                /> */}
                     </View>
-                </ScrollView>
             }
-            <Pressable style={styles.fab} onPress={openForm}>
-                <Ionicons name="plus" size={30} color={'white'} />
-            </Pressable>
+            {(login.role === "Accountant" || login.role === "Admin") &&
+                <Pressable style={styles.fab} onPress={openForm}>
+                    <Ionicons name="plus" size={30} color={'white'} />
+                </Pressable>
+            }
             {modalAddTransport &&
                 <TransportModal transportModalData={{ modalAddTransport, transportData, isEdit, id }} transportModalFn={{ setModalAddTransport, setTransportData, setIsEdit, setId }} />
             }
-           </LinearGradient>
-        //  </ImageBackground> 
+        </LinearGradient>
     );
 };
 
@@ -97,5 +105,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
+    }, imageView: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    nodataImage: {
+        width: 200,
+        height: 200
+    },
+    noData: {
+        fontSize: 30,
+        fontWeight: "bold",
+        color: '#5F4521',
+        textAlign: 'center'
     }
 })

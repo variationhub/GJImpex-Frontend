@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPartyData } from "../slices/party";
@@ -16,13 +16,14 @@ const PartyScreen = () => {
         partyName: "",
         city: "",
         mobileNumber: "",
-        transport : [{
+        transport: [{
             transportName: '',
             id: ''
         }],
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.party)
+    const login = useSelector((state) => state.login.data)
 
     const [modalAddParty, setModalAddParty] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -35,7 +36,6 @@ const PartyScreen = () => {
         dispatch(fetchPartyData())
     }, [])
 
-    const image = require('../assets/logo.png');
 
     const editParty = (id) => {
         const value = data.find(value => value.id === id)
@@ -52,27 +52,34 @@ const PartyScreen = () => {
 
     return (
         <LinearGradient
-        colors={['#FFDFB2', '#E89187']}
-        style={styles.backgroundImage}>
-        {/* <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}> */}
+            colors={['#FFDFB2', '#E89187']}
+            style={styles.backgroundImage}>
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
-                <ScrollView>
+                data.length ?
+                    <ScrollView>
 
-                    <View style={styles.container}>
-                        {data.map((item, index) => <PartyData key={item.id} data={{...item, index}} editParty={editParty} />)}
+                        <View style={styles.container}>
+                            {data.map((item, index) => <PartyData key={item.id} data={{ ...item, index }} editParty={editParty} />)}
+                        </View>
+                    </ScrollView>
+                    : <View style={styles.imageView}>
+                        <Text style={styles.noData}>No Data</Text>
+                        {/* <Image
+                    style={styles.nodataImage}
+                    source={require('../assets/image.png')}
+                /> */}
                     </View>
-                </ScrollView>
             }
-            <Pressable style={styles.fab} onPress={openForm}>
-                <Ionicons name="plus" size={30} color={'white'} />
-            </Pressable>
+            {(login.role === "Sales" || login.role === "Admin") &&
+                <Pressable style={styles.fab} onPress={openForm}>
+                    <Ionicons name="plus" size={30} color={'white'} />
+                </Pressable>
+            }
             {modalAddParty &&
                 <PartyModal partyModalData={{ modalAddParty, partyData, isEdit, id, partyRoles }} partyModalFn={{ setModalAddParty, setPartyData, setIsEdit, setId }} />
             }
-           
-        {/* </ImageBackground> */}
         </LinearGradient>
     );
 };
@@ -114,5 +121,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
+    },imageView:{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    nodataImage: {
+        width: 200,
+        height: 200
+    },
+    noData:{
+        fontSize: 30,
+        fontWeight: "bold",
+        color: '#5F4521',
+        textAlign: 'center'
     }
 });

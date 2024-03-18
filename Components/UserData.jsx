@@ -29,17 +29,17 @@ const UserData = (props) => {
     }
 
     return (
-        <View style={[styles.container, CSS.card, { fontFamily: 'Ubuntu-Title' }]}>
+        <View style={[styles.container, CSS.card]}>
             <View style={styles.firstLine}>
                 {/* style={{ display: "flex", flexDirection: "row", alignItems: "center" }} */}
                 <View style={styles.index}>
-                    <Text style={[styles.indexText, { fontFamily: 'Ubuntu-Title' }]}>{index + 1}</Text>
+                    <Text style={[styles.indexText]}>{index + 1}</Text>
                 </View>
                 {<Text style={styles.role}>{role}</Text>}
             </View>
             <View style={styles.secoundLine}>
                 <View style={styles.nickName}>
-                    <Text style={[{fontFamily: 'Ubuntu-Title'}, styles.nickNameText]}>{nickName}</Text>
+                    <Text style={[styles.nickNameText]}>{nickName}</Text>
                 </View>
                 <View style={styles.nameContact}>
                     <Text style={styles.name} numberOfLines={1}>{name} </Text>
@@ -63,7 +63,7 @@ export default UserData;
 
 const styles = StyleSheet.create({
     container: {
-        fontFamily: 'Ubuntu-Title',
+        // fontFamily: 'Ubuntu-Title',
         backgroundColor: 'white',
         display: "flex",
         flexDirection: "column",
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         marginLeft: 25
     },
     name: {
-        fontFamily:'Ubuntu-Title',
+        // fontFamily:'Ubuntu-Title',
         fontSize: 15,
         fontWeight: "bold",
         color: CSS.secondaryColor,
