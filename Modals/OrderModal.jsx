@@ -235,7 +235,6 @@ const OrderModal = (props) => {
                                 dropdownStyle={styles.selectedTextStyle}
                                 buttonTextStyle={styles.selectedTextStyleButton}
                                 rowTextStyle={styles.selectedTextStyleRow}
-                                rowStyle={styles.selectedTextStyleRowHeight}
                             />
                         </View>
                         <Input
@@ -439,6 +438,7 @@ const styles = StyleSheet.create({
     },
     selectedTextStyle: {
         borderRadius: 2,
+        height: 'fit-content'
     },
     inlineInput: {
         flexDirection: 'row',
@@ -575,9 +575,6 @@ const styles = StyleSheet.create({
     selectedTextStyleRow:{
         fontSize: 15,
         textAlign: 'left',
-        paddingLeft: 10,
+        padding: 10,
     },
-    selectedTextStyleRowHeight:{
-        height: 40,
-    }
 });

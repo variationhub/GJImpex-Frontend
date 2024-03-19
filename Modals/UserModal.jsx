@@ -236,7 +236,6 @@ const UserModal = (props) => {
                             dropdownStyle={styles.selectedTextStyle}
                             buttonTextStyle={styles.selectedTextStyleButton}
                             rowTextStyle={styles.selectedTextStyleRow}
-                            rowStyle={styles.selectedTextStyleRowHeight}
                         />
                     </View>
 
@@ -344,9 +343,6 @@ const styles = StyleSheet.create({
     selectedTextStyleRow:{
         fontSize: 15,
         textAlign: 'left',
-        paddingLeft: 10,
+        padding: 10,
     },
-    selectedTextStyleRowHeight:{
-        height: 40,
-    }
 });

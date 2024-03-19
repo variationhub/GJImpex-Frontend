@@ -26,6 +26,7 @@ textarea:focus, select:focus, input:focus, button:focus {
 export const injectWebCss = f => {
 
 	if ( !Platform.OS == 'web' ) return
+	if ( Platform.OS == 'android' ) return
 
 	const style = document.createElement('style')
 	style.textContent = `textarea, select, input, button { outline: none!important; }`
@@ -33,7 +34,6 @@ export const injectWebCss = f => {
 
 }
 
-// 👉 And this in the App.js file
 injectWebCss()
 
 const Navigation = () => {

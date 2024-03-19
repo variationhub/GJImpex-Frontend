@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         paddingTop: 10,
-        backgroundImage: 'linear-gradient(to bottom, #ffdfb2, #fbcca2, #f6b896, #f0a48d, #e89187)',
         marginBottom: 50
     },
     backgroundImage: {
