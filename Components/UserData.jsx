@@ -7,7 +7,6 @@ import { deleteUserData } from "../slices/user";
 import CSS from '../styles/gloable.json'
 
 const UserData = (props) => {
-    const [modalDelete, setModalDelete] = useState(false);
 
     const { name, role, nickName, mobileNumber, id, index } = props.data;
     const dispatch = useDispatch();

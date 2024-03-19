@@ -4,7 +4,9 @@ import { StyleSheet, View, Text, Modal, Pressable, ActivityIndicator } from "rea
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createUserData, updateUserData } from '../slices/user';
 import { useDispatch } from 'react-redux';
-import { IndexPath, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
+import { Input } from '@ui-kitten/components';
+import SelectDropdown from 'react-native-select-dropdown'
+
 
 const UserModal = (props) => {
 
@@ -35,7 +37,7 @@ const UserModal = (props) => {
     const closeForm = () => {
         setUserData({
             name: "",
-            role: new IndexPath(0),
+            role: userRoles[0],
             nickName: "",
             mobileNumber: "",
             email: "",
@@ -73,7 +75,7 @@ const UserModal = (props) => {
         if (isEdit) {
             response = await dispatch(updateUserData(id, {
                 name: userData.name.trim(),
-                role: userRoles[userData.role?.row],
+                role: userData.role,
                 mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
                 nickName: userData.nickName.trim()
@@ -82,7 +84,7 @@ const UserModal = (props) => {
         else {
             response = await dispatch(createUserData({
                 name: userData.name.trim(),
-                role: userRoles[userData.role?.row],
+                role: userData.role,
                 password: userData.password.trim(),
                 mobileNumber: userData.mobileNumber.trim(),
                 email: userData.email.trim(),
@@ -219,29 +221,24 @@ const UserModal = (props) => {
                                 } setUserData(prev => ({ ...prev, password: e }))
                             }}
                             ref={userRef.password}
-                            returnKeyType='next'
-                            onSubmitEditing={() => {
-                                userRef.role.current.focus();
-                            }}
-                            blurOnSubmit={false}
                         />
                     }
 
-                    <Layout
-                        style={styles.selection}
-                        level='1'
-                    >
-                        <Select
-                            label='Select Role'
-                            placeholder="Ex. Admin"
-                            value={userRoles[userData?.role?.row]}
-                            selectedIndex={userData?.role?.row}
-                            ref={userRef.role}
-                            onSelect={index => setUserData(prev => ({ ...prev, role: index }))}
-                        >
-                            {userRoles?.map((value) => <SelectItem title={value} key={value} />)}
-                        </Select>
-                    </Layout>
+                    <View style={styles.selectDrop}>
+                        <Text style={styles.company}>Select Role</Text>
+                        <SelectDropdown
+                            data={userRoles}
+                            defaultValueByIndex={userRoles.indexOf(userData?.role)}
+                            onSelect={(selectedItem, index) => {
+                                setUserData(prev => ({ ...prev, role: selectedItem }))
+                            }}
+                            buttonStyle={styles.dropdown}
+                            dropdownStyle={styles.selectedTextStyle}
+                            buttonTextStyle={styles.selectedTextStyleButton}
+                            rowTextStyle={styles.selectedTextStyleRow}
+                            rowStyle={styles.selectedTextStyleRowHeight}
+                        />
+                    </View>
 
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" />
@@ -317,5 +314,39 @@ const styles = StyleSheet.create({
     selection: {
         backgroundColor: 'white',
         marginVertical: 5
+    },
+    dropdown: {
+        height: 40,
+        width: '100%',
+        borderColor: '#E4E9F2',
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderRadius: 4
+    },
+    selectedTextStyleButton: {
+        fontSize: 15,
+        textAlign: 'left',
+    },
+    placeholderStyle: {
+        fontSize: 15,
+        color: 'gray',
+        fontFamily: ''
+    },
+    selectedTextStyle: {
+        borderRadius: 2,
+    },
+    company: {
+        color: "#8F9BB3",
+        fontWeight: "800",
+        fontSize: 12,
+        marginBottom: 2
+    },
+    selectedTextStyleRow:{
+        fontSize: 15,
+        textAlign: 'left',
+        paddingLeft: 10,
+    },
+    selectedTextStyleRowHeight:{
+        height: 40,
     }
 });

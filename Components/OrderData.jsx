@@ -7,7 +7,8 @@ import { useDispatch } from 'react-redux';
 import { deleteOrderData, updateStatus } from "../slices/order";
 import CSS from '../styles/gloable.json'
 import { Modal } from "react-native";
-import { CheckBox, Input } from "@ui-kitten/components";
+import { Input } from "@ui-kitten/components";
+import CheckBox from 'react-native-check-box'
 
 
 const RenderCheckboxModal = (props) => {
@@ -43,7 +44,6 @@ const RenderCheckboxModal = (props) => {
             dispatch(updateStatus(orderId, 'billed', { isBilledChecked, billNumber: billNo }))
         }
 
-        setId("");
         closeForm();
     };
 
@@ -75,16 +75,19 @@ const RenderCheckboxModal = (props) => {
                     <View style={styles.modalView}>
                         <Text style={styles.modalTitle}>Update Status</Text>
                         <CheckBox
-                            style={styles.modalCheckbox}
-                            checked={isBilledChecked}
-                            disabled={billed}
-                            onChange={() => {
-                                if (role === "AccAccountant" || role === "Admin")
+                            onClick={() => {
+                                if (role === "Accountant" || role === "Admin")
                                     setIsBilledChecked(!isBilledChecked)
                             }}
-                        >
-                            Billed
-                        </CheckBox>
+                            isChecked={isBilledChecked}
+                            disabled={billed}
+                            rightText={"Billed"}
+                            style={styles.modalCheckbox}
+                            checkBoxColor="#5F4521"
+                            checkedCheckBoxColor={billed ? "lightgray" : "#FB611A"}
+                            uncheckedCheckBoxColor={billed ? "lightgray" : "#5F4521"}
+
+                        />
                         {isBilledChecked && (
                             <Input
                                 style={styles.input}
@@ -96,30 +99,35 @@ const RenderCheckboxModal = (props) => {
                             />
                         )}
                         <CheckBox
-                            style={styles.modalCheckbox}
-                            checked={isDispatchChecked}
-                            disabled={!billed || dispatched}
-                            onChange={() => {
+                            onClick={() => {
                                 if (role === "Dispatcher" || role === "Admin") {
                                     setIsDispatchChecked(!isDispatchChecked)
                                 }
-                            }
-                            }
-                        >
-                            Dispatch
-                        </CheckBox>
-                        <CheckBox
+                            }}
+                            isChecked={isDispatchChecked}
+                            disabled={!billed || dispatched}
+                            rightText={"Dispatch"}
                             style={styles.modalCheckbox}
-                            checked={isLrSentChecked}
-                            disabled={!billed || !dispatched || lrSent}
-                            onChange={() => {
+                            checkBoxColor="#5F4521"
+                            checkedCheckBoxColor={(!billed || dispatched) ? "lightgray" : "#FB611A"}
+                            uncheckedCheckBoxColor={(!billed || dispatched) ? "lightgray" : "#5F4521"}
+                        />
+
+                        <CheckBox
+                            onClick={() => {
                                 if (role === "Sales" || role === "Admin") {
                                     setIsLrSentChecked(!isLrSentChecked)
                                 }
                             }}
-                        >
-                            LR Sent
-                        </CheckBox>
+                            isChecked={isLrSentChecked}
+                            disabled={!billed || !dispatched || lrSent}
+                            rightText={"LR Sent"}
+                            style={styles.modalCheckbox}
+                            checkBoxColor="#5F4521"
+                            checkedCheckBoxColor={(!billed || !dispatched || lrSent) ? "lightgray" : "#FB611A"}
+                            uncheckedCheckBoxColor={(!billed || !dispatched || lrSent) ? "lightgray" : "#5F4521"}
+
+                        />
                         <View style={styles.button}>
                             <Pressable style={styles.resetButton} onPress={reset}>
                                 <Text style={styles.resetButtonText}>RESET</Text>
@@ -203,8 +211,7 @@ const OrderData = (props) => {
                     <Text style={styles.statusChanged}>Order changed</Text>
                 </View>
             }
-            {showModalCheckboxes && <RenderCheckboxModal billNumber={billNumber} dispatched={dispatched} billed={billed} lrSent={lrSent} orderId={orderId} role={login.role} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
-
+            {showModalCheckboxes && <RenderCheckboxModal billNumber={billNumber} dispatched={dispatched} billed={billed} lrSent={lrSent} orderId={orderId} role={login?.role} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
         </View>
 
     );
@@ -248,7 +255,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         marginRight: "auto",
-        marginLeft:10
+        marginLeft: 10
     },
     name: {
         // fontFamily: 'Ubuntu-Title',

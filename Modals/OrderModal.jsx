@@ -3,7 +3,8 @@ import { StyleSheet, View, Text, Modal, Pressable, ScrollView, ActivityIndicator
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrderData, updateOrderData } from '../slices/order';
-import { Autocomplete, AutocompleteItem, IndexPath, Input, Layout, Select, SelectItem } from '@ui-kitten/components';
+import { Autocomplete, AutocompleteItem, Input } from '@ui-kitten/components';
+import SelectDropdown from 'react-native-select-dropdown'
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
 
@@ -24,7 +25,7 @@ const OrderModal = (props) => {
     const [value, setValue] = useState(orderData?.partyId ? partyData?.find(item => item.id === orderData?.partyId) : null);
     const [data1, setData1] = useState(partyData || []);
     const [transport, setTransport] = useState(orderData?.partyId ? partyData?.find(item => item.id === orderData?.partyId).transport : []);
-    
+
     const [value1, setValue1] = useState(null);
     const [data2, setData2] = useState(productsData);
 
@@ -55,7 +56,7 @@ const OrderModal = (props) => {
             city: "",
             mobile: "",
             transportId: "",
-            companyName: new IndexPath(0),
+            companyName: companyNameEnum[0],
             gst: "",
             gstPrice: "",
             totalPrice: 0,
@@ -82,7 +83,7 @@ const OrderModal = (props) => {
         const data = {
             partyId: value?.id,
             transportId: orderData.transportId.trim(),
-            companyName: companyNameEnum[orderData.companyName?.row],
+            companyName: orderData.companyName,
             orders: Object.values(products)?.map((item) => {
                 return {
                     productId: item?.productId,
@@ -222,27 +223,21 @@ const OrderModal = (props) => {
                             </>
                         }
 
-
-                        <Layout
-                            style={styles.selection}
-                            level='1'
-                        >
-                            <Select
-                                label='Company'
-                                placeholder="Ex. GJ Impex"
-                                status={error1.company ? 'danger' : 'basic'}
-
-                                value={companyNameEnum[orderData?.companyName?.row]}
-                                selectedIndex={orderData?.companyName?.row}
-                                onSelect={index => {
-                                    setError1((prev) => ({ ...prev, company: false }))
-                                    setOrderData(prev => ({ ...prev, companyName: index }))
+                        <View style={styles.selectDrop}>
+                            <Text style={styles.company}>Select Company</Text>
+                            <SelectDropdown
+                                data={companyNameEnum}
+                                defaultValueByIndex={companyNameEnum.indexOf(orderData?.companyName)}
+                                onSelect={(selectedItem, index) => {
+                                    setOrderData(prev => ({ ...prev, companyName: selectedItem }))
                                 }}
-                            >
-                                {companyNameEnum?.map((value) => <SelectItem title={value} key={value} />)}
-                            </Select>
-                        </Layout>
-
+                                buttonStyle={styles.dropdown}
+                                dropdownStyle={styles.selectedTextStyle}
+                                buttonTextStyle={styles.selectedTextStyleButton}
+                                rowTextStyle={styles.selectedTextStyleRow}
+                                rowStyle={styles.selectedTextStyleRowHeight}
+                            />
+                        </View>
                         <Input
                             value={orderData.narration}
                             label='Narration'
@@ -427,11 +422,15 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         height: 40,
-        width: '85%',
-        borderColor: '#808080',
+        width: '100%',
+        borderColor: '#E4E9F2',
+        backgroundColor: 'white',
         borderWidth: 1,
-        borderRadius: 0,
-        paddingHorizontal: 8,
+        borderRadius: 4
+    },
+    selectedTextStyleButton: {
+        fontSize: 15,
+        textAlign: 'left'
     },
     placeholderStyle: {
         fontSize: 15,
@@ -439,7 +438,7 @@ const styles = StyleSheet.create({
         fontFamily: ''
     },
     selectedTextStyle: {
-        fontSize: 15,
+        borderRadius: 2,
     },
     inlineInput: {
         flexDirection: 'row',
@@ -563,5 +562,22 @@ const styles = StyleSheet.create({
     },
     btn: {
         width: '45%'
+    },
+    selectDrop: {
+        marginTop: 8
+    },
+    company: {
+        color: "#8F9BB3",
+        fontWeight: "800",
+        fontSize: 12,
+        marginBottom: 2
+    },
+    selectedTextStyleRow:{
+        fontSize: 15,
+        textAlign: 'left',
+        paddingLeft: 10,
+    },
+    selectedTextStyleRowHeight:{
+        height: 40,
     }
 });

@@ -1,12 +1,11 @@
 import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserData } from "../slices/user";
+import user, { fetchUserData } from "../slices/user";
 import UserData from "../components/UserData";
 import UserModal from "../modals/UserModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
-import { IndexPath } from "@ui-kitten/components";
 import { Text } from "react-native";
 
 const userRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', 'Other'];
@@ -15,7 +14,7 @@ const userRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', '
 const UserScreen = () => {
     const [userData, setUserData] = useState({
         name: "",
-        role: new IndexPath(0),
+        role: userRoles[0],
         mobileNumber: "",
         email: "",
         password: "",
@@ -35,13 +34,11 @@ const UserScreen = () => {
         dispatch(fetchUserData())
     }, [])
 
-    const image = require('../assets/logo.png');
-
     const editUser = (id) => {
         const value = data.find(value => value.id === id)
         setUserData({
             name: value.name,
-            role: new IndexPath(userRoles.indexOf(value.role)),
+            role: value.role,
             mobileNumber: value.mobileNumber,
             email: value.email,
             password: "password",
@@ -98,7 +95,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingTop: 10,
         backgroundImage: 'linear-gradient(to bottom, #ffdfb2, #fbcca2, #f6b896, #f0a48d, #e89187)',
-        marginBottom:50
+        marginBottom: 50
     },
     backgroundImage: {
         height: '100%',
