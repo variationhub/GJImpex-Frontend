@@ -13,7 +13,7 @@ import { Image } from "react-native";
 import OrderDetails from "../modals/OrderDetails";
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
-
+const status = ['BILLING', 'DISPATCHING', 'LR PENDING']
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
         partyId: "",
@@ -21,14 +21,16 @@ const OrderScreen = () => {
         mobile: "",
         transportId: "",
         companyName: companyNameEnum[0],
+        freight: "",
         gst: "",
         gstPrice: "",
-        totalPrice: 0,
+        totalPrice: "",
         confirmOrder: true,
         narration: ""
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.order)
+    const [filter, setFilter] = useState("")
     const login = useSelector((state) => state.login.data)
     const [modalAddOrder, setModalAddOrder] = useState(false);
     const [detailsModel, setDetailsModel] = useState(false);
@@ -39,8 +41,9 @@ const OrderScreen = () => {
     const openForm = () => {
         setModalAddOrder(true);
     };
+
     useEffect(() => {
-        dispatch(fetchOrderData())
+        dispatch(fetchOrderData(true, true))
         const id = Date.now();
         setProduct((prev) => ({ ...prev, [id]: { id: id, productName: "", quantity: "", sellPrice: "", total: "" } }))
     }, [])
@@ -68,7 +71,8 @@ const OrderScreen = () => {
             company: value.companyName,
             gst: value.gst,
             gstPrice: value.gstPrice,
-            // confirmOrder: value.confirmOrder,
+            freight: value.freight,
+            confirmOrder: value.confirmOrder,
             narration: value.narration,
             totalPrice: value.totalPrice,
         })
@@ -92,7 +96,7 @@ const OrderScreen = () => {
                 data.length ?
                     <ScrollView>
                         <View style={styles.container}>
-                            {data.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index }} editOrder={editOrder} setId={setId} />)}
+                            {data.filter(item => filter.includes(item.status))?.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index }} editOrder={editOrder} setId={setId} />)}
                         </View>
                     </ScrollView>
                     :
@@ -127,7 +131,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         paddingTop: 10,
-        marginBottom:50
+        marginBottom: 50
     },
     backgroundImage: {
         height: '100%',

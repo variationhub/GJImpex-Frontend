@@ -6,11 +6,13 @@ export const orderSlice = createSlice({
   name: 'order',
   initialState: {
     data: [],
-    loading: false
+    loading: false,
+    pendingData: [],
+    doneData: []
   },
   reducers: {
     updateOrder(state, action) {
-      state.data = action.payload;
+      state[action.payload.key] = action.payload.data;
     },
     setLoading(state, action) {
       state.loading = action.payload;
@@ -20,13 +22,13 @@ export const orderSlice = createSlice({
 
 export const { updateOrder } = orderSlice.actions
 
-export const fetchOrderData = (load = true) => async (dispatch) => {
+export const fetchOrderData = (load = true, confirmOrder = true) => async (dispatch) => {
   try {
     if (load) {
       dispatch(orderSlice.actions.setLoading(true));
     }
-    const response = await axiosInstance.get('/orders');
-    dispatch(orderSlice.actions.updateOrder(response.data.data));
+    const response = await axiosInstance.get(`/orders?confirmOrder=${confirmOrder}`);
+    dispatch(orderSlice.actions.updateOrder({ data: response.data.data, key: confirmOrder ? "data" : "pendingData" }));
     dispatch(orderSlice.actions.setLoading(false));
     return true;
   } catch (err) {
@@ -37,11 +39,11 @@ export const fetchOrderData = (load = true) => async (dispatch) => {
   }
 }
 
-export const createOrderData = (data) => async (dispatch) => {
+export const createOrderData = (data, pending = false) => async (dispatch) => {
   try {
     const response = await axiosInstance.post('/orders', data);
     if (response.data.status) {
-      dispatch(fetchOrderData(false));
+      dispatch(fetchOrderData(false, pending));
     }
     return true;
   } catch (err) {
@@ -57,11 +59,11 @@ export const deleteOrderData = (id) => async (dispatch) => {
   }
 }
 
-export const updateOrderData = (id, data) => async (dispatch) => {
+export const updateOrderData = (id, data, pending = true) => async (dispatch) => {
   try {
     const response = await axiosInstance.put(`/orders/${id}`, data);
     if (response.data.status) {
-      dispatch(fetchOrderData(false));
+      dispatch(fetchOrderData(false, pending));
     }
     return true;
   } catch (err) {

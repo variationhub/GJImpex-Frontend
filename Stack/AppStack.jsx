@@ -41,22 +41,32 @@ const AppStack = ({ token }) => {
 
     if (user) {
         return (
-            <Drawer.Navigator initialRouteName="CONFIRMED ORDERS" drawerContent={(props) => <CustomDrawer {...props} />}
+            <Drawer.Navigator initialRouteName="PENDING ORDERS" drawerContent={(props) => <CustomDrawer {...props} />}
                 screenOptions={{
 
                     drawerActiveTintColor: '#fff',
                     drawerActiveBackgroundColor: "#FB611A",
                 }}
             >
-                {/* <Drawer.Screen
+                <Drawer.Screen
                     name="OVERVIEW"
                     component={OverviewScreen}
                     options={option}
                     icon={({ color, size }) => <Ionicons name="exit-outline" size={22} />}
-                /> */}
+                />
                 <Drawer.Screen
                     name="ORDERS"
                     component={HomeScreen}
+                    options={option}
+                />
+                <Drawer.Screen
+                    name="PENDING ORDERS"
+                    component={PendingOrderScreen}
+                    options={option}
+                />
+                <Drawer.Screen
+                    name="DONE ORDERS"
+                    component={PendingOrderScreen}
                     options={option}
                 />
                 {(data?.role === "Sales" || data?.role === "Admin") &&
@@ -66,16 +76,12 @@ const AppStack = ({ token }) => {
                         options={option}
                     />
                 }
-                {/* <Drawer.Screen
-                    name="PENDING ORDERS"
-                    component={PendingOrderScreen}
-                    options={option}
-                /> */}
-                {/* <Drawer.Screen
+
+                <Drawer.Screen
                     name="PRODUCTION"
                     component={ProductionScreen}
                     options={option}
-                /> */}
+                />
                 {(data?.role === "Accountant" || data?.role === "Admin") &&
                     <Drawer.Screen
                         name="PRODUCTS DETAILS"
@@ -83,13 +89,11 @@ const AppStack = ({ token }) => {
                         options={option}
                     />
                 }
-                {(data?.role === "Accountant" || data?.role === "Admin") &&
                     <Drawer.Screen
                         name="TRANSPORTATION"
                         component={TransportScreen}
                         options={option}
                     />
-                }
                 {data?.role === "Admin" &&
                     <Drawer.Screen
                         name="USERS DETAILS"
@@ -97,11 +101,11 @@ const AppStack = ({ token }) => {
                         options={option}
                     />
                 }
-                {/* <Drawer.Screen
+                <Drawer.Screen
                     name="TASKS"
                     component={TaskScreen}
                     options={option}
-                /> */}
+                />
             </Drawer.Navigator>
         );
     } else {

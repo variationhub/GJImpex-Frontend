@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createOrderData, updateOrderData } from '../slices/order';
 import { Autocomplete, AutocompleteItem, Input } from '@ui-kitten/components';
 import SelectDropdown from 'react-native-select-dropdown'
+import CheckBox from 'react-native-check-box';
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
 
@@ -12,7 +13,7 @@ const filter = (item, query) => item.partyName.toLowerCase().includes(query.toLo
 const filterProduct = (item, query) => item.productName.toLowerCase().includes(query.toLowerCase());
 
 const OrderModal = (props) => {
-    const { modalAddOrder, orderData, isEdit, id, products } = props?.orderModalData;
+    const { modalAddOrder, orderData, isEdit, id, products, pending = false } = props?.orderModalData;
     const { setModalAddOrder, setOrderData, setIsEdit, setId, setProduct } = props?.orderModalFn;
 
     const dispatch = useDispatch();
@@ -46,9 +47,9 @@ const OrderModal = (props) => {
     useEffect(() => {
         const total = Object.values(products)?.reduce((acc, item) => {
             return Number(acc) + Number(item.sellPrice * item.quantity)
-        }, 0)
+        }, orderData.freight)
         setOrderData((prev) => ({ ...prev, total: total }))
-    }, [products]);
+    }, [products, orderData.freight]);
 
     const closeForm = () => {
         setOrderData({
@@ -59,9 +60,10 @@ const OrderModal = (props) => {
             companyName: companyNameEnum[0],
             gst: "",
             gstPrice: "",
-            totalPrice: 0,
+            totalPrice: "",
             confirmOrder: true,
-            narration: ""
+            narration: "",
+            freight: ""
         });
         setError1(() => ({
             party: false,
@@ -91,16 +93,19 @@ const OrderModal = (props) => {
                     sellPrice: item?.sellPrice
                 }
             }),
+            confirmOrder: orderData.confirmOrder,
+            freight: orderData?.freight || 0,
             gst: orderData?.gst || 0,
             gstPrice: orderData?.gstPrice || 0,
             narration: orderData?.narration || ""
         }
+
         setLoading(true);
         let response = false;
         if (isEdit) {
-            response = await dispatch(updateOrderData(id, data));
+            response = await dispatch(updateOrderData(id, data, !pending));
         } else {
-            response = await dispatch(createOrderData(data));
+            response = await dispatch(createOrderData(data, !orderData.confirmOrder));
         }
         if (response) {
             closeForm();
@@ -237,6 +242,17 @@ const OrderModal = (props) => {
                                 rowTextStyle={styles.selectedTextStyleRow}
                             />
                         </View>
+                        {/* <View style={styles.modalView}> */}
+                        <CheckBox
+                            onClick={() => {
+                                setOrderData((prev) => ({ ...prev, confirmOrder: !prev.confirmOrder }))
+                            }}
+                            isChecked={orderData.confirmOrder}
+                            rightText={"Order confirmation"}
+                            style={styles.modalCheckbox}
+                            checkBoxColor="#5F4521"
+
+                        />
                         <Input
                             value={orderData.narration}
                             label='Narration'
@@ -306,7 +322,7 @@ const OrderModal = (props) => {
                                                 inputMode="numeric"
                                                 placeholder="Quantity"
                                                 size='small'
-                                                value={String(item?.quantity || 0)}
+                                                value={String(item?.quantity)}
                                                 onChangeText={(e) => handleChange(item?.id, "quantity", Number(e))}
                                             />
                                             <Input
@@ -315,7 +331,7 @@ const OrderModal = (props) => {
                                                 inputMode="numeric"
                                                 placeholder="Price"
                                                 size='small'
-                                                value={String(item?.sellPrice || 0)}
+                                                value={String(item?.sellPrice)}
                                                 onChangeText={(e) => handleChange(item?.id, "sellPrice", Number(e))}
                                             />
                                             <Text style={styles.totalPrice}>
@@ -328,26 +344,40 @@ const OrderModal = (props) => {
                         </ScrollView>
                         <View style={styles.inlineInput2}>
                             <Input
+                                name="freight"
+                                style={[styles.input, { flex: 1, marginRight: 10, maxWidth: 80 }]}
+                                placeholder="Freight"
+                                keyboardType="numeric"
+                                size="small"
+                                value={String(orderData.freight)}
+                                onChangeText={(e) => setOrderData(prev => ({ ...prev, freight: Number(e) }))}
+                            />
+                            <Input
                                 name="gstPrice"
                                 style={[styles.input, { flex: 1, marginRight: 10 }]}
                                 placeholder="GST Amount"
                                 keyboardType="numeric"
                                 size="small"
-                                value={String(orderData.gstPrice || 0)}
+                                value={String(orderData.gstPrice)}
                                 onChangeText={(e) => setOrderData(prev => ({ ...prev, gstPrice: Number(e) }))}
                             />
                             <Input
                                 name="gst"
                                 style={[styles.gst, { flex: 1, marginRight: 10 }]}
-                                placeholder="GST %"
+                                placeholder="GST%"
                                 inputMode="numeric"
                                 size='small'
-                                value={String(orderData.gst || 0)}
+                                value={String(orderData.gst)}
                                 onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: Number(e) }))}
                             />
-                            <Text style={styles.totalPrice}>
+                        </View>
+                        <View style={styles.finalPriceView}>
+                            <Text style={styles.finalPrice}>
+                                Total Amount :
+                            </Text>
+                            <Text style={[styles.totalPrice, { width: 140 }]}>
                                 {orderData.gst ?
-                                    Number(orderData.total + (orderData.gstPrice / orderData.gst)).toFixed(2)
+                                    Number(orderData.total + (orderData.gstPrice * (orderData.gst / 100))).toFixed(2)
                                     :
                                     Number(orderData.total + orderData.gstPrice).toFixed(2)
                                 }
@@ -392,6 +422,9 @@ const styles = StyleSheet.create({
         height: '93%',
         elevation: 5,
         marginTop: "auto"
+    },
+    modalCheckbox: {
+        marginTop: 10,
     },
     topProduct: {
         display: 'flex',
@@ -496,7 +529,8 @@ const styles = StyleSheet.create({
     },
     gst: {
         borderWidth: 1,
-        maxWidth: 65
+        maxWidth: 72,
+        backgroundColor: 'white'
     },
     mobileandcity: {
         marginVertical: 10,
@@ -546,6 +580,11 @@ const styles = StyleSheet.create({
         fontWeight: "800",
         marginLeft: 4,
     },
+    finalPrice: {
+        fontSize: 14,
+        color: "#8F9BB3",
+        fontWeight: "800",
+    },
     totalPrice: {
         fontSize: 14,
         color: "#8F9BB3",
@@ -572,9 +611,17 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginBottom: 2
     },
-    selectedTextStyleRow:{
+    selectedTextStyleRow: {
         fontSize: 15,
         textAlign: 'left',
         padding: 10,
     },
+    finalPriceView: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: "2%",
+        width: '96%'
+    }
 });

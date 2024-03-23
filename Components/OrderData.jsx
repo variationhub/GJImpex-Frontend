@@ -150,7 +150,7 @@ const RenderCheckboxModal = (props) => {
 const OrderData = (props) => {
     const [orderId, setOrderId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
-    const { party, changed, status, billNumber, dispatched, billed, lrSent, id, index, user, login } = props.data;
+    const { party, changed, status, billNumber, dispatched, billed, lrSent, id, index, user, login, pending = false } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -180,9 +180,21 @@ const OrderData = (props) => {
                 <View style={styles.index}>
                     <Text style={styles.indexText}>{index + 1}</Text>
                 </View>
-                <View style={styles.statusParent}>
-                    <Text style={styles.status}>{status}</Text>
-                </View>
+                {status === 'BILLING' &&
+                    <View style={styles.statusParent}>
+                        <Text style={styles.status}>{status}</Text>
+                    </View>
+                }
+                {status === 'DISPATCHING' &&
+                    <View style={styles.statusDispatching}>
+                        <Text style={styles.status}>{status}</Text>
+                    </View>
+                }
+                {status === 'LR PENDING' &&
+                    <View style={styles.statusLR}>
+                        <Text style={styles.status}>{status}</Text>
+                    </View>
+                }
             </View>
             <View style={styles.secondLine}>
                 <View style={styles.logo}>
@@ -198,9 +210,11 @@ const OrderData = (props) => {
                     <Pressable disabled={user?.id !== login.id} style={user?.id !== login.id ? styles.iconEditDisable : styles.iconEdit} onPress={() => props.editOrder(id)}>
                         <FontAwesome5 name="edit" size={14} color={'white'} />
                     </Pressable>
-                    <Pressable style={styles.iconDelete} onPress={() => handleBookCheck(id)}>
-                        <Ionicons name="book-check" size={18} color={CSS.primaryColor} />
-                    </Pressable>
+                    {!pending &&
+                        <Pressable style={styles.iconDelete} onPress={() => handleBookCheck(id)}>
+                            <Ionicons name="book-check" size={18} color={CSS.primaryColor} />
+                        </Pressable>
+                    }
                     <Pressable disabled={user?.id !== login.id} style={user?.id !== login.id ? styles.iconDeleteDisable : styles.iconDelete} onPress={deleteHandler}>
                         <Ionicons name="delete" size={18} color={CSS.primaryColor} />
                     </Pressable>
@@ -279,9 +293,21 @@ const styles = StyleSheet.create({
     status: {
         fontSize: 12,
         fontWeight: '900',
-        color: CSS.primaryColor,
+        color: 'white',
         paddingHorizontal: 5
     },
+    // statusD: {
+    //     fontSize: 12,
+    //     fontWeight: '900',
+    //     color: '',
+    //     paddingHorizontal: 5
+    // },
+    // statusL: {
+    //     fontSize: 12,
+    //     fontWeight: '900',
+    //     color: '',
+    //     paddingHorizontal: 5
+    // },
     statusChanged: {
         fontSize: 12,
         fontWeight: '900',
@@ -304,9 +330,35 @@ const styles = StyleSheet.create({
     statusParent: {
         top: 0,
         position: 'absolute',
-        right: 100,
+        left: 40,
         display: 'flex',
-        backgroundColor: 'rgba(240, 97, 26, 0.2)',
+        backgroundColor: 'rgba(255, 0, 0, 0.8)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+        minWidth: 80,
+        padding: 5
+    },
+    statusDispatching: {
+        top: 0,
+        position: 'absolute',
+        left: 120,
+        display: 'flex',
+        backgroundColor: 'rgba(0, 0, 255, 0.8)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+        minWidth: 80,
+        padding: 5
+    },
+    statusLR:{
+        top: 0,
+        position: 'absolute',
+        left: 220,
+        display: 'flex',
+        backgroundColor: 'rgba(15, 150, 100, 1)',
         alignItems: 'center',
         justifyContent: 'center',
         borderBottomLeftRadius: 15,
