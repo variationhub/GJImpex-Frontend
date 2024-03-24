@@ -20,9 +20,9 @@ export const productSlice = createSlice({
 
 export const { updateProduct } = productSlice.actions
 
-export const fetchProductData = (load=true) => async (dispatch) => {
+export const fetchProductData = (load = true) => async (dispatch) => {
   try {
-    if(load){
+    if (load) {
       dispatch(productSlice.actions.setLoading(true));
     }
     const response = await axiosInstance.get('/products');
@@ -59,6 +59,23 @@ export const deleteProductData = (id) => async (dispatch) => {
 export const updateProductData = (id, data) => async (dispatch) => {
   try {
     const response = await axiosInstance.put(`/products/${id}`, data);
+    if (response.data.status) {
+      dispatch(fetchProductData(false));
+    }
+    return true;
+  } catch (err) {
+    dispatch(modelSlice.actions.setModel({ visible: true, message: err.response.data.message || "Something went wrong..!" }));
+    return false;
+  }
+}
+
+export const updateStockData = (id, data) => async (dispatch) => {
+  try {
+    const productPriceHistory = [{
+      stock: data.stock,
+      price: data.price
+    }]
+    const response = await axiosInstance.put(`/products/${id}/stock`, {productPriceHistory});
     if (response.data.status) {
       dispatch(fetchProductData(false));
     }

@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Text } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductData } from "../slices/product";
@@ -61,12 +61,9 @@ const ProductScreen = () => {
                             {data.map((item, index) => <ProductData key={item.id} data={{ ...item, index }} editProduct={editProduct} />)}
                         </View>
                     </ScrollView>
-                    : <View style={styles.imageView}>
-                        <Text style={styles.noData}>No Data</Text>
-                        {/* <Image
-            style={styles.nodataImage}
-            source={require('../assets/image.png')}
-        /> */}
+                    :
+                    <View style={styles.imageView}>
+                        <Image source={require("../assets/nodata.png")} style={styles.nodataImage} />
                     </View>
             }
             {(login.role === "Accountant" || login.role === "Admin") &&
@@ -89,7 +86,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         paddingTop: 10,
-        marginBottom:50
+        marginBottom: 50
     },
     backgroundImage: {
         height: '100%',
@@ -118,7 +115,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
-    }, imageView: {
+    },
+    imageView: {
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -126,8 +124,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     nodataImage: {
-        width: 200,
-        height: 200
+        width: 240,
+        height: 240
     },
     noData: {
         fontSize: 30,

@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import user, { fetchUserData } from "../slices/user";
@@ -6,7 +6,6 @@ import UserData from "../components/UserData";
 import UserModal from "../modals/UserModal";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Text } from "react-native";
 
 const userRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', 'Other'];
 
@@ -66,11 +65,7 @@ const UserScreen = () => {
                     </ScrollView>
                     :
                     <View style={styles.imageView}>
-                        <Text style={styles.noData}>No Data</Text>
-                        {/* <Image
-            style={styles.nodataImage}
-            source={require('../assets/image.png')}
-        /> */}
+                        <Image source={require("../assets/nodata.png")} style={styles.nodataImage} />
                     </View>
             }
             {login.role === "Admin" &&
@@ -123,7 +118,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
-    }, imageView: {
+    },
+    imageView: {
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -131,8 +127,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     nodataImage: {
-        width: 200,
-        height: 200
+        width: 240,
+        height: 240
     },
     noData: {
         fontSize: 30,

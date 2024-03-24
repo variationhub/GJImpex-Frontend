@@ -249,7 +249,7 @@ const OrderData = (props) => {
                 </View>
             }
             <View style={styles.timeStyle}>
-                <Text style={styles.timeStyleText}>{dateConvert(createdAt)}</Text>
+                <Text style={styles.timeStyleText}>{dateConvert(createdAt)} - {user?.nickName}</Text>
             </View>
             {showModalCheckboxes && <RenderCheckboxModal billNumber={billNumber} dispatched={dispatched} billed={billed} lrSent={lrSent} orderId={orderId} role={login?.role} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
         </View>
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '26%',
+        marginLeft: 8,
         padding: 2
     },
     timeStyleText: {

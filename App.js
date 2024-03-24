@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { useEffect, useState } from 'react';
 import AppStack from "./stack/AppStack";
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View, AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./store";
@@ -11,6 +11,11 @@ import { ApplicationProvider } from '@ui-kitten/components';
 import { modelSlice } from "./slices/model";
 
 import { Platform } from 'react-native'
+import { fetchOrderData } from "./slices/order";
+import { fetchTransportData } from "./slices/transport";
+import { fetchProductData } from "./slices/product";
+import { fetchPartyData } from "./slices/party";
+import JSON from "./url.json"
 
 const noGlow = `
 textarea, select, input, button {
@@ -25,12 +30,12 @@ textarea:focus, select:focus, input:focus, button:focus {
 
 export const injectWebCss = f => {
 
-	if ( !Platform.OS == 'web' ) return
-	if ( Platform.OS == 'android' ) return
+  if (!Platform.OS == 'web') return
+  if (Platform.OS == 'android') return
 
-	const style = document.createElement('style')
-	style.textContent = `textarea, select, input, button { outline: none!important; }`
-	return document.head.append(style)
+  const style = document.createElement('style')
+  style.textContent = `textarea, select, input, button { outline: none!important; }`
+  return document.head.append(style)
 
 }
 
@@ -39,6 +44,7 @@ injectWebCss()
 const Navigation = () => {
   const [loading, setLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
+  const [ws, setWs] = useState(null);
 
   const { visible, message } = useSelector(state => state.model)
   const dispatch = useDispatch();
@@ -53,6 +59,54 @@ const Navigation = () => {
       })
       .finally(() => setLoading(false));
   }, []);
+
+
+  useEffect(() => {
+    const appStateChangeHandler = (nextAppState) => {
+      if (nextAppState === 'active') {
+        const newWs = new WebSocket(`${JSON.BASE_URL_WS}:8080`);
+        setWs(newWs);
+      } else {
+        if (ws) {
+          ws.close();
+        }
+      }
+    };
+
+    AppState.addEventListener('change', appStateChangeHandler);
+
+    return () => {
+      AppState.removeEventListener('change', appStateChangeHandler);
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (ws) {
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.DOMAIN === 'ORDER') {
+          dispatch(fetchOrderData(false))
+        }
+
+        if (data.DOMAIN === 'PARTY') {
+          dispatch(fetchPartyData(false))
+        }
+
+        if (data.DOMAIN === 'PRODUCT') {
+          dispatch(fetchProductData(false))
+        }
+
+        if (data.DOMAIN === 'TRANSPORT') {
+          dispatch(fetchTransportData(false))
+        }
+
+        console.log(data);
+      };
+    }
+  }, [ws]);
 
   if (loading) {
     return (
@@ -77,7 +131,7 @@ const Navigation = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.message, {marginBottom:5, fontWeight:'bold', fontSize:16}]}>
+            <Text style={[styles.message, { marginBottom: 5, fontWeight: 'bold', fontSize: 16 }]}>
               Error
             </Text>
             <Text style={styles.message}>{message}</Text>

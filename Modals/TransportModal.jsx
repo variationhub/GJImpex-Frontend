@@ -36,7 +36,21 @@ const TransportModal = (props) => {
     const checkAllFieldfilled = () => {
         let button = false;
         Object.keys(transportData).forEach(key => {
-            if (!transportData[key]) {
+            if (key === "gst") {
+                if (transportData[key].length !== 15) {
+                    setError((prev) => ({ ...prev, [key]: true }))
+                    button = true;
+                }
+            } else if (key === "mobileNumber") {
+                transportData[key].split(",").forEach(value => {
+                    if (value.length !== 10) {
+                        if (value.length !== 0) {
+                            setError((prev) => ({ ...prev, [key]: true }))
+                            button = true;
+                        }
+                    }
+                })
+            } else if (!transportData[key]) {
                 setError((prev) => ({ ...prev, [key]: true }))
                 button = true;
             }
@@ -57,16 +71,16 @@ const TransportModal = (props) => {
             response = await dispatch(updateTransportData(id, {
                 transportName: transportData.name.trim(),
                 mobileNumber: transportData.mobileNumber.trim(),
-                gst:transportData.gst.trim().toUppercase(),
-                address:transportData.address.trim()
+                gst: transportData.gst.trim().toUppercase(),
+                address: transportData.address.trim()
             }))
         }
         else {
             response = await dispatch(createTransportData({
                 transportName: transportData.name.trim(),
                 mobileNumber: transportData.mobileNumber.trim(),
-                gst:transportData.gst.trim(),
-                address:transportData.address.trim()
+                gst: transportData.gst.trim(),
+                address: transportData.address.trim()
             }))
         }
         if (response) {
@@ -106,7 +120,7 @@ const TransportModal = (props) => {
                     <Input
                         value={transportData.mobileNumber}
                         label='Mobile Number'
-                        placeholder='Ex. 9019293939'
+                        placeholder='Ex. 9019293939,9876895874'
                         style={styles.input}
                         name="mobile"
                         status={error.mobileNumber ? "danger" : "basic"}

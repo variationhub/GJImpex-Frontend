@@ -1,16 +1,117 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Pressable, Alert } from "react-native";
+import { StyleSheet, View, Text, Pressable, Alert, Modal } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useDispatch } from 'react-redux';
-import { deleteProductData } from "../slices/product";
+import { deleteProductData, updateStockData } from "../slices/product";
 import CSS from '../styles/gloable.json'
+import { Input } from "@ui-kitten/components";
+
+
+const RenderCheckboxModal = (props) => {
+    const { setShowModalCheckboxes, productId, setProductId } = props
+
+    const dispatch = useDispatch();
+
+    const [value, setValue] = useState({
+        stock: "",
+        price: ""
+    })
+
+    const closeForm = () => {
+        setShowModalCheckboxes(false)
+        setProductId("");
+    }
+    const [error, setError] = useState({
+        stock: false,
+        price: false
+    });
+
+    const saveForm = () => {
+
+        if (!value.stock || !value.price) {
+            if (!value.stock) {
+                setError((prev) => ({ ...prev, stock: true }))
+            }
+
+            if (!value.price) {
+                setError((prev) => ({ ...prev, price: true }))
+            }
+            return;
+        }
+
+        const data = {
+            stock: Number(value.stock),
+            price: Number(value.price)
+        }
+
+        const response = dispatch(updateStockData(productId, data));
+        if (response) {
+            closeForm();
+        }
+    };
+
+    return (
+        <View style={[styles.centeredView, styles.modal]}>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={true}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                            <Text style={[styles.modalTitle, { fontSize: 16 }]}>Add Stock</Text>
+                            <Pressable style={styles} onPress={closeForm}>
+                                <Ionicons style={styles.closeIcon} name="close" size={24} color={'#5F4521'} />
+                            </Pressable>
+                        </View>
+                        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                            <Input
+                                value={value.stock}
+                                label='Stock'
+                                status={error.stock ? "danger" : "basic"}
+                                placeholder='Ex. 50'
+                                keyboardType="numeric"
+                                style={styles.inputStock}
+                                onChangeText={(e) => {
+                                    setValue((prev) => ({ ...prev, stock: e }))
+                                    setError((prev) => ({ ...prev, stock: false }))
+                                }}
+                            />
+                            <Input
+                                value={value.price}
+                                label='Purcha price'
+                                status={error.price ? "danger" : "basic"}
+                                keyboardType="numeric"
+                                placeholder='Ex. 200'
+                                style={styles.inputStock}
+                                onChangeText={(e) => {
+                                    setValue((prev) => ({ ...prev, price: e }))
+                                    setError((prev) => ({ ...prev, price: false }))
+                                }}
+                            />
+                        </View>
+                        <View style={styles.button}>
+                            <Pressable style={styles.saveButton} onPress={saveForm}>
+                                <Text style={styles.saveButtonText}>ADD</Text>
+                            </Pressable>
+                        </View>
+
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    );
+};
+
 
 const ProductData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
 
     const { productName, productType, stock, id, index } = props.data;
+    const [productId, setProductId] = useState("");
+    const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -28,6 +129,11 @@ const ProductData = (props) => {
             messageStyle: styles.alertMessage,
         })
     }
+
+    const handleAddProduct = (id) => {
+        setProductId(id);
+        setShowModalCheckboxes(!showModalCheckboxes);
+    };
 
     return (
         <View style={[styles.container, CSS.card]}>
@@ -52,11 +158,15 @@ const ProductData = (props) => {
                     <Pressable style={styles.iconEdit} onPress={() => props.editProduct(id)}>
                         <FontAwesome5 name="edit" size={14} color={'white'} />
                     </Pressable>
+                    <Pressable style={styles.iconDelete} onPress={() => handleAddProduct(id)}>
+                        <Ionicons name="clipboard-plus-outline" size={18} color={CSS.primaryColor} />
+                    </Pressable>
                     <Pressable style={styles.iconDelete} onPress={deleteHandler}>
                         <Ionicons name="delete" size={16} color={CSS.primaryColor} />
                     </Pressable>
                 </View>
             </View>
+            {showModalCheckboxes && <RenderCheckboxModal productId={productId} setProductId={setProductId} handleAddProduct={handleAddProduct} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} />}
         </View>
 
     );
@@ -69,12 +179,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         display: "flex",
         flexDirection: "column",
-        position:'relative'
+        position: 'relative'
     },
     firstLine: {
-        width:'100%',
-        display:'flex',
-        position:'absolute',
+        width: '100%',
+        display: 'flex',
+        position: 'absolute',
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between"
@@ -82,18 +192,18 @@ const styles = StyleSheet.create({
     index: {
         width: 30,
         height: 30,
-        borderTopLeftRadius:12,
+        borderTopLeftRadius: 12,
         borderBottomRightRadius: 50,
         backgroundColor: CSS.primaryColor,
         justifyContent: "center",
         alignItems: "center",
     },
-    indexText:{
-        top:3,
-        left:8,
+    indexText: {
+        top: 3,
+        left: 8,
         position: 'absolute',
-        color:'white',
-        fontWeight:'bold',
+        color: 'white',
+        fontWeight: 'bold',
     },
     nameContact: {
         display: "flex",
@@ -102,7 +212,6 @@ const styles = StyleSheet.create({
         marginLeft: 25
     },
     name: {
-        // fontFamily:'Ubuntu-Title',
         fontSize: 15,
         fontWeight: "bold",
         color: CSS.secondaryColor,
@@ -122,43 +231,44 @@ const styles = StyleSheet.create({
 
     },
     stock: {
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: '900',
         color: CSS.primaryColor,
     },
-    stockParent:{
+    stockParent: {
         position: 'absolute',
-        right: 100,
-        display:'flex',
-        backgroundColor:'rgba(240, 97, 26, 0.2)',
-        alignItems:'center',
-        justifyContent:'center',
-        borderBottomLeftRadius:15,
-        borderBottomRightRadius:15,
-        width:'18%',
-        padding:5
+        top: 0,
+        right: "35%",
+        display: 'flex',
+        backgroundColor: 'rgba(240, 97, 26, 0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
+        paddingVertical: 2,
+        paddingHorizontal: 10
     },
     icons: {
         flexDirection: 'row',
         gap: 3,
     },
     iconEdit: {
-        height:35,
-        width:35,
+        height: 35,
+        width: 35,
         backgroundColor: CSS.primaryColor,
         borderRadius: 40,
-        display:'flex',
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     },
     iconDelete: {
-        height:35,
-        width:35,
+        height: 35,
+        width: 35,
         backgroundColor: 'white',
-        borderWidth:2,
+        borderWidth: 2,
         borderColor: CSS.primaryColor,
         borderRadius: 40,
-        display:'flex',
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -176,10 +286,86 @@ const styles = StyleSheet.create({
     secoundLine: {
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems:'center',
+        alignItems: 'center',
         flexDirection: "row",
-        paddingHorizontal:15,
-        paddingVertical:20
+        paddingHorizontal: 15,
+        paddingVertical: 20
     },
-
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        width: '90%',
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 25,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modal: {
+        position: 'absolute'
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalCheckbox: {
+        marginBottom: 10,
+        height: 30
+    },
+    modalButton: {
+        marginTop: 20,
+        backgroundColor: '#5F4521',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    modalButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    button: {
+        justifyContent: 'space-between',
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%',
+    },
+    saveButton: {
+        backgroundColor: '#5F4521',
+        borderRadius: 5,
+        width: '100%',
+        padding: 10,
+    },
+    saveButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    closeForm: {
+        position: 'absolute',
+        top: '3%',
+        right: '3%',
+    },
+    closeModal: {
+        display: 'flex',
+        position: 'absolute',
+        top: '3%',
+        right: '3%',
+    },
+    inputStock: {
+        borderWidth: 1,
+        width: "47%",
+        marginBottom: 10
+    }
 });

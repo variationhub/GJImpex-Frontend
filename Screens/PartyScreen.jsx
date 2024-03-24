@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Text } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPartyData } from "../slices/party";
@@ -44,7 +44,7 @@ const PartyScreen = () => {
             partyName: value.partyName,
             city: value.city,
             mobileNumber: value.mobileNumber,
-            transport: value.transport[0]
+            transport: value.transport
         })
         setIsEdit(true)
         setId(id)
@@ -64,12 +64,9 @@ const PartyScreen = () => {
                             {data.map((item, index) => <PartyData key={item.id} data={{ ...item, index }} editParty={editParty} />)}
                         </View>
                     </ScrollView>
-                    : <View style={styles.imageView}>
-                        <Text style={styles.noData}>No Data</Text>
-                        {/* <Image
-                    style={styles.nodataImage}
-                    source={require('../assets/image.png')}
-                /> */}
+                    :
+                    <View style={styles.imageView}>
+                        <Image source={require("../assets/nodata.png")} style={styles.nodataImage} />
                     </View>
             }
             {(login.role === "Sales" || login.role === "Admin") &&
@@ -120,7 +117,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
-    }, imageView: {
+    },
+    imageView: {
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -128,8 +126,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     nodataImage: {
-        width: 200,
-        height: 200
+        width: 240,
+        height: 240
     },
     noData: {
         fontSize: 30,

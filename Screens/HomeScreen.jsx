@@ -22,7 +22,7 @@ const OrderScreen = () => {
         transportId: "",
         companyName: companyNameEnum[0],
         freight: "",
-        gst: "",
+        gst: 18,
         gstPrice: "",
         totalPrice: "",
         confirmOrder: true,
@@ -131,11 +131,7 @@ const OrderScreen = () => {
                     </>
                     :
                     <View style={styles.imageView}>
-                        <Text style={styles.noData}>No Data</Text>
-                        {/* <Image
-                            style={styles.nodataImage}
-                            source={require('../assets/image.png')}
-                        /> */}
+                        <Image source={require("../assets/nodata.png")} style={styles.nodataImage} />
                     </View>
             }
             {(login.role === "Admin" || login.role === "Sales") &&
@@ -199,8 +195,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     nodataImage: {
-        width: 200,
-        height: 200
+        width: 240,
+        height: 240
     },
     noData: {
         fontSize: 30,
@@ -235,12 +231,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(15, 150, 100, 0.2)',
         borderColor: 'rgba(15, 150, 100, 1)'
     },
-    all:{
+    all: {
         // backgroundColor: 'gray',
         borderColor: 'gray',
         borderStyle: 'dashed'
     },
-    fillAll:{
+    fillAll: {
         backgroundColor: 'gray',
         borderColor: 'gray',
         borderStyle: 'solid',

@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Text } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView, Pressable, ActivityIndicator, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransportData } from "../slices/transport";
@@ -35,7 +35,7 @@ const TransportScreen = () => {
             name: value.transportName,
             mobileNumber: value.mobileNumber,
             gst: value.gst,
-            address: value.gst
+            address: value.address
         })
         setIsEdit(true)
         setId(id)
@@ -52,19 +52,15 @@ const TransportScreen = () => {
                 data.length ?
                     <ScrollView>
                         <View style={styles.container}>
-                            {data.map((item, index) => <TransportData key={item.id} data={{ ...item, index }} editTransport={editTransport} />)}
+                            {data.map((item, index) => <TransportData key={item.id} data={{ ...item, index, login }} editTransport={editTransport} />)}
                         </View>
                     </ScrollView>
                     :
                     <View style={styles.imageView}>
-                        <Text style={styles.noData}>No Data</Text>
-                        {/* <Image
-                    style={styles.nodataImage}
-                    source={require('../assets/image.png')}
-                /> */}
+                        <Image source={require("../assets/nodata.png")} style={styles.nodataImage} />
                     </View>
             }
-            {(login.role === "Accountant" || login.role === "Admin") &&
+            {(login.role === "Accountant" || login.role === "Admin" || login.role === "Sales") &&
                 <Pressable style={styles.fab} onPress={openForm}>
                     <Ionicons name="plus" size={30} color={'white'} />
                 </Pressable>
@@ -112,7 +108,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: "48px"
-    }, imageView: {
+    }, 
+    imageView: {
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -120,8 +117,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     nodataImage: {
-        width: 200,
-        height: 200
+        width: 240,
+        height: 240
     },
     noData: {
         fontSize: 30,

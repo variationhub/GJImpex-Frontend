@@ -6,19 +6,17 @@ import { createPartyData, updatePartyData } from '../slices/party';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete, AutocompleteItem, Input } from '@ui-kitten/components';
 import { fetchTransportData } from '../slices/transport';
-import CheckBox from 'react-native-check-box';
 
 const filter = (item, query) => item.transportName.toLowerCase().includes(query.toLowerCase());
 
 const PartyModal = (props) => {
 
-    const { modalAddParty, partyData, isEdit, id, partyRoles } = props.partyModalData;
+    const { modalAddParty, partyData, isEdit, id } = props.partyModalData;
     const { setModalAddParty, setPartyData, setIsEdit, setId } = props.partyModalFn;
     const transportData = useSelector(state => state.transport.data)
     const dispatch = useDispatch();
-    const [checkedItems, setCheckedItems] = useState(partyData?.transport || []);
     const [loading, setLoading] = useState(false);
-    const [value, setValue] = React.useState(partyData.transport ? partyData.transport : null);
+    const [value, setValue] = React.useState(partyData.transport ? partyData.transport : []);
     const [data, setData] = React.useState(transportData);
 
     const [partyRef] = useState({
@@ -54,7 +52,12 @@ const PartyModal = (props) => {
     const checkAllFieldfilled = () => {
         let button = false;
         Object.keys(partyData).forEach(key => {
-            if (!partyData[key]) {
+            if (key === "mobileNumber") {
+                if (partyData[key].length !== 10) {
+                    setError((prev) => ({ ...prev, [key]: true }))
+                    button = true;
+                }
+            } else if (!partyData[key]) {
                 setError((prev) => ({ ...prev, [key]: true }))
                 button = true;
             }
@@ -64,9 +67,13 @@ const PartyModal = (props) => {
     }
 
     const onSelect = useCallback((index) => {
-        setValue(data[index]);
-        setPartyData(prev => ({ ...prev, transport: data[index] }))
-    }, [data]);
+        if (value.find(item => item.id === data[index].id)) {
+            setValue(value.filter(item => item.id !== data[index].id));
+        } else {
+            setValue(prev => [...prev, data[index]]);
+            setPartyData(prev => ({ ...prev, transport: data[index] }))
+        }
+    }, [data, value]);
 
     const onChangeText = useCallback((query) => {
         const data = transportData.filter(item => filter(item, query))
@@ -98,7 +105,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: checkedItems
+                transport: value.map((item) => ({ id: item.id, transportName: item.transportName }))
             }))
         }
         else {
@@ -106,7 +113,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: checkedItems
+                transport: value.map((item) => ({ id: item.id, transportName: item.transportName }))
             }))
         }
         if (response) {
@@ -114,15 +121,6 @@ const PartyModal = (props) => {
         }
         setLoading(false);
     };
-
-    const handleClick = (value) => {
-
-        if(checkedItems.find(items => items.id === value.id)){
-            setCheckedItems(checkedItems.filter(items => items.id !== value.id))
-        }else{
-            setCheckedItems((prev) => [...prev, {transportName: value.transportName, id:value.id}])
-        }
-    }
 
     return (
         <Modal
@@ -185,6 +183,7 @@ const PartyModal = (props) => {
                         value={partyData.mobileNumber}
                         partyName="mobileNumber"
                         label='Contact Number'
+                        keyboardType='numeric'
                         status={error.mobileNumber ? "danger" : "basic"}
                         placeholder='Ex. 1234567890'
                         style={styles.input}
@@ -206,7 +205,6 @@ const PartyModal = (props) => {
                     <Autocomplete
                         placeholder='Transport..'
                         label={"Transport"}
-                        value={value?.transportName}
                         style={styles.assignTo}
                         placement='inner top'
                         onSelect={onSelect}
@@ -214,20 +212,16 @@ const PartyModal = (props) => {
                     >
                         {data?.map(renderOption)}
                     </Autocomplete>
-                    <View style={styles.checkboxContainer}>
-                        <Text style={styles.checkboxTitle}>Select Transport:</Text>
-                        {transportData.map((transport, index) => (
-                            <View key={index} style={styles.checkboxItem}>
-                               <CheckBox
-                                    onClick={()=>handleClick(transport)}
-                                    isChecked={checkedItems?.find(item => item.id === transport.id)}
-                                    rightText={transport.transportName}
-                                    style={styles.modalCheckbox}
-                                    checkBoxColor="#5F4521"
-                                    />
-                            </View>
-                        ))}
+
+                    <View style={styles.multipleTransport}>
+                        {value?.map((item, index, arr) => {
+                            return (
+                                <View style={styles.removeItem} key={item.id + index}>
+                                    <Text>{item.transportName} {arr.length - 1 === index ? "" : ", "}</Text>
+                                </View>)
+                        })}
                     </View>
+
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" />
                             :
@@ -302,5 +296,25 @@ const styles = StyleSheet.create({
     selection: {
         backgroundColor: 'white',
         marginVertical: 5
+    },
+    multipleTransport: {
+        marginTop: 8,
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 4
+    },
+    removeItem: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    removeButton: {
+        width: 24,
+        height: 24,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 12,
+        backgroundColor: "maroon"
     }
 });

@@ -1,10 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchOrderData } from "../slices/order";
-import { fetchProductData } from "../slices/product";
-import { fetchPartyData } from "../slices/party";
+import { useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, View, Image } from "react-native";
+import { useSelector } from "react-redux";
 import OrderData from "../components/OrderData";
 import OrderModal from "../modals/OrderModal";
 import OrderDetails from "../modals/OrderDetails";
@@ -27,7 +24,6 @@ const DoneOrderScreen = () => {
         confirmOrder: true,
         narration: ""
     })
-    const dispatch = useDispatch();
     const { doneData, loading } = useSelector((state) => state.order)
     const login = useSelector((state) => state.login.data)
     const [modalAddOrder, setModalAddOrder] = useState(false);
@@ -35,8 +31,6 @@ const DoneOrderScreen = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState('');
     const [products, setProduct] = useState({})
-
-    console.log(doneData);
 
     const editOrder = (id, details = false) => {
         const value = doneData?.find(value => value.id === id)
@@ -80,12 +74,12 @@ const DoneOrderScreen = () => {
                 doneData.length ?
                     <ScrollView>
                         <View style={styles.container}>
-                            {doneData.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index, done:true }} editOrder={editOrder} setId={setId} />)}
+                            {doneData.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index, done: true }} editOrder={editOrder} setId={setId} />)}
                         </View>
                     </ScrollView>
                     :
                     <View style={styles.imageView}>
-                        <Text style={styles.noData}>No Data</Text>
+                        <Image source={require("../assets/nodata.png")} style={styles.nodataImage} />
                     </View>
             }
             {modalAddOrder &&
@@ -144,8 +138,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     nodataImage: {
-        width: 200,
-        height: 200
+        width: 240,
+        height: 240
     },
     noData: {
         fontSize: 30,

@@ -45,9 +45,11 @@ const ProductModal = (props) => {
     const checkAllFieldfilled = () => {
         let button = false;
         Object.keys(productData).forEach(key => {
-            if (!productData[key]) {
-                setError((prev) => ({ ...prev, [key]: true }))
-                button = true;
+            if ((key === "stock" || key === "price") && !isEdit) {
+                if (!productData[key]) {
+                    setError((prev) => ({ ...prev, [key]: true }))
+                    button = true;
+                }
             }
         })
 
@@ -68,17 +70,25 @@ const ProductModal = (props) => {
             setLoading(false);
             return;
         }
+
+        const data = {
+            productName: productData.productName.trim(),
+            productType: productData.productType.trim(),
+            productPriceHistory: [{
+                price: productData.price,
+                stock: productData.stock
+            }],
+            minStock: productData.minStock,
+        }
         if (isEdit) {
             resposne = await dispatch(updateProductData(id, {
                 productName: productData.productName.trim(),
                 productType: productData.productType.trim(),
-                stock: productData.stock,
                 minStock: productData.minStock,
-                price: productData.price
             }))
         }
         else {
-            resposne = await dispatch(createProductData(productData))
+            resposne = await dispatch(createProductData(data))
         }
         if (resposne) {
             closeForm();
@@ -132,30 +142,32 @@ const ProductModal = (props) => {
                         blurOnSubmit={false}
                     />
 
-                    <Input
-                        value={String(productData.stock)}
-                        label='Stock'
-                        placeholder='Ex. 50'
-                        style={styles.input}
-                        status={error.stock ? "danger" : "basic"}
-                        inputMode='numeric'
-                        onChangeText={(e) => {
-                            if (e) {
-                                setError((prev) => ({
-                                    ...prev,
-                                    stock: false
-                                }))
-                            }
-                            setProductData(prev => ({ ...prev, stock: Number(e) }))
-                        }}
-                        ref={stock}
-                        returnKeyType='next'
-                        onSubmitEditing={() => {
-                            minStock.current.focus();
-                        }}
-                        blurOnSubmit={false}
-                    />
+                    {!isEdit &&
 
+                        <Input
+                            value={String(productData.stock)}
+                            label='Stock'
+                            placeholder='Ex. 50'
+                            style={styles.input}
+                            status={error.stock ? "danger" : "basic"}
+                            inputMode='numeric'
+                            onChangeText={(e) => {
+                                if (e) {
+                                    setError((prev) => ({
+                                        ...prev,
+                                        stock: false
+                                    }))
+                                }
+                                setProductData(prev => ({ ...prev, stock: Number(e) }))
+                            }}
+                            ref={stock}
+                            returnKeyType='next'
+                            onSubmitEditing={() => {
+                                minStock.current.focus();
+                            }}
+                            blurOnSubmit={false}
+                        />
+                    }
                     <Input
                         value={String(productData.minStock)}
                         label='Minimum Stock'
@@ -179,23 +191,25 @@ const ProductModal = (props) => {
                         }}
                         blurOnSubmit={false}
                     />
-                    <Input
-                        value={String(productData.price)}
-                        label='Purchase Price'
-                        placeholder='Ex. 50'
-                        status={error.price ? "danger" : "basic"}
-                        style={styles.input}
-                        inputMode='numeric'
-                        onChangeText={(e) => {
-                            if (e) {
-                                setError((prev) => ({
-                                    ...prev,
-                                    price: false
-                                }))
-                            } setProductData(prev => ({ ...prev, price: Number(e) }))
-                        }}
-                        ref={price}
-                    />
+                    {!isEdit &&
+                        <Input
+                            value={String(productData.price)}
+                            label='Purchase Price'
+                            placeholder='Ex. 50'
+                            status={error.price ? "danger" : "basic"}
+                            style={styles.input}
+                            inputMode='numeric'
+                            onChangeText={(e) => {
+                                if (e) {
+                                    setError((prev) => ({
+                                        ...prev,
+                                        price: false
+                                    }))
+                                } setProductData(prev => ({ ...prev, price: Number(e) }))
+                            }}
+                            ref={price}
+                        />
+                    }
 
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" /> :

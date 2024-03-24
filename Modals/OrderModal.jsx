@@ -58,7 +58,7 @@ const OrderModal = (props) => {
             mobile: "",
             transportId: "",
             companyName: companyNameEnum[0],
-            gst: "",
+            gst: 18,
             gstPrice: "",
             totalPrice: "",
             confirmOrder: true,
@@ -379,7 +379,8 @@ const OrderModal = (props) => {
                                 inputMode="numeric"
                                 size='small'
                                 value={String(orderData.gst)}
-                                onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: Number(e) }))}
+                                disabled
+                                // onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: Number(e) }))}
                             />
                         </View>
                         <View style={styles.finalPriceView}>

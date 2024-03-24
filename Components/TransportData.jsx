@@ -7,13 +7,12 @@ import { deleteTransportData } from "../slices/transport";
 import CSS from '../styles/gloable.json'
 
 const TransportData = (props) => {
-    const [modalDelete, setModalDelete] = useState(false);
 
-    const { transportName, gst, mobileNumber, address, id, index } = props.data;
+    const { transportName, gst, mobileNumber, address, id, index, login } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
-        Alert.alert('Delete ', 'Are You Sure ?', [
+        Alert.alert('Delete ', 'It may affect party data.\n\nAre you sure you want to delete transport data?', [
             {
                 text: 'Cancel',
                 onPress: () => console.log('Cancel Pressed'),
@@ -35,7 +34,7 @@ const TransportData = (props) => {
                     <Text style={[styles.indexText]}>{index + 1}</Text>
                 </View>
                 {/* <View style={styles.gstParent}> */}
-                    <Text style={styles.gst}>GST ID : {gst}</Text>
+                <Text style={styles.gst}>GST ID : {gst}</Text>
                 {/* </View> */}
             </View>
             <View style={styles.secoundLine}>
@@ -47,13 +46,20 @@ const TransportData = (props) => {
                     <Text style={styles.mobileNumber}>{mobileNumber}</Text>
                 </View>
                 <View style={styles.icons}>
-                    <Pressable style={styles.iconEdit} onPress={() => props.editTransport(id)}>
-                        <FontAwesome5 name="edit" size={14} color={'white'} />
-                    </Pressable>
-                    <Pressable style={styles.iconDelete} onPress={deleteHandler}>
-                        <Ionicons name="delete" size={16} color={CSS.primaryColor} />
-                    </Pressable>
+                    {(login.role === "Accountant" || login.role === "Admin" || login.role === "Sales") &&
+                        <>
+                            <Pressable style={styles.iconEdit} onPress={() => props.editTransport(id)}>
+                                <FontAwesome5 name="edit" size={14} color={'white'} />
+                            </Pressable>
+                            <Pressable style={styles.iconDelete} onPress={deleteHandler}>
+                                <Ionicons name="delete" size={16} color={CSS.primaryColor} />
+                            </Pressable>
+                        </>
+                    }
                 </View>
+            </View>
+            <View style={styles.thirdLine}>
+                <Text style={styles.addressText} numberOfLines={1}>Address: {address}</Text>
             </View>
         </View>
 
@@ -68,12 +74,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         display: "flex",
         flexDirection: "column",
-        position:'relative'
+        position: 'relative'
     },
     firstLine: {
-        width:'100%',
-        display:'flex',
-        position:'absolute',
+        width: '100%',
+        display: 'flex',
+        position: 'absolute',
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between"
@@ -81,18 +87,18 @@ const styles = StyleSheet.create({
     index: {
         width: 30,
         height: 30,
-        borderTopLeftRadius:12,
+        borderTopLeftRadius: 12,
         borderBottomRightRadius: 50,
         backgroundColor: CSS.primaryColor,
         justifyContent: "center",
         alignItems: "center",
     },
-    indexText:{
-        top:3,
-        left:8,
+    indexText: {
+        top: 3,
+        left: 8,
         position: 'absolute',
-        color:'white',
-        fontWeight:'bold',
+        color: 'white',
+        fontWeight: 'bold',
     },
     nameContact: {
         display: "flex",
@@ -121,22 +127,22 @@ const styles = StyleSheet.create({
         gap: 3,
     },
     iconEdit: {
-        height:35,
-        width:35,
+        height: 35,
+        width: 35,
         backgroundColor: CSS.primaryColor,
         borderRadius: 40,
-        display:'flex',
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     },
     iconDelete: {
-        height:35,
-        width:35,
+        height: 35,
+        width: 35,
         backgroundColor: 'white',
-        borderWidth:2,
+        borderWidth: 2,
         borderColor: CSS.primaryColor,
         borderRadius: 40,
-        display:'flex',
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -154,10 +160,10 @@ const styles = StyleSheet.create({
     secoundLine: {
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems:'center',
+        alignItems: 'center',
         flexDirection: "row",
-        paddingHorizontal:15,
-        paddingVertical:20
+        paddingHorizontal: 15,
+        paddingTop: 20
     },
     gst: {
         fontSize: 12,
@@ -168,10 +174,19 @@ const styles = StyleSheet.create({
         top: 5,
 
     },
+    addressText: {
+        fontSize: 12,
+        color: "gray",
+        marginBottom: 3,
+    },
     mobileNumber: {
         fontSize: 13,
         color: "#666",
     },
+    thirdLine: {
+        marginVertical: 2,
+        marginLeft: 8
+    }
 });
 
 
