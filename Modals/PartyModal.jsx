@@ -6,6 +6,7 @@ import { createPartyData, updatePartyData } from '../slices/party';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete, AutocompleteItem, Input } from '@ui-kitten/components';
 import { fetchTransportData } from '../slices/transport';
+import CheckBox from 'react-native-check-box';
 
 const filter = (item, query) => item.transportName.toLowerCase().includes(query.toLowerCase());
 
@@ -15,7 +16,7 @@ const PartyModal = (props) => {
     const { setModalAddParty, setPartyData, setIsEdit, setId } = props.partyModalFn;
     const transportData = useSelector(state => state.transport.data)
     const dispatch = useDispatch();
-
+    const [checkedItems, setCheckedItems] = useState(partyData?.transport || []);
     const [loading, setLoading] = useState(false);
     const [value, setValue] = React.useState(partyData.transport ? partyData.transport : null);
     const [data, setData] = React.useState(transportData);
@@ -97,7 +98,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: partyData.transport
+                transport: checkedItems
             }))
         }
         else {
@@ -105,7 +106,7 @@ const PartyModal = (props) => {
                 partyName: partyData.partyName.trim(),
                 city: partyData.city.trim(),
                 mobileNumber: partyData.mobileNumber.trim(),
-                transport: partyData.transport
+                transport: checkedItems
             }))
         }
         if (response) {
@@ -114,6 +115,14 @@ const PartyModal = (props) => {
         setLoading(false);
     };
 
+    const handleClick = (value) => {
+
+        if(checkedItems.find(items => items.id === value.id)){
+            setCheckedItems(checkedItems.filter(items => items.id !== value.id))
+        }else{
+            setCheckedItems((prev) => [...prev, {transportName: value.transportName, id:value.id}])
+        }
+    }
 
     return (
         <Modal
@@ -205,7 +214,20 @@ const PartyModal = (props) => {
                     >
                         {data?.map(renderOption)}
                     </Autocomplete>
-
+                    <View style={styles.checkboxContainer}>
+                        <Text style={styles.checkboxTitle}>Select Transport:</Text>
+                        {transportData.map((transport, index) => (
+                            <View key={index} style={styles.checkboxItem}>
+                               <CheckBox
+                                    onClick={()=>handleClick(transport)}
+                                    isChecked={checkedItems?.find(item => item.id === transport.id)}
+                                    rightText={transport.transportName}
+                                    style={styles.modalCheckbox}
+                                    checkBoxColor="#5F4521"
+                                    />
+                            </View>
+                        ))}
+                    </View>
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
                         {loading ? <ActivityIndicator color="#ffffff" />
                             :
