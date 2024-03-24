@@ -1,4 +1,4 @@
 {
     "BASE_URL": "https://uncleblock.in/api",
-    "BASE_URL_WS": "ws://uncleblock.in/websocket"
+    "BASE_URL_WS": "wss://uncleblock.in/websocket"
 }
