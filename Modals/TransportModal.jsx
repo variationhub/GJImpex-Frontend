@@ -16,11 +16,17 @@ const TransportModal = (props) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({
         name: false,
+        mobileNumber: false,
+        gst: false,
+        address: false
     });
 
     const closeForm = () => {
         setTransportData({
-            name: ""
+            name: "",
+            mobileNumber: "",
+            gst: "",
+            address: ""
         })
         setModalAddTransport(false);
         setIsEdit(false);
@@ -49,12 +55,18 @@ const TransportModal = (props) => {
         setLoading(true)
         if (isEdit) {
             response = await dispatch(updateTransportData(id, {
-                transportName: transportData.name.trim()
+                transportName: transportData.name.trim(),
+                mobileNumber: transportData.mobileNumber.trim(),
+                gst:transportData.gst.trim().toUppercase(),
+                address:transportData.address.trim()
             }))
         }
         else {
             response = await dispatch(createTransportData({
-                transportName: transportData.name.trim()
+                transportName: transportData.name.trim(),
+                mobileNumber: transportData.mobileNumber.trim(),
+                gst:transportData.gst.trim(),
+                address:transportData.address.trim()
             }))
         }
         if (response) {
@@ -89,6 +101,57 @@ const TransportModal = (props) => {
                                 }))
                             }
                             setTransportData(prev => ({ ...prev, name: e }))
+                        }}
+                    />
+                    <Input
+                        value={transportData.mobileNumber}
+                        label='Mobile Number'
+                        placeholder='Ex. 9019293939'
+                        style={styles.input}
+                        name="mobile"
+                        status={error.mobileNumber ? "danger" : "basic"}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    mobileNumber: false
+                                }))
+                            }
+                            setTransportData(prev => ({ ...prev, mobileNumber: e }))
+                        }}
+                    />
+                    <Input
+                        value={transportData.gst}
+                        label='GST Number'
+                        placeholder='Ex. 22AAAAA0000A1Z5'
+                        style={styles.input}
+                        name="gst"
+                        status={error.gst ? "danger" : "basic"}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    gst: false
+                                }))
+                            }
+                            setTransportData(prev => ({ ...prev, gst: e.toUpperCase() }))
+                        }}
+                    />
+                    <Input
+                        value={transportData.address}
+                        label='Address'
+                        placeholder='Ex. 31, Shubham Complex'
+                        style={styles.input}
+                        name="address"
+                        status={error.address ? "danger" : "basic"}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    address: false
+                                }))
+                            }
+                            setTransportData(prev => ({ ...prev, address: e }))
                         }}
                     />
 

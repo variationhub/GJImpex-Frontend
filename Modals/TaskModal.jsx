@@ -1,24 +1,36 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View, Text, Modal, Pressable, TextInput, ActivityIndicator } from "react-native";
+
+import { StyleSheet, View, Text, Modal, Pressable, TextInput, Picker, ActivityIndicator, Button } from "react-native";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useDispatch, useSelector } from 'react-redux';
 import { createTaskData, updateTaskData } from '../slices/task';
-import { modelSlice } from '../slices/model';
-import { Autocomplete, AutocompleteItem } from '@ui-kitten/components';
+import { useDispatch, useSelector } from 'react-redux';
+import { Autocomplete, AutocompleteItem, Datepicker, Input } from '@ui-kitten/components';
+import SelectDropdown from 'react-native-select-dropdown';
 import { fetchUserData } from '../slices/user';
+import DateTimePicker from '@react-native-community/datetimepicker'; // Import the DatePicker component
 
 const filter = (item, query) => item.name.toLowerCase().includes(query.toLowerCase());
 
+const TaskEnum = ['Task', 'Query', 'General']
 const TaskModal = (props) => {
 
     const { modalAddTask, taskData, isEdit, id } = props.taskModalData;
     const { setModalAddTask, setTaskData, setIsEdit, setId } = props.taskModalFn;
-    const [value, setValue] = React.useState(null);
+    const [showDateTimePicker, setShowDateTimePicker] = useState(false); 
+    const [data1, setData1] = useState(value2 || []);
+    const [value, setValue] = useState(null)
     const [loading, setLoading] = useState(false);
-    const userData = useSelector(state=> state.user.data)
-    const [data, setData] = React.useState(userData);
+    const dispatch = useDispatch();
+    const value2 = useSelector((state) => state.user?.data)
+    const [selectedDateTime, setSelectedDateTime] = useState(new Date());
 
-    const dispatch = useDispatch()
+    const [error, setError] = useState({
+        topic: false,
+        description: false,
+        type: false,
+        assignTo: false,
+        timeSent: false
+    });
 
     useEffect(() => {
         dispatch(fetchUserData())
@@ -30,62 +42,88 @@ const TaskModal = (props) => {
             description: "",
             type: "",
             assignTo: "",
-            timeSent: ""
-            
+            timeSent: new Date()
         })
         setModalAddTask(false);
-        setId("")
         setIsEdit(false);
+        setId('');
+    }
+
+    const checkAllFieldfilled = () => {
+        let button = false;
+        Object.keys(taskData).forEach(key => {
+            if (!taskData[key]) {
+                setError((prev) => ({ ...prev, [key]: true }))
+                button = true;
+            }
+        })
+
+        return button;
     }
 
     const saveForm = async (isEdit) => {
-        let resposne = false;
-        setLoading(true);
 
-        if(!taskData.topic.trim()){
-            dispatch(modelSlice.actions.setModel({visible:true, message:"Task name is required"}));
-            setLoading(false);
+        if (checkAllFieldfilled()) {
             return;
         }
+
+        let response = false;
+        setLoading(true)
         if (isEdit) {
-            resposne = await dispatch(updateTaskData(id, {
+            response = await dispatch(updateTaskData(id, {
                 topic: taskData.topic.trim(),
                 description: taskData.description.trim(),
-                type: taskData.type,
-                assignTo: taskData.assignTo,
+                type:taskData.type.trim().toUppercase(),
+                assignTo:taskData.assignTo.trim(),
                 timeSent: taskData.timeSent
             }))
         }
         else {
-            resposne = await dispatch(createTaskData(taskData))
+            response = await dispatch(createTaskData({
+                topic: taskData.topic.trim(),
+                description: taskData.description.trim(),
+                type:taskData.type.trim(),
+                assignTo:taskData.assignTo.trim(),
+                timeSent: taskData.timeSent
+
+            }))
         }
-        if (resposne) {
+        if (response) {
             closeForm();
         }
         setLoading(false);
     };
-      const onSelect = useCallback((index) => {
-        setValue(data[index].name);
-      }, [data]);
-    
-      const onChangeText = useCallback((query) => {
-        const data = userData.filter(item => filter(item, query))
-        if(data.length){
-            setValue(query);
-            setData(userData.filter(item => filter(item, query)));
+
+    const onSelect = useCallback((index) => {
+        setValue(data1[index]);
+        // setError1((prev) => ({
+        //     ...prev,
+        //     name: false
+        // }))
+    }, [data1]);
+
+    const onChangeText = useCallback((query) => {
+        const data = value2.filter(item => filter(item, query))
+        if (data.length) {
+            setData1(data);
         }
-        else{
-            setValue("");
-            setData(userData);
+        else {
+            setData1(data);
         }
-      }, []);
-    
-      const renderOption = (item, index) => (
+        setValue(query);
+        // setError1((prev) => ({
+        //     ...prev,
+        //     name: false
+        // }))
+    }, []);
+
+    const renderOption = (item, index) => (
         <AutocompleteItem
-          key={index}
-          title={item.name}
+            style={{ width: 318 }}
+            key={index}
+            title={item.name}
         />
-      );
+    );
     return (
         <Modal
             animationType="slide"
@@ -96,49 +134,103 @@ const TaskModal = (props) => {
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <Text style={styles.formTitle}>{isEdit ? "Edit" : "Add"} Task</Text>
-                    <TextInput
-                        name="topic"
-                        style={styles.input}
-                        placeholder="Enter Topic"
+
+                    <Input
                         value={taskData.topic}
-                        onChangeText={(e) => setTaskData(prev => ({ ...prev, topic: e }))}
-                    />
-                    <TextInput
-                        name="description"
+                        label='Task Topic'
+                        placeholder='Ex. Loadcell Related'
                         style={styles.input}
-                        placeholder="Enter description"
+                        name="topic"
+                        status={error.name ? "danger" : "basic"}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    topic: false
+                                }))
+                            }
+                            setTaskData(prev => ({ ...prev, topic: e }))
+                        }}
+                    />
+                    <Input
                         value={taskData.description}
-                        onChangeText={(e) => setTaskData(prev => ({ ...prev, description: e }))}
-                    />
-                    <TextInput
-                        name="type"
+                        label='Description'
+                        placeholder='Ex. Tomorrow is One Urgent Delivery'
                         style={styles.input}
-                        inputMode="numeric"
-                        placeholder="Enter type"
-                        value={String(taskData.type)}
-                        onChangeText={(e) => setTaskData(prev => ({ ...prev, type: e }))}
+                        name="description"
+                        status={error.description ? "danger" : "basic"}
+                        onChangeText={(e) => {
+                            if (e.length > 2) {
+                                setError((prev) => ({
+                                    ...prev,
+                                    description: false
+                                }))
+                            }
+                            setTaskData(prev => ({ ...prev, description: e }))
+                        }}
                     />
                     <Autocomplete
-                        placeholder='Assing to ..'
-                        value={value}
-                        style={styles.assignTo}
+                        placeholder='Assign To'
+                        value={value?.name}
+                        status={error.assignTo ? 'danger' : 'basic'}
                         placement='inner top'
+                        label="Assign To"
                         onSelect={onSelect}
                         onChangeText={onChangeText}
-                        >
-                        {data.map(renderOption)}
+                    >
+                        {data1?.map(renderOption)}
                     </Autocomplete>
-                    <TextInput
-                        name="timeSent"
-                        style={styles.input}
-                        inputMode="numeric"
-                        placeholder="Enter timeSent"
-                        value={String(taskData.timeSent)}
-                        onChangeText={(e) => setTaskData(prev => ({ ...prev, timeSent: e }))}
+                    <View style={styles.selectDrop}>
+                        <Text style={styles.company}>Type</Text>
+                        <SelectDropdown
+                            data={TaskEnum}
+                            defaultValueByIndex={TaskEnum.indexOf(taskData?.General)}
+                            onSelect={(selectedItem, index) => {
+                                setTaskData(prev => ({ ...prev, type: selectedItem }))
+                            }}
+                            buttonStyle={styles.dropdown}
+                            dropdownStyle={styles.selectedTextStyle}
+                            buttonTextStyle={styles.selectedTextStyleButton}
+                            rowTextStyle={styles.selectedTextStyleRow}
+                        />
+                    </View>
+                    <View styles={styles.timeSent}>
+                        <Input
+                            value={selectedDateTime}
+                            label='Time Sent'
+                            placeholder='Ex. Sending Time'
+                            style={styles.input}
+                            name="sentTime"
+                            status={error.sentTime ? "danger" : "basic"}
+                            onChangeText={(e) => {
+                                if (e.length > 2) {
+                                    setError((prev) => ({
+                                        ...prev,
+                                        sentTime: false
+                                    }))
+                                }
+                                setTaskData(prev => ({ ...prev, sentTime: e }))
+                            }}
+                            />
+                        <Pressable onPress={() => setShowDateTimePicker(true)}>
+                            <Ionicons name="calendar" size={26} />
+                        </Pressable>
+                    </View>
+                    {showDateTimePicker && (
+                        <DateTimePicker
+                            value={selectedDateTime}
+                            mode="datetime"
+                            display="default"
+                            onChange={(event, date) => {
+                                setShowDateTimePicker(false);
+                                setSelectedDateTime(date || selectedDateTime);
+                        }}
                     />
+                    )}
                     <Pressable style={styles.saveButton} onPress={() => !loading && saveForm(isEdit)}>
-                        {loading ? <ActivityIndicator color="#ffffff" /> :
-                            <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Create"}</Text>
+                        {loading ? <ActivityIndicator color="#ffffff" />
+                            :
+                            <Text style={styles.saveButtonText}>{isEdit ? "Update" : "Add"}</Text>
                         }
                     </Pressable>
                     <Pressable style={styles.closeForm} onPress={closeForm}>
@@ -156,6 +248,7 @@ const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         width: '100%',
+
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -187,11 +280,8 @@ const styles = StyleSheet.create({
         color: '#5F4521',
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 10,
+        backgroundColor: 'white',
+        marginVertical: 5
     },
     saveButton: {
         backgroundColor: '#5F4521',
@@ -208,14 +298,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 16,
     },
-    dropdown: {
-        height: 40,
-        marginBottom: 10,
-        borderColor: '#808080',
-        borderWidth: 1,
-        borderRadius: 0,
-        paddingHorizontal: 8,
-    },
     placeholderStyle: {
         fontSize: 15,
         color: 'gray',
@@ -224,10 +306,37 @@ const styles = StyleSheet.create({
     selectedTextStyle: {
         fontSize: 15,
     },
-    assignTo:{
+    selectDrop: {
+        marginTop: 8
+    },
+    company: {
+        color: "#8F9BB3",
+        fontWeight: "800",
+        fontSize: 12,
+        marginBottom: 2
+    },
+    selectedTextStyleButton: {
+        fontSize: 15,
+        textAlign: 'left'
+    },
+    selectedTextStyle: {
+        borderRadius: 2,
+        height: 'fit-content'
+    },
+    dropdown: {
+        height: 40,
         width: '100%',
-        borderWidth: 5,
-        backgroundColor: '#fff',
-        marginBottom: 10
+        borderColor: '#E4E9F2',
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderRadius: 4
+    },
+    selectedTextStyleRow: {
+        fontSize: 15,
+        textAlign: 'left',
+        padding: 10,
+    },
+    timeSent:{
+        
     }
 });
