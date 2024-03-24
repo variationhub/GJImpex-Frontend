@@ -48,31 +48,25 @@ const TaskScreen = () => {
 
 
     return (
-        <LinearGradient
-        colors={['#FFDFB2', '#E89187']}
-        style={styles.backgroundImage}>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text >Coming Soon....!</Text>
-            </View>
-        </LinearGradient>
+
         
-        //<ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
-        //   {loading ? */}
-        //         <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
-        //         :
-        //         <ScrollView>
-        //             <View style={styles.container}>
-        //                 {data.map(item => <TaskData key={item.id} data={item} editTask={editTask} />)}
-        //             </View>
-        //         </ScrollView>
-        //     }
-        //     <Pressable style={styles.fab} onPress={openForm}>
-        //         <Ionicons name="plus" size={30} color={'white'} />
-        //     </Pressable>
-        //     {modalAddTask &&
-        //         <TaskModal taskModalData={{ modalAddTask, taskData, isEdit, id }} taskModalFn={{ setModalAddTask, setTaskData, setIsEdit, setId }} />
-        //     }
-        // </ImageBackground>
+        <ImageBackground source={image} style={styles.backgroundImage} resizeMode="contain" opacity={0.4}>
+          {loading ? 
+                <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
+                :
+                <ScrollView>
+                    <View style={styles.container}>
+                        {data.map((item, index) => <TaskData key={item.id} data={{...item, index}} editTask={editTask} />)}
+                    </View>
+                </ScrollView>
+            }
+            <Pressable style={styles.fab} onPress={openForm}>
+                <Ionicons name="plus" size={30} color={'white'} />
+            </Pressable>
+            {modalAddTask &&
+                <TaskModal taskModalData={{ modalAddTask, taskData, isEdit, id }} taskModalFn={{ setModalAddTask, setTaskData, setIsEdit, setId }} />
+            }
+        </ImageBackground>
 
         
     );

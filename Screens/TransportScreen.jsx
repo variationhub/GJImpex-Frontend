@@ -9,7 +9,10 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const TransportScreen = () => {
     const [transportData, setTransportData] = useState({
-        name: ""
+        name: "",
+        mobileNumber: "",
+        gst: "",
+        address: ""
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.transport)
@@ -29,7 +32,10 @@ const TransportScreen = () => {
     const editTransport = (id) => {
         const value = data.find(value => value.id === id)
         setTransportData({
-            name: value.transportName
+            name: value.transportName,
+            mobileNumber: value.mobileNumber,
+            gst: value.gst,
+            address: value.gst
         })
         setIsEdit(true)
         setId(id)

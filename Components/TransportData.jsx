@@ -9,7 +9,7 @@ import CSS from '../styles/gloable.json'
 const TransportData = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
 
-    const { transportName, city, mobileNumber, id, index } = props.data;
+    const { transportName, gst, mobileNumber, address, id, index } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -31,10 +31,12 @@ const TransportData = (props) => {
     return (
         <View style={[styles.container, CSS.card]}>
             <View style={styles.firstLine}>
-                {/* style={{ display: "flex", flexDirection: "row", alignItems: "center" }} */}
                 <View style={styles.index}>
                     <Text style={[styles.indexText]}>{index + 1}</Text>
                 </View>
+                {/* <View style={styles.gstParent}> */}
+                    <Text style={styles.gst}>GST ID : {gst}</Text>
+                {/* </View> */}
             </View>
             <View style={styles.secoundLine}>
                 <View style={styles.logo}>
@@ -42,6 +44,7 @@ const TransportData = (props) => {
                 </View>
                 <View style={styles.nameContact}>
                     <Text style={styles.name} numberOfLines={1}>{transportName} </Text>
+                    <Text style={styles.mobileNumber}>{mobileNumber}</Text>
                 </View>
                 <View style={styles.icons}>
                     <Pressable style={styles.iconEdit} onPress={() => props.editTransport(id)}>
@@ -156,5 +159,19 @@ const styles = StyleSheet.create({
         paddingHorizontal:15,
         paddingVertical:20
     },
+    gst: {
+        fontSize: 12,
+        color: "#333",
+        marginBottom: 3,
+        position: 'absolute',
+        right: 10,
+        top: 5,
 
+    },
+    mobileNumber: {
+        fontSize: 13,
+        color: "#666",
+    },
 });
+
+
