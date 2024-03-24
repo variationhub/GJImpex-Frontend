@@ -64,7 +64,7 @@ const Navigation = () => {
   useEffect(() => {
     const appStateChangeHandler = (nextAppState) => {
       if (nextAppState === 'active') {
-        const newWs = new WebSocket(`${JSON.BASE_URL_WS}:8080`);
+        const newWs = new WebSocket(`${JSON.BASE_URL_WS}`);
         setWs(newWs);
       } else {
         if (ws) {
