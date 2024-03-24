@@ -146,11 +146,24 @@ const RenderCheckboxModal = (props) => {
     );
 };
 
+const dateConvert = (value) => {
+    const date = new Date(value);
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Note: Month is zero-based
+    const year = date.getFullYear();
+
+    const formattedDate = `${day}/${month}/${year} | ${hours}:${minutes}`;
+
+    return formattedDate;
+}
 
 const OrderData = (props) => {
     const [orderId, setOrderId] = useState('');
     const [showModalCheckboxes, setShowModalCheckboxes] = useState(false);
-    const { party, changed, status, billNumber, dispatched, billed, lrSent, id, index, user, login, pending = false } = props.data;
+    const { party, changed, status, priority, createdAt, billNumber, dispatched, billed, lrSent, id, index, user, login, pending = false, done = false } = props.data;
     const dispatch = useDispatch();
     const deleteHandler = (e) => {
         e.stopPropagation()
@@ -180,6 +193,7 @@ const OrderData = (props) => {
                 <View style={styles.index}>
                     <Text style={styles.indexText}>{index + 1}</Text>
                 </View>
+
                 {status === 'BILLING' &&
                     <View style={styles.statusParent}>
                         <Text style={styles.status}>{status}</Text>
@@ -198,6 +212,11 @@ const OrderData = (props) => {
             </View>
             <View style={styles.secondLine}>
                 <View style={styles.logo}>
+                    {priority &&
+                        <View style={styles.priority}>
+                            <Text style={styles.priorityP}>P</Text>
+                        </View>
+                    }
                     <FontAwesome5 name="money-bill-wave" size={22} color={CSS.primaryColor} />
                 </View>
                 <View style={styles.nameContact}>
@@ -207,17 +226,21 @@ const OrderData = (props) => {
                     </Pressable>
                 </View>
                 <View style={styles.icons}>
-                    <Pressable disabled={user?.id !== login.id} style={user?.id !== login.id ? styles.iconEditDisable : styles.iconEdit} onPress={() => props.editOrder(id)}>
-                        <FontAwesome5 name="edit" size={14} color={'white'} />
-                    </Pressable>
+                    {!done &&
+                        <Pressable disabled={user?.id !== login.id} style={user?.id !== login.id ? styles.iconEditDisable : styles.iconEdit} onPress={() => props.editOrder(id)}>
+                            <FontAwesome5 name="edit" size={14} color={'white'} />
+                        </Pressable>
+                    }
                     {!pending &&
                         <Pressable style={styles.iconDelete} onPress={() => handleBookCheck(id)}>
                             <Ionicons name="book-check" size={18} color={CSS.primaryColor} />
                         </Pressable>
                     }
-                    <Pressable disabled={user?.id !== login.id} style={user?.id !== login.id ? styles.iconDeleteDisable : styles.iconDelete} onPress={deleteHandler}>
-                        <Ionicons name="delete" size={18} color={CSS.primaryColor} />
-                    </Pressable>
+                    {!done &&
+                        <Pressable disabled={user?.id !== login.id} style={user?.id !== login.id ? styles.iconDeleteDisable : styles.iconDelete} onPress={deleteHandler}>
+                            <Ionicons name="delete" size={18} color={CSS.primaryColor} />
+                        </Pressable>
+                    }
                 </View>
             </View>
             {changed &&
@@ -225,6 +248,9 @@ const OrderData = (props) => {
                     <Text style={styles.statusChanged}>Order changed</Text>
                 </View>
             }
+            <View style={styles.timeStyle}>
+                <Text style={styles.timeStyleText}>{dateConvert(createdAt)}</Text>
+            </View>
             {showModalCheckboxes && <RenderCheckboxModal billNumber={billNumber} dispatched={dispatched} billed={billed} lrSent={lrSent} orderId={orderId} role={login?.role} setOrderId={setOrderId} handleBookCheck={handleBookCheck} showModalCheckboxes={showModalCheckboxes} setShowModalCheckboxes={setShowModalCheckboxes} setId={props.setId} />}
         </View>
 
@@ -289,9 +315,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 50,
         backgroundColor: "rgba(240, 97, 26, 0.2)",
+        position: "relative",
     },
     status: {
-        fontSize: 12,
+        fontSize: 10,
         fontWeight: '900',
         color: 'white',
         paddingHorizontal: 5
@@ -309,7 +336,7 @@ const styles = StyleSheet.create({
     //     paddingHorizontal: 5
     // },
     statusChanged: {
-        fontSize: 12,
+        fontSize: 10,
         fontWeight: '900',
         color: 'white',
         textTransform: 'uppercase'
@@ -322,47 +349,44 @@ const styles = StyleSheet.create({
         backgroundColor: 'maroon',
         alignItems: 'center',
         justifyContent: 'center',
-        borderTopLeftRadius: 15,
+        borderTopLeftRadius: 12,
         borderBottomRightRadius: 12,
-        width: '40%',
         padding: 5,
     },
     statusParent: {
         top: 0,
         position: 'absolute',
-        left: 40,
+        left: "10%",
         display: 'flex',
         backgroundColor: 'rgba(255, 0, 0, 0.8)',
         alignItems: 'center',
         justifyContent: 'center',
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
-        minWidth: 80,
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
         padding: 5
     },
     statusDispatching: {
         top: 0,
         position: 'absolute',
-        left: 120,
+        left: "36%",
         display: 'flex',
-        backgroundColor: 'rgba(0, 0, 255, 0.8)',
+        backgroundColor: 'rgba(100, 100, 200, 0.8)',
         alignItems: 'center',
         justifyContent: 'center',
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
-        minWidth: 80,
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
         padding: 5
     },
-    statusLR:{
+    statusLR: {
         top: 0,
         position: 'absolute',
-        left: 220,
+        right: 0,
         display: 'flex',
         backgroundColor: 'rgba(15, 150, 100, 1)',
         alignItems: 'center',
         justifyContent: 'center',
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
+        borderBottomLeftRadius: 12,
+        borderTopRightRadius: 12,
         minWidth: 80,
         padding: 5
     },
@@ -429,7 +453,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: "row",
         paddingHorizontal: 15,
-        paddingVertical: 20
+        paddingVertical: 20,
     },
     centeredView: {
         flex: 1,
@@ -517,5 +541,37 @@ const styles = StyleSheet.create({
     input: {
         borderWidth: 1,
         marginBottom: 18
+    },
+    timeStyle: {
+        bottom: 0,
+        position: 'absolute',
+        left: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '26%',
+        padding: 2
+    },
+    timeStyleText: {
+        color: 'gray',
+        fontSize: 8
+    },
+    priority: {
+        position: 'absolute',
+        bottom: -4,
+        right: -4,
+        width: 16,
+        height: 16,
+        borderRadius: 50,
+        backgroundColor: 'rgba(230,0,0,1)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    priorityP: {
+        color: 'white',
+        fontSize: 10,
+        fontWeight: 'bold'
     }
+
 });

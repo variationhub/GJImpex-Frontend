@@ -96,12 +96,12 @@ const OrderDetails = (props) => {
                         })}
                     </View>
                     <View style={[styles.row, styles.gst]}>
-                        <Text style={[styles.cellName, styles.cellHeading]}>GST Price</Text>
+                        <Text style={[styles.cellName, styles.cellHeading]}>Freight  |  GST Price</Text> 
                         <Text style={[styles.cellNumber, styles.cellHeading]}>GST %</Text>
                         <Text style={[styles.cellNumber, styles.cellHeading]}>Total</Text>
                     </View>
                     <View style={styles.row}>
-                        <Text style={[styles.cell, styles.cellName]}>{orderData.gstPrice}</Text>
+                        <Text style={[styles.cell, styles.cellName]}>{orderData.freight}  |  {orderData.gstPrice}</Text>
                         <Text style={[styles.cellNumber]}>{orderData.gst}</Text>
                         <Text style={[styles.cellNumber]}>{orderData.totalPrice}</Text>
                     </View>

@@ -13,6 +13,7 @@ import TransportScreen from "../screens/TransportScreen";
 import PartyScreen from "../screens/PartyScreen";
 import OverviewScreen from "../screens/OverviewScreen";
 import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
+import DoneOrderScreen from '../screens/DoneOrderScreen';
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,19 +42,19 @@ const AppStack = ({ token }) => {
 
     if (user) {
         return (
-            <Drawer.Navigator initialRouteName="PENDING ORDERS" drawerContent={(props) => <CustomDrawer {...props} />}
+            <Drawer.Navigator initialRouteName="ORDERS" drawerContent={(props) => <CustomDrawer {...props} />}
                 screenOptions={{
 
                     drawerActiveTintColor: '#fff',
                     drawerActiveBackgroundColor: "#FB611A",
                 }}
             >
-                <Drawer.Screen
+                {/* <Drawer.Screen
                     name="OVERVIEW"
                     component={OverviewScreen}
                     options={option}
                     icon={({ color, size }) => <Ionicons name="exit-outline" size={22} />}
-                />
+                /> */}
                 <Drawer.Screen
                     name="ORDERS"
                     component={HomeScreen}
@@ -66,7 +67,7 @@ const AppStack = ({ token }) => {
                 />
                 <Drawer.Screen
                     name="DONE ORDERS"
-                    component={PendingOrderScreen}
+                    component={DoneOrderScreen}
                     options={option}
                 />
                 {(data?.role === "Sales" || data?.role === "Admin") &&
@@ -77,11 +78,11 @@ const AppStack = ({ token }) => {
                     />
                 }
 
-                <Drawer.Screen
+                {/* <Drawer.Screen
                     name="PRODUCTION"
                     component={ProductionScreen}
                     options={option}
-                />
+                /> */}
                 {(data?.role === "Accountant" || data?.role === "Admin") &&
                     <Drawer.Screen
                         name="PRODUCTS DETAILS"
@@ -89,11 +90,11 @@ const AppStack = ({ token }) => {
                         options={option}
                     />
                 }
-                    <Drawer.Screen
-                        name="TRANSPORTATION"
-                        component={TransportScreen}
-                        options={option}
-                    />
+                <Drawer.Screen
+                    name="TRANSPORTATION"
+                    component={TransportScreen}
+                    options={option}
+                />
                 {data?.role === "Admin" &&
                     <Drawer.Screen
                         name="USERS DETAILS"
@@ -101,11 +102,11 @@ const AppStack = ({ token }) => {
                         options={option}
                     />
                 }
-                <Drawer.Screen
+                {/* <Drawer.Screen
                     name="TASKS"
                     component={TaskScreen}
                     options={option}
-                />
+                /> */}
             </Drawer.Navigator>
         );
     } else {

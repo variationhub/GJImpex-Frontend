@@ -13,7 +13,7 @@ import { Image } from "react-native";
 import OrderDetails from "../modals/OrderDetails";
 
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
-const status = ['BILLING', 'DISPATCHING', 'LR PENDING']
+
 const OrderScreen = () => {
     const [orderData, setOrderData] = useState({
         partyId: "",
@@ -26,11 +26,12 @@ const OrderScreen = () => {
         gstPrice: "",
         totalPrice: "",
         confirmOrder: true,
-        narration: ""
+        narration: "",
+        priority: false
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.order)
-    const [filter, setFilter] = useState("")
+    const [filter, setFilter] = useState([])
     const login = useSelector((state) => state.login.data)
     const [modalAddOrder, setModalAddOrder] = useState(false);
     const [detailsModel, setDetailsModel] = useState(false);
@@ -75,6 +76,7 @@ const OrderScreen = () => {
             confirmOrder: value.confirmOrder,
             narration: value.narration,
             totalPrice: value.totalPrice,
+            priority: value.priority
         })
         setProduct(result);
         if (!details) {
@@ -86,6 +88,18 @@ const OrderScreen = () => {
         }
     }
 
+    const filterHandler = (data) => {
+        if (data === "ALL") {
+            setFilter([])
+        } else {
+            if (filter.includes(data)) {
+                setFilter(filter.filter(item => item !== data))
+            } else {
+                setFilter([...filter, data])
+            }
+        }
+    }
+
     return (
         <LinearGradient
             colors={['#FFDFB2', '#E89187']}
@@ -94,11 +108,27 @@ const OrderScreen = () => {
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
                 data.length ?
-                    <ScrollView>
-                        <View style={styles.container}>
-                            {data.filter(item => filter.includes(item.status))?.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index }} editOrder={editOrder} setId={setId} />)}
+                    <>
+                        <View style={styles.filter}>
+                            <Pressable style={[styles.filterbtn, !filter.length ? styles.fillAll : styles.all]} onPress={() => filterHandler("ALL")}>
+                                <Text style={styles.filterText}>ALL</Text>
+                            </Pressable >
+                            <Pressable style={[styles.filterbtn, filter.includes("BILLING") ? styles.fillBilling : styles.billing]} onPress={() => filterHandler("BILLING")}>
+                                <Text style={styles.filterText}>BILLING</Text>
+                            </Pressable >
+                            <Pressable style={[styles.filterbtn, filter.includes("DISPATCHING") ? styles.fillDispatching : styles.dispatching]} onPress={() => filterHandler("DISPATCHING")}>
+                                <Text style={styles.filterText}>DISPATCHING</Text>
+                            </Pressable>
+                            <Pressable style={[styles.filterbtn, filter.includes("LR PENDING") ? styles.fillLrpending : styles.lrpending]} onPress={() => filterHandler("LR PENDING")}>
+                                <Text style={styles.filterText}>LR PENDING</Text>
+                            </Pressable>
                         </View>
-                    </ScrollView>
+                        <ScrollView>
+                            <View style={styles.container}>
+                                {data.filter(item => filter.length ? filter.includes(item.status) : true)?.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index }} editOrder={editOrder} setId={setId} />)}
+                            </View>
+                        </ScrollView>
+                    </>
                     :
                     <View style={styles.imageView}>
                         <Text style={styles.noData}>No Data</Text>
@@ -177,5 +207,61 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: '#5F4521',
         textAlign: 'center'
+    },
+    filter: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: '100%',
+        padding: "2%"
+    },
+    filterbtn: {
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        borderRadius: 8,
+        paddingHorizontal: 8,
+        paddingVertical: 4
+    },
+    billing: {
+        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+        borderColor: 'rgba(255, 0, 0, 1)',
+    },
+    dispatching: {
+        backgroundColor: 'rgba(100, 100, 200, 0.2)',
+        borderColor: 'rgba(100, 100, 100, 1)'
+    },
+    lrpending: {
+        backgroundColor: 'rgba(15, 150, 100, 0.2)',
+        borderColor: 'rgba(15, 150, 100, 1)'
+    },
+    all:{
+        // backgroundColor: 'gray',
+        borderColor: 'gray',
+        borderStyle: 'dashed'
+    },
+    fillAll:{
+        backgroundColor: 'gray',
+        borderColor: 'gray',
+        borderStyle: 'solid',
+    },
+    fillBilling: {
+        backgroundColor: 'rgba(255, 0, 0, 1)',
+        borderColor: 'rgba(255, 0, 0, 1)',
+        borderStyle: 'solid',
+    },
+    fillDispatching: {
+        backgroundColor: 'rgba(100, 100, 200, 1)',
+        borderColor: 'rgba(100, 100, 100, 1)',
+        borderStyle: 'solid'
+    },
+    fillLrpending: {
+        backgroundColor: 'rgba(15, 150, 100, 1)',
+        borderColor: 'rgba(15, 150, 100, 1)',
+        borderStyle: 'solid'
+    },
+
+    filterText: {
+        fontSize: 12
     }
 });

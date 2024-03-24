@@ -63,7 +63,8 @@ const OrderModal = (props) => {
             totalPrice: "",
             confirmOrder: true,
             narration: "",
-            freight: ""
+            freight: "",
+            priority: false
         });
         setError1(() => ({
             party: false,
@@ -97,15 +98,16 @@ const OrderModal = (props) => {
             freight: orderData?.freight || 0,
             gst: orderData?.gst || 0,
             gstPrice: orderData?.gstPrice || 0,
-            narration: orderData?.narration || ""
+            narration: orderData?.narration || "",
+            priority: orderData?.priority
         }
 
         setLoading(true);
         let response = false;
         if (isEdit) {
-            response = await dispatch(updateOrderData(id, data, !pending));
+            response = await dispatch(updateOrderData(id, data, !orderData.confirmOrder));
         } else {
-            response = await dispatch(createOrderData(data, !orderData.confirmOrder));
+            response = await dispatch(createOrderData(data, orderData.confirmOrder));
         }
         if (response) {
             closeForm();
@@ -242,13 +244,22 @@ const OrderModal = (props) => {
                                 rowTextStyle={styles.selectedTextStyleRow}
                             />
                         </View>
-                        {/* <View style={styles.modalView}> */}
                         <CheckBox
                             onClick={() => {
                                 setOrderData((prev) => ({ ...prev, confirmOrder: !prev.confirmOrder }))
                             }}
                             isChecked={orderData.confirmOrder}
                             rightText={"Order confirmation"}
+                            style={styles.modalCheckbox}
+                            checkBoxColor="#5F4521"
+
+                        />
+                        <CheckBox
+                            onClick={() => {
+                                setOrderData((prev) => ({ ...prev, priority: !prev.priority }))
+                            }}
+                            isChecked={orderData.priority}
+                            rightText={"Priority"}
                             style={styles.modalCheckbox}
                             checkBoxColor="#5F4521"
 

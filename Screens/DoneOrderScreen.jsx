@@ -12,7 +12,7 @@ import OrderDetails from "../modals/OrderDetails";
 const companyNameEnum = ['GJ Impex', 'Shreeji sensor', 'Shree Enterprice'];
 
 
-const PendingOrderScreen = () => {
+const DoneOrderScreen = () => {
 
     const [orderData, setOrderData] = useState({
         partyId: "",
@@ -28,7 +28,7 @@ const PendingOrderScreen = () => {
         narration: ""
     })
     const dispatch = useDispatch();
-    const { pendingData, loading } = useSelector((state) => state.order)
+    const { doneData, loading } = useSelector((state) => state.order)
     const login = useSelector((state) => state.login.data)
     const [modalAddOrder, setModalAddOrder] = useState(false);
     const [detailsModel, setDetailsModel] = useState(false);
@@ -36,20 +36,10 @@ const PendingOrderScreen = () => {
     const [id, setId] = useState('');
     const [products, setProduct] = useState({})
 
-    useEffect(() => {
-        dispatch(fetchOrderData(true, false))
-        const id = Date.now();
-        setProduct((prev) => ({ ...prev, [id]: { id: id, productName: "", quantity: "", sellPrice: "", total: "" } }))
-    }, [])
-
-    useEffect(() => {
-        dispatch(fetchProductData());
-        dispatch(fetchPartyData())
-    }, []);
-
+    console.log(doneData);
 
     const editOrder = (id, details = false) => {
-        const value = pendingData?.find(value => value.id === id)
+        const value = doneData?.find(value => value.id === id)
 
         const result = value?.products?.reduce((acc, obj) => {
             acc[obj.id] = { ...obj, productId: obj.id };
@@ -87,10 +77,10 @@ const PendingOrderScreen = () => {
             {loading ?
                 <ActivityIndicator size="large" style={styles.loader} color="#5F4521" />
                 :
-                pendingData.length ?
+                doneData.length ?
                     <ScrollView>
                         <View style={styles.container}>
-                            {pendingData.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index, pending: true }} editOrder={editOrder} setId={setId} />)}
+                            {doneData.map((item, index) => <OrderData key={item.id} data={{ ...item, login, index, done:true }} editOrder={editOrder} setId={setId} />)}
                         </View>
                     </ScrollView>
                     :
@@ -109,7 +99,7 @@ const PendingOrderScreen = () => {
     )
 }
 
-export default PendingOrderScreen;
+export default DoneOrderScreen;
 
 const styles = StyleSheet.create({
     container: {

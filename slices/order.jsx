@@ -12,7 +12,13 @@ export const orderSlice = createSlice({
   },
   reducers: {
     updateOrder(state, action) {
-      state[action.payload.key] = action.payload.data;
+      state.data = action.payload;
+    },
+    updatePending(state, action) {
+      state.pendingData = action.payload;
+    },
+    updateDone(state, action) {
+      state.doneData = action.payload;
     },
     setLoading(state, action) {
       state.loading = action.payload;
@@ -22,13 +28,18 @@ export const orderSlice = createSlice({
 
 export const { updateOrder } = orderSlice.actions
 
-export const fetchOrderData = (load = true, confirmOrder = true) => async (dispatch) => {
+export const fetchOrderData = (load = true) => async (dispatch) => {
   try {
     if (load) {
       dispatch(orderSlice.actions.setLoading(true));
     }
-    const response = await axiosInstance.get(`/orders?confirmOrder=${confirmOrder}`);
-    dispatch(orderSlice.actions.updateOrder({ data: response.data.data, key: confirmOrder ? "data" : "pendingData" }));
+    const response = await axiosInstance.get(`/orders`);
+    const doneData = response.data.data.filter(item => item.status === 'DONE')
+    const pendingData = response.data.data.filter(item => item.confirmOrder === false)
+    const data = response.data.data.filter(item => item.confirmOrder === true && item.status !== 'DONE')
+    dispatch(orderSlice.actions.updateOrder(data));
+    dispatch(orderSlice.actions.updatePending(pendingData));
+    dispatch(orderSlice.actions.updateDone(doneData));
     dispatch(orderSlice.actions.setLoading(false));
     return true;
   } catch (err) {
