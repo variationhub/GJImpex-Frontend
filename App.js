@@ -15,7 +15,7 @@ import { fetchOrderData } from "./slices/order";
 import { fetchTransportData } from "./slices/transport";
 import { fetchProductData } from "./slices/product";
 import { fetchPartyData } from "./slices/party";
-import JSON from "./url.json"
+import URL from "./url.json"
 
 const noGlow = `
 textarea, select, input, button {
@@ -64,7 +64,7 @@ const Navigation = () => {
   useEffect(() => {
     const appStateChangeHandler = (nextAppState) => {
       if (nextAppState === 'active') {
-        const newWs = new WebSocket(`${JSON.BASE_URL_WS}`);
+        const newWs = new WebSocket(`${URL.BASE_URL_WS}`);
         setWs(newWs);
       } else {
         if (ws) {
