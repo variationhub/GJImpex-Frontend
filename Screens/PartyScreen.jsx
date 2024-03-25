@@ -10,16 +10,12 @@ import { fetchTransportData } from "../slices/transport";
 
 const partyRoles = ['Admin', 'Sales', 'Accountant', 'Dispatcher', 'Production', 'Other'];
 
-
 const PartyScreen = () => {
     const [partyData, setPartyData] = useState({
         partyName: "",
         city: "",
         mobileNumber: "",
-        transport: [{
-            transportName: '',
-            id: ''
-        }],
+        transport: [],
     })
     const dispatch = useDispatch();
     const { data, loading } = useSelector((state) => state.party)

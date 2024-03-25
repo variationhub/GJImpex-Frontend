@@ -71,7 +71,7 @@ const TransportModal = (props) => {
             response = await dispatch(updateTransportData(id, {
                 transportName: transportData.name.trim(),
                 mobileNumber: transportData.mobileNumber.trim(),
-                gst: transportData.gst.trim().toUppercase(),
+                gst: transportData.gst.trim(),
                 address: transportData.address.trim()
             }))
         }

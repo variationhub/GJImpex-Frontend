@@ -42,7 +42,7 @@ const PartyModal = (props) => {
             partyName: "",
             city: "",
             mobileNumber: "",
-            transport: ""
+            transport: []
         })
         setModalAddParty(false);
         setIsEdit(false);
