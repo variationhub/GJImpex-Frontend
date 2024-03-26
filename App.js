@@ -61,11 +61,15 @@ const Navigation = () => {
   }, []);
 
 
+  const connectWebSocket = () => {
+    const newWs = new WebSocket(`${URL.BASE_URL_WS}`);
+    setWs(newWs);
+  };
+
   useEffect(() => {
     const appStateChangeHandler = (nextAppState) => {
       if (nextAppState === 'active') {
-        const newWs = new WebSocket(`${URL.BASE_URL_WS}`);
-        setWs(newWs);
+        connectWebSocket();
       } else {
         if (ws) {
           ws.close();
@@ -89,6 +93,7 @@ const Navigation = () => {
         const data = JSON.parse(event.data);
         if (data.DOMAIN === 'ORDER') {
           dispatch(fetchOrderData(false))
+          dispatch(fetchProductData(false))
         }
 
         if (data.DOMAIN === 'PARTY') {
@@ -105,8 +110,15 @@ const Navigation = () => {
 
         console.log(data);
       };
+
+      ws.onclose = (event) => {
+        console.log('Socket is closed. Reconnect will be attempted in 100 ms.', event.reason);
+        setTimeout(connectWebSocket, 100); // Reconnect after 100 ms
+      };
     }
   }, [ws]);
+
+
 
   if (loading) {
     return (

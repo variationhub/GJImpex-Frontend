@@ -75,16 +75,16 @@ const ProductModal = (props) => {
             productName: productData.productName.trim(),
             productType: productData.productType.trim(),
             productPriceHistory: [{
-                price: productData.price,
-                stock: productData.stock
+                price: Number(productData.price),
+                stock: Number(productData.stock)
             }],
-            minStock: productData.minStock,
+            minStock: Number(productData.minStock),
         }
         if (isEdit) {
             resposne = await dispatch(updateProductData(id, {
                 productName: productData.productName.trim(),
                 productType: productData.productType.trim(),
-                minStock: productData.minStock,
+                minStock: Number(productData.minStock),
             }))
         }
         else {
@@ -152,13 +152,14 @@ const ProductModal = (props) => {
                             status={error.stock ? "danger" : "basic"}
                             inputMode='numeric'
                             onChangeText={(e) => {
+                                const sanitizedValue = e.replace(/[ -.,]/g, '');
                                 if (e) {
                                     setError((prev) => ({
                                         ...prev,
                                         stock: false
                                     }))
                                 }
-                                setProductData(prev => ({ ...prev, stock: Number(e) }))
+                                setProductData(prev => ({ ...prev, stock: sanitizedValue }))
                             }}
                             ref={stock}
                             returnKeyType='next'
@@ -176,13 +177,14 @@ const ProductModal = (props) => {
                         status={error.minStock ? "danger" : "basic"}
                         inputMode='numeric'
                         onChangeText={(e) => {
+                            const sanitizedValue = e.replace(/[ -.,]/g, '');
                             if (e) {
                                 setError((prev) => ({
                                     ...prev,
                                     minStock: false
                                 }))
                             }
-                            setProductData(prev => ({ ...prev, minStock: Number(e) }))
+                            setProductData(prev => ({ ...prev, minStock: sanitizedValue }))
                         }}
                         ref={minStock}
                         returnKeyType='next'
@@ -200,12 +202,23 @@ const ProductModal = (props) => {
                             style={styles.input}
                             inputMode='numeric'
                             onChangeText={(e) => {
+                                const sanitizedValue = e.replace(/[ ,-]/g, '');
+                                const dotIndex = sanitizedValue.indexOf('.');
+                                if (dotIndex !== -1) {
+                                    const beforeDot = sanitizedValue.slice(0, dotIndex);
+                                    const afterDot = sanitizedValue.slice(dotIndex + 1);
+                                    const newValue = beforeDot + '.' + afterDot.replace('.', '');
+                                    setProductData(prev => ({ ...prev, price: newValue }));
+                                } else {
+                                    setProductData(prev => ({ ...prev, price: sanitizedValue }));
+                                }
+
                                 if (e) {
                                     setError((prev) => ({
                                         ...prev,
                                         price: false
                                     }))
-                                } setProductData(prev => ({ ...prev, price: Number(e) }))
+                                }
                             }}
                             ref={price}
                         />

@@ -46,8 +46,8 @@ const OrderModal = (props) => {
 
     useEffect(() => {
         const total = Object.values(products)?.reduce((acc, item) => {
-            return Number(acc) + Number(item.sellPrice * item.quantity)
-        }, orderData.freight)
+            return Number(acc) + Number(item.sellPrice * Number(item.quantity))
+        }, Number(orderData.freight))
         setOrderData((prev) => ({ ...prev, total: total }))
     }, [products, orderData.freight]);
 
@@ -90,14 +90,14 @@ const OrderModal = (props) => {
             orders: Object.values(products)?.map((item) => {
                 return {
                     productId: item?.productId,
-                    quantity: item?.quantity,
-                    sellPrice: item?.sellPrice
+                    quantity: Number(item?.quantity),
+                    sellPrice: Number(item?.sellPrice)
                 }
             }),
             confirmOrder: orderData.confirmOrder,
-            freight: orderData?.freight || 0,
-            gst: orderData?.gst || 0,
-            gstPrice: orderData?.gstPrice || 0,
+            freight: Number(orderData?.freight) || 0,
+            gst: Number(orderData?.gst) || 0,
+            gstPrice: Number(orderData?.gstPrice) || 0,
             narration: orderData?.narration || "",
             priority: orderData?.priority
         }
@@ -334,7 +334,10 @@ const OrderModal = (props) => {
                                                 placeholder="Quantity"
                                                 size='small'
                                                 value={String(item?.quantity)}
-                                                onChangeText={(e) => handleChange(item?.id, "quantity", Number(e))}
+                                                onChangeText={(e) => {
+                                                    const sanitizedValue = e.replace(/[ -.,]/g, '');
+                                                    handleChange(item?.id, "quantity", sanitizedValue)
+                                                }}
                                             />
                                             <Input
                                                 name="sellPrice"
@@ -343,7 +346,18 @@ const OrderModal = (props) => {
                                                 placeholder="Price"
                                                 size='small'
                                                 value={String(item?.sellPrice)}
-                                                onChangeText={(e) => handleChange(item?.id, "sellPrice", Number(e))}
+                                                onChangeText={(e) => {
+                                                    const sanitizedValue = e.replace(/[ ,-]/g, '');
+                                                    const dotIndex = sanitizedValue.indexOf('.');
+                                                    if (dotIndex !== -1) {
+                                                        const beforeDot = sanitizedValue.slice(0, dotIndex);
+                                                        const afterDot = sanitizedValue.slice(dotIndex + 1);
+                                                        const newValue = beforeDot + '.' + afterDot.replace('.', '');
+                                                        handleChange(item?.id, "sellPrice", newValue)
+                                                    } else {
+                                                        handleChange(item?.id, "sellPrice", sanitizedValue)
+                                                    }
+                                                }}
                                             />
                                             <Text style={styles.totalPrice}>
                                                 {(Number(item.quantity) * Number(item.sellPrice)).toFixed(2)}
@@ -361,7 +375,18 @@ const OrderModal = (props) => {
                                 keyboardType="numeric"
                                 size="small"
                                 value={String(orderData.freight)}
-                                onChangeText={(e) => setOrderData(prev => ({ ...prev, freight: Number(e) }))}
+                                onChangeText={(e) => {
+                                    const sanitizedValue = e.replace(/[ ,-]/g, '');
+                                    const dotIndex = sanitizedValue.indexOf('.');
+                                    if (dotIndex !== -1) {
+                                        const beforeDot = sanitizedValue.slice(0, dotIndex);
+                                        const afterDot = sanitizedValue.slice(dotIndex + 1);
+                                        const newValue = beforeDot + '.' + afterDot.replace('.', '');
+                                        setOrderData(prev => ({ ...prev, freight: newValue }))
+                                    } else {
+                                        setOrderData(prev => ({ ...prev, freight: sanitizedValue }))
+                                    }
+                                }}
                             />
                             <Input
                                 name="gstPrice"
@@ -370,7 +395,18 @@ const OrderModal = (props) => {
                                 keyboardType="numeric"
                                 size="small"
                                 value={String(orderData.gstPrice)}
-                                onChangeText={(e) => setOrderData(prev => ({ ...prev, gstPrice: Number(e) }))}
+                                onChangeText={(e) => {
+                                    const sanitizedValue = e.replace(/[ ,-]/g, '');
+                                    const dotIndex = sanitizedValue.indexOf('.');
+                                    if (dotIndex !== -1) {
+                                        const beforeDot = sanitizedValue.slice(0, dotIndex);
+                                        const afterDot = sanitizedValue.slice(dotIndex + 1);
+                                        const newValue = beforeDot + '.' + afterDot.replace('.', '');
+                                        setOrderData(prev => ({ ...prev, gstPrice: newValue }))
+                                    } else {
+                                        setOrderData(prev => ({ ...prev, gstPrice: sanitizedValue }))
+                                    }
+                                }}
                             />
                             <Input
                                 name="gst"
@@ -380,7 +416,7 @@ const OrderModal = (props) => {
                                 size='small'
                                 value={String(orderData.gst)}
                                 disabled
-                                // onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: Number(e) }))}
+                            // onChangeText={(e) => setOrderData(prev => ({ ...prev, gst: Number(e) }))}
                             />
                         </View>
                         <View style={styles.finalPriceView}>

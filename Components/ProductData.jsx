@@ -75,7 +75,8 @@ const RenderCheckboxModal = (props) => {
                                 keyboardType="numeric"
                                 style={styles.inputStock}
                                 onChangeText={(e) => {
-                                    setValue((prev) => ({ ...prev, stock: e }))
+                                    const sanitizedValue = e.replace(/[ ,-]/g, '');
+                                    setValue((prev) => ({ ...prev, stock: sanitizedValue }))
                                     setError((prev) => ({ ...prev, stock: false }))
                                 }}
                             />
@@ -87,7 +88,16 @@ const RenderCheckboxModal = (props) => {
                                 placeholder='Ex. 200'
                                 style={styles.inputStock}
                                 onChangeText={(e) => {
-                                    setValue((prev) => ({ ...prev, price: e }))
+                                    const sanitizedValue = e.replace(/[ ,-]/g, '');
+                                    const dotIndex = sanitizedValue.indexOf('.');
+                                    if (dotIndex !== -1) {
+                                        const beforeDot = sanitizedValue.slice(0, dotIndex);
+                                        const afterDot = sanitizedValue.slice(dotIndex + 1);
+                                        const newValue = beforeDot + '.' + afterDot.replace('.', '');
+                                        setValue((prev) => ({ ...prev, price: newValue }))
+                                    } else {
+                                        setValue((prev) => ({ ...prev, price: sanitizedValue }))
+                                    }
                                     setError((prev) => ({ ...prev, price: false }))
                                 }}
                             />
